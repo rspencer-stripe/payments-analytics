@@ -7198,11 +7198,11 @@
                 revenueLostValue.textContent = formatCurrency(data.revenueLost);
             }
             
-            // Recovered volume (fraud losses prevented)
+            // Recovered payments (count of recovered transactions)
             const recoveredVolumeCard = performanceCards[2];
             const recoveredVolumeValue = recoveredVolumeCard.querySelector('.stat-value');
             if (recoveredVolumeValue) {
-                recoveredVolumeValue.textContent = formatCurrency(data.fraudLosses);
+                recoveredVolumeValue.textContent = data.recoveredTransactions || 0;
             }
             
             // Success rate
@@ -7215,7 +7215,7 @@
             console.log('Updated performance stats:', {
                 totalRevenue: formatCurrency(data.totalVolume),
                 revenueLost: formatCurrency(data.revenueLost),
-                recoveredVolume: formatCurrency(data.fraudLosses),
+                recoveredPayments: data.recoveredTransactions || 0,
                 successRate: `${data.successRate}%`
             });
         } else {
@@ -9383,8 +9383,8 @@
                             <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Total revenue recovered</div>
                         </div>
                         <div class="performance-stat-card" data-metric="recovered-volume" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
-                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Recovered volume</div>
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">0</div>
+                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Recovered payments</div>
                         </div>
                         <div class="performance-stat-card" data-metric="success-rate" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
                             <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">0%</div>
@@ -10138,7 +10138,7 @@
         const metricLabels = {
             'total-revenue': 'Total Revenue',
             'revenue-lost': 'Total Revenue Recovered',
-            'recovered-volume': 'Recovered Volume',
+            'recovered-volume': 'Recovered Payments',
             'success-rate': 'Success Rate'
         };
         
