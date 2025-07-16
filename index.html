@@ -968,8 +968,8 @@
         }
 
         .sparkles-icon {
-            width: 24px;
-            height: 24px;
+            width: 16px;
+            height: 16px;
             color: var(--color-purple-500);
         }
 
@@ -2387,6 +2387,10 @@
             box-shadow: 2px 5px 7px 0px rgba(214,17,17,0.06),-1px 0px 10px 0px rgba(187,175,255,0.34);
         }
 
+        .performance-stat-card:hover {
+            box-shadow: 2px 5px 7px 0px rgba(214,17,17,0.06),-1px 0px 10px 0px rgba(187,175,255,0.34);
+        }
+
         .snapshot-card-header {
             display: flex;
             justify-content: space-between;
@@ -3461,26 +3465,31 @@
 
         .summary-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            min-width: 0;
         }
 
         .summary-stat {
             text-align: center;
-            padding: 16px;
+            padding: 12px 8px;
             background: var(--color-gray-50);
+            width: 100%;
+            box-sizing: border-box;
+            min-width: 0;
         }
 
         .summary-stat .stat-value {
             display: block;
-            font-size: 24px !important;
+            font-size: 20px !important;
             font-weight: 600;
             color: var(--color-gray-900);
             margin-bottom: 2px;
         }
 
-                .summary-stat .stat-label {
-            font-size: 12px;
+        .summary-stat .stat-label {
+            font-size: 11px;
             color: var(--color-gray-600);
         }
 
@@ -6482,6 +6491,9 @@
                 // Update AI assistant prompts with new date range
                 updateAssistantPrompts(currentBusinessType, this.textContent);
                 
+                // Preserve the correct page title
+                preservePageTitle();
+                
                 // Close dropdown
                 dateRangeMenu.classList.remove('show');
                 
@@ -6512,6 +6524,60 @@
         
         // Initialize chart tooltips
         initializeChartTooltips();
+        
+        // Optimization Date Range Dropdown Functionality
+        const optimizationDateRangeDropdown = document.getElementById('optimizationDateRangeDropdown');
+        const optimizationDateRangeMenu = document.getElementById('optimizationDateRangeMenu');
+        const optimizationDropdownItems = document.querySelectorAll('#optimizationDateRangeMenu .dropdown-item');
+
+        // Toggle dropdown
+        if (optimizationDateRangeDropdown) {
+            optimizationDateRangeDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+                optimizationDateRangeMenu.classList.toggle('show');
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            if (optimizationDateRangeMenu) {
+                optimizationDateRangeMenu.classList.remove('show');
+            }
+        });
+
+        // Handle dropdown item selection
+        optimizationDropdownItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                console.log('Optimization dropdown item clicked:', this.textContent);
+                
+                // Remove active class from all items
+                optimizationDropdownItems.forEach(dropdownItem => dropdownItem.classList.remove('active'));
+                
+                // Add active class to selected item
+                this.classList.add('active');
+                
+                // Update dropdown trigger text
+                optimizationDateRangeDropdown.textContent = this.textContent;
+                optimizationDateRangeDropdown.appendChild(document.createElement('i')).setAttribute('data-lucide', 'chevron-down');
+                optimizationDateRangeDropdown.querySelector('i').classList.add('filter-icon');
+                
+                // Update optimization page with new date range
+                if (currentBusinessType) {
+                    updateOptimizationPage(currentBusinessType, this.textContent);
+                }
+                
+                // Preserve the correct page title
+                preservePageTitle();
+                
+                // Close dropdown
+                optimizationDateRangeMenu.classList.remove('show');
+                
+                // Reinitialize lucide icons
+                lucide.createIcons();
+            });
+        });
     });
 
     // Failed card payments chart data (now includes bars and table)
@@ -6934,6 +7000,14 @@
     };
 
     let currentBusinessType = 'medium';
+    
+    // Function to preserve the correct page title - always "Payments analytics"
+    function preservePageTitle() {
+        const pageTitle = document.querySelector('.page-title');
+        if (pageTitle) {
+            pageTitle.textContent = 'Payments analytics';
+        }
+    }
 
     // Simple function to switch business type
     function switchBusinessType(businessType) {
@@ -6979,11 +7053,8 @@
         // Update optimization page if it exists
         updateOptimizationPage(businessType, currentDateRange);
         
-        // Update the page title to reflect the current business type
-        const pageTitle = document.querySelector('.page-title');
-        if (pageTitle) {
-            pageTitle.textContent = `Payment Analytics`;
-        }
+        // Preserve the correct page title based on current active tab
+        preservePageTitle();
         
         console.log('Business data updated for:', businessType);
     }
@@ -7016,60 +7087,58 @@
         console.log('Found optimization view, updating content...');
         console.log('Optimization view display style:', optimizationView.style.display);
         
-        // Realistic business data based on size
-        const businessData = {
-            small: {
-                totalVolume: 45000,
-                totalTransactions: 1800,
-                successRate: 78.5,
-                authRate: 75.2,
-                disputeRate: 0.8,
-                retentionRate: 45.2,
-                finalRevenue: 35325,
-                revenueLost: 9675,
-                declinedTransactions: 447,
-                disputeTransactions: 14,
-                fraudLosses: 360
-            },
-            medium: {
-                totalVolume: 450000,
-                totalTransactions: 18000,
-                successRate: 85.2,
-                authRate: 89.1,
-                disputeRate: 0.4,
-                retentionRate: 67.3,
-                finalRevenue: 383400,
-                revenueLost: 66600,
-                declinedTransactions: 1962,
-                disputeTransactions: 72,
-                fraudLosses: 3600
-            },
-            large: {
-                totalVolume: 3150000,
-                totalTransactions: 126000,
-                successRate: 91.7,
-                authRate: 94.8,
-                disputeRate: 0.2,
-                retentionRate: 82.1,
-                finalRevenue: 2888550,
-                revenueLost: 261450,
-                declinedTransactions: 6552,
-                disputeTransactions: 252,
-                fraudLosses: 25200
-            }
+        // Generate dynamic data based on business type and date range
+        const generator = new RealisticDataGenerator(businessType, dateRange);
+        const businessMetrics = generator.getBusinessMetrics();
+        const timeframeMultipliers = generator.getTimeframeMultipliers();
+        
+        // Calculate base values for the selected timeframe
+        const totalDays = timeframeMultipliers.days;
+        const avgDailyVolume = businessMetrics.avgTransactionValue * businessMetrics.dailyTransactions;
+        const totalVolume = avgDailyVolume * totalDays * timeframeMultipliers.volume;
+        const totalTransactions = businessMetrics.dailyTransactions * totalDays * timeframeMultipliers.payments;
+        
+        // Generate realistic data with some variation
+        const successRate = businessMetrics.successRate + (generator.rng() - 0.5) * 3; // ±1.5% variation
+        const authRate = Math.min(100, successRate + 5 + (generator.rng() - 0.5) * 4); // Slightly higher than success rate
+        const disputeRate = businessMetrics.disputeRate + (generator.rng() - 0.5) * 0.2; // Small variation
+        const retentionRate = 45 + (businessType === 'small' ? 0 : businessType === 'medium' ? 20 : 35) + (generator.rng() - 0.5) * 10;
+        
+        // Calculate derived metrics
+        const finalRevenue = totalVolume * (successRate / 100);
+        const revenueLost = totalVolume - finalRevenue;
+        const declinedTransactions = Math.round(totalTransactions * (1 - authRate / 100));
+        const disputeTransactions = Math.round(totalTransactions * disputeRate / 100);
+        const fraudLosses = Math.round(totalVolume * 0.008); // 0.8% fraud rate
+        
+        const data = {
+            totalVolume: Math.round(totalVolume),
+            totalTransactions: Math.round(totalTransactions),
+            successRate: Math.round(successRate * 10) / 10,
+            authRate: Math.round(authRate * 10) / 10,
+            disputeRate: Math.round(disputeRate * 10) / 10,
+            retentionRate: Math.round(retentionRate * 10) / 10,
+            finalRevenue: Math.round(finalRevenue),
+            revenueLost: Math.round(revenueLost),
+            declinedTransactions: declinedTransactions,
+            disputeTransactions: disputeTransactions,
+            fraudLosses: fraudLosses
         };
         
-        const data = businessData[businessType] || businessData.medium;
+        // Update performance stats (the four cards at the top)
+        updatePerformanceStats(optimizationView, data);
         
         // Update summary stats
         const summaryStats = optimizationView.querySelectorAll('.stat-value');
-        if (summaryStats.length >= 3) {
-            summaryStats[0].textContent = formatCurrency(data.finalRevenue);
+        if (summaryStats.length >= 4) {
+            summaryStats[0].textContent = formatCurrency(data.totalVolume);
             summaryStats[1].textContent = formatCurrency(-data.revenueLost);
-            summaryStats[2].textContent = `${data.successRate}%`;
+            summaryStats[2].textContent = formatCurrency(data.finalRevenue);
+            summaryStats[3].textContent = `${data.successRate}%`;
             console.log('Updated summary stats for', businessType, ':', {
-                finalRevenue: formatCurrency(data.finalRevenue),
+                totalRevenue: formatCurrency(data.totalVolume),
                 revenueLost: formatCurrency(-data.revenueLost),
+                recoveredVolume: formatCurrency(data.finalRevenue),
                 successRate: `${data.successRate}%`
             });
         } else {
@@ -7106,7 +7175,50 @@
         // Add a visible indicator in the optimization view
         const lifecycleTitle = optimizationView.querySelector('.lifecycle-title');
         if (lifecycleTitle) {
-            lifecycleTitle.textContent = `Payment lifecycle optimization`;
+            lifecycleTitle.textContent = `Payment lifecycle`;
+        }
+    }
+    
+    // Function to update performance stats cards
+    function updatePerformanceStats(container, data) {
+        const performanceCards = container.querySelectorAll('.performance-stat-card');
+        if (performanceCards.length >= 4) {
+            // Total revenue
+            const totalRevenueCard = performanceCards[0];
+            const totalRevenueValue = totalRevenueCard.querySelector('.stat-value');
+            if (totalRevenueValue) {
+                totalRevenueValue.textContent = formatCurrency(data.totalVolume);
+            }
+            
+            // Total revenue lost
+            const revenueLostCard = performanceCards[1];
+            const revenueLostValue = revenueLostCard.querySelector('.stat-value');
+            if (revenueLostValue) {
+                revenueLostValue.textContent = formatCurrency(data.revenueLost);
+            }
+            
+            // Recovered volume (fraud losses prevented)
+            const recoveredVolumeCard = performanceCards[2];
+            const recoveredVolumeValue = recoveredVolumeCard.querySelector('.stat-value');
+            if (recoveredVolumeValue) {
+                recoveredVolumeValue.textContent = formatCurrency(data.fraudLosses);
+            }
+            
+            // Success rate
+            const successRateCard = performanceCards[3];
+            const successRateValue = successRateCard.querySelector('.stat-value');
+            if (successRateValue) {
+                successRateValue.textContent = `${data.successRate}%`;
+            }
+            
+            console.log('Updated performance stats:', {
+                totalRevenue: formatCurrency(data.totalVolume),
+                revenueLost: formatCurrency(data.revenueLost),
+                recoveredVolume: formatCurrency(data.fraudLosses),
+                successRate: `${data.successRate}%`
+            });
+        } else {
+            console.error('Could not find performance stat cards:', performanceCards.length);
         }
     }
     
@@ -9004,6 +9116,12 @@
             console.log('Hiding:', content.id);
         });
         
+        // Handle page title - always set to "Payments analytics"
+        const pageTitle = document.querySelector('.page-title');
+        if (pageTitle) {
+            pageTitle.textContent = 'Payments analytics';
+        }
+        
         // Show the appropriate content based on tab name
         switch(tabName.toLowerCase()) {
             case 'acceptance':
@@ -9198,6 +9316,18 @@
         const currentDateRange = document.getElementById('dateRangeDropdown').textContent.trim();
         updateOptimizationPage(currentBusinessType, currentDateRange);
         
+        // Initialize optimization date range dropdown
+        const optimizationDateRangeDropdown = document.getElementById('optimizationDateRangeDropdown');
+        if (optimizationDateRangeDropdown) {
+            // Set the dropdown to match the main date range dropdown
+            optimizationDateRangeDropdown.textContent = currentDateRange;
+            optimizationDateRangeDropdown.appendChild(document.createElement('i')).setAttribute('data-lucide', 'chevron-down');
+            optimizationDateRangeDropdown.querySelector('i').classList.add('filter-icon');
+            
+            // Reinitialize lucide icons
+            lucide.createIcons();
+        }
+        
         console.log('Optimization view should now be visible and updated');
     }
 
@@ -9221,32 +9351,49 @@
                 <div style="display: flex; gap: 24px; margin-top: 48px; width: 100%;">
                     <!-- Left Column -->
                     <div style="flex: 0 0 70%;">
-                    <!-- Funnel Summary -->
-                    <div class="funnel-summary">
-                        <div class="summary-card">
-                            <div class="summary-header">
-                                <h3>Summary</h3>
+                    <!-- Performance Header and Time Filter -->
+                    <div class="performance-header-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 style="margin: 0; font-size: 20px; font-weight: 600; color: var(--color-gray-900); line-height: 28px;">Performance</h2>
+                        
+                        <!-- Time Filter for Optimization Page -->
+                        <div class="date-range-dropdown">
+                            <button class="filter-btn dropdown-trigger" id="optimizationDateRangeDropdown">
+                                Last 90 days
+                                <i data-lucide="chevron-down" class="filter-icon"></i>
+                            </button>
+                            <div class="dropdown-menu" id="optimizationDateRangeMenu">
+                                <div class="dropdown-item" data-range="7">Last 7 days</div>
+                                <div class="dropdown-item" data-range="30">Last 30 days</div>
+                                <div class="dropdown-item" data-range="60">Last 60 days</div>
+                                <div class="dropdown-item active" data-range="90">Last 90 days</div>
+                                <div class="dropdown-item" data-range="180">Last 6 months</div>
                             </div>
-                            <div class="summary-stats">
-                                <div class="summary-stat">
-                                    <span class="stat-value">$0</span>
-                                    <span class="stat-label">Final revenue</span>
-                                </div>
-                                <div class="summary-stat">
-                                    <span class="stat-value">$0</span>
-                                    <span class="stat-label">Total revenue lost</span>
-                                </div>
-                                <div class="summary-stat">
-                                    <span class="stat-value">0%</span>
-                                    <span class="stat-label">Success rate</span>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Stats -->
+                    <div class="performance-stats" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 72px;">
+                        <div class="performance-stat-card" data-metric="total-revenue" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
+                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Total revenue</div>
+                        </div>
+                        <div class="performance-stat-card" data-metric="revenue-lost" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
+                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Total revenue lost</div>
+                        </div>
+                        <div class="performance-stat-card" data-metric="recovered-volume" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
+                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Recovered volume</div>
+                        </div>
+                        <div class="performance-stat-card" data-metric="success-rate" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">0%</div>
+                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Success rate</div>
                         </div>
                     </div>
 
                     <!-- Payment Lifecycle Header -->
                     <div class="lifecycle-header">
-                        <h1 class="lifecycle-title">Payment lifecycle optimization</h1>
+                        <h1 class="lifecycle-title">Payment lifecycle</h1>
                         <p class="lifecycle-subtitle">Optimize every stage of your payment journey for maximum revenue capture</p>
                     </div>
 
@@ -9308,9 +9455,9 @@
 
                     </div>
 
-                    <!-- Performance Snapshot -->
+                    <!-- Key Metrics -->
                     <div class="performance-snapshot">
-                        <h2 class="snapshot-title">Performance snapshot</h2>
+                        <h2 class="snapshot-title">Key metrics</h2>
                         <div class="snapshot-grid">
                             <div class="snapshot-card">
                                 <div class="snapshot-card-header">
@@ -9330,9 +9477,9 @@
                                             <div class="snapshot-chart-grid"></div>
                                             <div class="snapshot-chart-bars">
                                                 <svg class="snapshot-chart-svg" viewBox="0 0 200 200">
-                                                    <rect x="20" y="34" width="40" height="166" fill="#E4E7EC" opacity="0.8"/>
+                                                    <rect x="10" y="34" width="40" height="166" fill="#E4E7EC" opacity="0.8"/>
                                                     <rect x="80" y="16" width="40" height="184" fill="#533AFD" opacity="0.8"/>
-                                                    <rect x="140" y="4" width="40" height="196" fill="#22C55E" opacity="0.8"/>
+                                                    <rect x="150" y="4" width="40" height="196" fill="#22C55E" opacity="0.8"/>
                                                 </svg>
                                             </div>
                                             <div class="snapshot-chart-x-axis">
@@ -9363,9 +9510,9 @@
                                             <div class="snapshot-chart-grid"></div>
                                             <div class="snapshot-chart-bars">
                                                 <svg class="snapshot-chart-svg" viewBox="0 0 200 200">
-                                                    <rect x="20" y="38" width="40" height="162" fill="#E4E7EC" opacity="0.8"/>
+                                                    <rect x="10" y="38" width="40" height="162" fill="#E4E7EC" opacity="0.8"/>
                                                     <rect x="80" y="22" width="40" height="178" fill="#533AFD" opacity="0.8"/>
-                                                    <rect x="140" y="10" width="40" height="190" fill="#22C55E" opacity="0.8"/>
+                                                    <rect x="150" y="10" width="40" height="190" fill="#22C55E" opacity="0.8"/>
                                                 </svg>
                                             </div>
                                             <div class="snapshot-chart-x-axis">
@@ -9396,9 +9543,9 @@
                                             <div class="snapshot-chart-grid"></div>
                                             <div class="snapshot-chart-bars">
                                                 <svg class="snapshot-chart-svg" viewBox="0 0 200 200">
-                                                    <rect x="20" y="184" width="40" height="16" fill="#E4E7EC" opacity="0.8"/>
+                                                    <rect x="10" y="184" width="40" height="16" fill="#E4E7EC" opacity="0.8"/>
                                                     <rect x="80" y="192" width="40" height="8" fill="#533AFD" opacity="0.8"/>
-                                                    <rect x="140" y="196" width="40" height="4" fill="#22C55E" opacity="0.8"/>
+                                                    <rect x="150" y="196" width="40" height="4" fill="#22C55E" opacity="0.8"/>
                                                 </svg>
                                             </div>
                                             <div class="snapshot-chart-x-axis">
@@ -9429,9 +9576,9 @@
                                             <div class="snapshot-chart-grid"></div>
                                             <div class="snapshot-chart-bars">
                                                 <svg class="snapshot-chart-svg" viewBox="0 0 200 200">
-                                                    <rect x="20" y="84" width="40" height="116" fill="#E4E7EC" opacity="0.8"/>
+                                                    <rect x="10" y="84" width="40" height="116" fill="#E4E7EC" opacity="0.8"/>
                                                     <rect x="80" y="66" width="40" height="134" fill="#533AFD" opacity="0.8"/>
-                                                    <rect x="140" y="44" width="40" height="156" fill="#22C55E" opacity="0.8"/>
+                                                    <rect x="150" y="44" width="40" height="156" fill="#22C55E" opacity="0.8"/>
                                                 </svg>
                                             </div>
                                             <div class="snapshot-chart-x-axis">
@@ -9885,12 +10032,6 @@
         const currentDateRange = document.getElementById('dateRangeDropdown').textContent.trim();
         updateOptimizationPage(currentBusinessType, currentDateRange);
         
-        // Add a visible indicator of the current business type
-        const pageTitle = document.querySelector('.page-title');
-        if (pageTitle) {
-            pageTitle.textContent = `Payment Analytics`;
-        }
-        
         return optimizationView;
     }
 
@@ -9975,6 +10116,150 @@
         return paymentMethodsView;
     }
 
+    // Performance stat cards click functionality
+    function initializePerformanceStatCards() {
+        const performanceCards = document.querySelectorAll('.performance-stat-card');
+        performanceCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const metric = this.getAttribute('data-metric');
+                openMetricDetailsModal(metric);
+            });
+        });
+    }
+
+    // Open metric details modal
+    function openMetricDetailsModal(metric) {
+        const modal = document.getElementById('metricDetailsModal');
+        const title = document.querySelector('.metric-modal-title');
+        const subtitle = document.querySelector('.metric-modal-subtitle');
+        
+        // Set title based on metric
+        const metricLabels = {
+            'total-revenue': 'Total Revenue',
+            'revenue-lost': 'Total Revenue Lost',
+            'recovered-volume': 'Recovered Volume',
+            'success-rate': 'Success Rate'
+        };
+        
+        title.textContent = metricLabels[metric] || 'Metric Details';
+        subtitle.textContent = 'Time series data and trends';
+        
+        // Generate and display chart data
+        generateMetricChart(metric);
+        
+        // Show modal
+        modal.style.display = 'block';
+        
+        // Reinitialize Lucide icons for the modal
+        lucide.createIcons();
+    }
+
+    // Close metric details modal
+    function closeMetricDetailsModal() {
+        const modal = document.getElementById('metricDetailsModal');
+        modal.style.display = 'none';
+    }
+
+    // Generate chart data for the metric
+    function generateMetricChart(metric) {
+        const svg = document.getElementById('metricChartSvg');
+        const xAxis = document.getElementById('metricChartXAxis');
+        const yAxisMax = document.getElementById('metricYAxisMax');
+        const yAxisMin = document.getElementById('metricYAxisMin');
+        
+        // Get current date range
+        const currentDateRange = document.getElementById('optimizationDateRangeDropdown')?.textContent.trim() || 'Last 90 days';
+        const dateLabels = getDateLabels(currentDateRange);
+        
+        // Set Y-axis labels based on metric type
+        if (metric === 'success-rate') {
+            yAxisMax.textContent = '100%';
+            yAxisMin.textContent = '0%';
+        } else {
+            yAxisMax.textContent = '$12K';
+            yAxisMin.textContent = '$0';
+        }
+        
+        // Generate data based on metric
+        const generator = new RealisticDataGenerator(currentBusinessType, currentDateRange);
+        let currentData, previousData, optimizedData;
+        
+        if (metric === 'total-revenue') {
+            currentData = generator.generateTimeSeriesData(50, 0.2, 0.05);
+            previousData = currentData.map(v => v * 0.8);
+            optimizedData = currentData.map(v => v * 1.25);
+        } else if (metric === 'revenue-lost') {
+            currentData = generator.generateTimeSeriesData(15, 0.3, 0.08);
+            previousData = currentData.map(v => v * 0.9);
+            optimizedData = currentData.map(v => v * 0.7);
+        } else if (metric === 'recovered-volume') {
+            currentData = generator.generateTimeSeriesData(8, 0.4, 0.1);
+            previousData = currentData.map(v => v * 0.7);
+            optimizedData = currentData.map(v => v * 1.4);
+        } else if (metric === 'success-rate') {
+            currentData = generator.generateTimeSeriesData(85, 0.1, 0.02);
+            previousData = currentData.map(v => v * 0.95);
+            optimizedData = currentData.map(v => Math.min(v * 1.08, 100));
+        }
+        
+        // Convert to Y coordinates
+        const xPoints = [60, 140, 220, 300, 380, 460, 540, 620];
+        const maxValue = Math.max(...currentData, ...previousData, ...optimizedData);
+        const scale = metric === 'success-rate' ? 300 / 100 : 300 / maxValue;
+        
+        const currentY = currentData.map(v => 300 - (v * scale));
+        const previousY = previousData.map(v => 300 - (v * scale));
+        const optimizedY = optimizedData.map(v => 300 - (v * scale));
+        
+        // Build SVG paths
+        let currentLine = '';
+        let previousLine = '';
+        let optimizedLine = '';
+        
+        for (let i = 0; i < xPoints.length; i++) {
+            if (i === 0) {
+                currentLine = `M${xPoints[i]},${currentY[i]}`;
+                previousLine = `M${xPoints[i]},${previousY[i]}`;
+                optimizedLine = `M${xPoints[i]},${optimizedY[i]}`;
+            } else {
+                currentLine += ` L${xPoints[i]},${currentY[i]}`;
+                previousLine += ` L${xPoints[i]},${previousY[i]}`;
+                optimizedLine += ` L${xPoints[i]},${optimizedY[i]}`;
+            }
+        }
+        
+        // Update SVG content
+        svg.innerHTML = `
+            <!-- Baseline performance line (gray) -->
+            <path d="${previousLine}" stroke="#E4E7EC" stroke-width="2" fill="none"/>
+            <!-- Current performance line (purple) -->
+            <path d="${currentLine}" stroke="#533AFD" stroke-width="3" fill="none"/>
+            <!-- AI-optimized performance line (green) -->
+            <path d="${optimizedLine}" stroke="#22C55E" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
+        `;
+        
+        // Update X-axis labels
+        xAxis.innerHTML = dateLabels.map(label => `<span>${label}</span>`).join('');
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('metricDetailsModal');
+        if (e.target === modal) {
+            closeMetricDetailsModal();
+        }
+    });
+
+    // Initialize performance stat cards when optimization view is created
+    const originalCreateOptimizationView = createOptimizationView;
+    createOptimizationView = function() {
+        const view = originalCreateOptimizationView();
+        setTimeout(() => {
+            initializePerformanceStatCards();
+        }, 100);
+        return view;
+    };
+
 
 
 
@@ -9991,7 +10276,7 @@
 <div class="ai-assistant-panel" id="aiAssistantPanel">
     <div class="ai-panel-header">
         <div class="ai-panel-title">
-            <i data-lucide="sparkles" style="width: 20px; height: 20px; color: var(--color-purple-500);"></i>
+            <i data-lucide="sparkles" style="width: 16px; height: 16px; color: var(--color-purple-500);"></i>
             <h3>Assistant</h3>
         </div>
         <div class="ai-panel-controls">
@@ -10028,11 +10313,61 @@
     </div>
 </div>
 
-
-
-
-
-
+<!-- Metric Details Popup Modal -->
+<div class="metric-details-modal" id="metricDetailsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 10000; backdrop-filter: blur(4px);">
+    <div class="metric-modal-content" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 12px; padding: 32px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+        <div class="metric-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div>
+                <h2 class="metric-modal-title" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 8px 0;">Metric Details</h2>
+                <p class="metric-modal-subtitle" style="font-size: 14px; color: var(--color-gray-600); margin: 0;">Time series data and trends</p>
+            </div>
+            <button class="metric-modal-close" onclick="closeMetricDetailsModal()" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.15s;">
+                <i data-lucide="x" style="width: 20px; height: 20px; color: var(--color-gray-500);"></i>
+            </button>
+        </div>
+        
+        <div class="metric-modal-body">
+            <div class="metric-chart-container" style="margin-bottom: 24px;">
+                <div class="metric-chart-content" style="position: relative; height: 300px; width: 100%;">
+                    <div class="metric-chart-y-axis" style="position: absolute; left: 0; top: 0; bottom: 0; width: 40px; display: flex; flex-direction: column; justify-content: space-between; font-size: 12px; color: var(--color-gray-500); font-weight: 500; padding-right: 12px;">
+                        <span id="metricYAxisMax">$12K</span>
+                        <span>$8K</span>
+                        <span>$4K</span>
+                        <span id="metricYAxisMin">$0</span>
+                    </div>
+                    <div class="metric-chart-area" style="position: absolute; top: 0; left: 40px; right: 0; bottom: 40px; background: white;">
+                        <div class="metric-chart-grid" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(to bottom, var(--color-gray-200) 1px, transparent 1px); background-size: 100% 25%; opacity: 0.3;"></div>
+                        <div class="metric-chart-lines" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%;">
+                            <svg class="metric-chart-svg" id="metricChartSvg" viewBox="0 0 700 300" style="width: 100%; height: 100%;">
+                                <!-- Chart lines will be dynamically added here -->
+                            </svg>
+                        </div>
+                        <div class="metric-chart-x-axis" id="metricChartXAxis" style="position: absolute; left: 0; right: 0; bottom: -40px; display: flex; justify-content: space-between; font-size: 12px; color: var(--color-gray-500); font-weight: 500; padding-left: 40px; padding-right: 40px;">
+                            <!-- X-axis labels will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="metric-chart-footer" style="margin-top: 48px;">
+                    <div class="metric-chart-legend" style="display: flex; gap: 24px; margin-bottom: 16px;">
+                        <div class="legend-item" style="display: flex; align-items: center; gap: 8px;">
+                            <div class="legend-color current" style="width: 12px; height: 3px; background: #533AFD; border-radius: 2px;"></div>
+                            <span style="font-size: 14px; color: var(--color-gray-700);">Current performance</span>
+                        </div>
+                        <div class="legend-item" style="display: flex; align-items: center; gap: 8px;">
+                            <div class="legend-color previous" style="width: 12px; height: 3px; background: #E4E7EC; border-radius: 2px;"></div>
+                            <span style="font-size: 14px; color: var(--color-gray-700);">Baseline performance</span>
+                        </div>
+                        <div class="legend-item" style="display: flex; align-items: center; gap: 8px;">
+                            <div class="legend-color optimized" style="width: 12px; height: 3px; background: #22C55E; border-radius: 2px; border-top: 2px dashed #22C55E;"></div>
+                            <span style="font-size: 14px; color: var(--color-gray-700);">AI-optimized potential</span>
+                        </div>
+                    </div>
+                    <span class="update-status" style="font-size: 12px; color: var(--color-gray-500);">Updated yesterday</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html> 

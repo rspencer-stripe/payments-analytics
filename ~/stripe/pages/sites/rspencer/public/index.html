@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Payment Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/_assets/js/dompurify/dist/purify.min.js"></script>
+</head>
+<body>
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold mb-4">Stripe Payment Analytics</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Total Revenue</h2>
+                <p class="text-4xl font-bold text-green-600">
+                    <span id="totalRevenue">$0.00</span>
+                </p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Total Transactions</h2>
+                <p class="text-4xl font-bold text-blue-600">
+                    <span id="totalTransactions">0</span>
+                </p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Average Transaction Value</h2>
+                <p class="text-4xl font-bold text-purple-600">
+                    <span id="averageTransactionValue">$0.00</span>
+                </p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Total Refunds</h2>
+                <p class="text-4xl font-bold text-red-600">
+                    <span id="totalRefunds">$0.00</span>
+                </p>
+            </div>
+        </div>
+
+        <h2 class="text-xl font-semibold mt-8 mb-4">Recent Transactions</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white rounded-lg shadow-md">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 border-b">Date</th>
+                        <th class="py-2 px-4 border-b">Amount</th>
+                        <th class="py-2 px-4 border-b">Type</th>
+                        <th class="py-2 px-4 border-b">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionsTableBody">
+                    <!-- Transactions will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Placeholder for data fetching and updating functions
+        async function fetchAnalytics() {
+            try {
+                const response = await fetch('/api/analytics');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                updateAnalytics(data);
+            } catch (error) {
+                console.error("Error fetching analytics:", error);
+                document.getElementById('totalRevenue').textContent = 'N/A';
+                document.getElementById('totalTransactions').textContent = 'N/A';
+                document.getElementById('averageTransactionValue').textContent = 'N/A';
+                document.getElementById('totalRefunds').textContent = 'N/A';
+            }
+        }
+
+        function updateAnalytics(data) {
+            document.getElementById('totalRevenue').textContent = `$${data.totalRevenue.toFixed(2)}`;
+            document.getElementById('totalTransactions').textContent = data.totalTransactions;
+            document.getElementById('averageTransactionValue').textContent = `$${data.averageTransactionValue.toFixed(2)}`;
+            document.getElementById('totalRefunds').textContent = `$${data.totalRefunds.toFixed(2)}`;
+
+            // Clear existing transactions and add new ones
+            const tbody = document.getElementById('transactionsTableBody');
+            tbody.innerHTML = ''; // Clear all rows
+
+            data.recentTransactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-2 px-4 border-b">${new Date(transaction.date).toLocaleDateString()}</td>
+                    <td class="py-2 px-4 border-b text-right">$${transaction.amount.toFixed(2)}</td>
+                    <td class="py-2 px-4 border-b">${transaction.type}</td>
+                    <td class="py-2 px-4 border-b">${transaction.status}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Initial fetch
+        fetchAnalytics();
+        setInterval(fetchAnalytics, 30000); // Fetch every 30 seconds
+    </script>
+</body>
+</html> 
