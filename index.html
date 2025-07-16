@@ -2175,6 +2175,57 @@
             border-radius: 4px;
         }
 
+        /* Filter skeleton styles */
+        .skeleton-filter-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .skeleton-filter-btn {
+            height: 36px;
+            width: 120px;
+            background: #f0f0f0;
+            border-radius: 8px;
+        }
+
+        .skeleton-filter-chips {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .skeleton-filter-chip {
+            height: 32px;
+            width: 100px;
+            background: #f0f0f0;
+            border-radius: 16px;
+        }
+
+        .skeleton-breakdown-filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .skeleton-breakdown-dropdowns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .skeleton-dropdown-btn {
+            height: 36px;
+            width: 100px;
+            background: #f0f0f0;
+            border-radius: 8px;
+        }
+
+        .skeleton-download-btn {
+            height: 36px;
+            width: 80px;
+            background: #f0f0f0;
+            border-radius: 8px;
+        }
+
         /* AI Assistant Panel Styles */
         .ai-assistant-panel {
             position: fixed;
@@ -9741,6 +9792,37 @@
         const isAcceptancePage = document.querySelector('.nav-tab.active')?.textContent === 'Acceptance';
         
         if (isAcceptancePage) {
+            // Page filters - convert to skeleton mode
+            const filterRows = document.querySelectorAll('.filter-row');
+            filterRows.forEach((filterRow, index) => {
+                const originalContent = filterRow.innerHTML;
+                filterRow.dataset.originalContent = originalContent;
+                
+                if (index === 0) {
+                    // First filter row (date range, deduplicated, etc.)
+                    filterRow.innerHTML = `
+                        <div class="skeleton-block skeleton-filter-row">
+                            <div class="skeleton-filter-btn"></div>
+                            <div class="skeleton-filter-btn"></div>
+                            <div class="skeleton-filter-btn"></div>
+                            <div class="skeleton-filter-btn"></div>
+                        </div>
+                    `;
+                } else {
+                    // Second filter row (processor, card type, etc.)
+                    filterRow.innerHTML = `
+                        <div class="skeleton-block skeleton-filter-chips">
+                            <div class="skeleton-filter-chip"></div>
+                            <div class="skeleton-filter-chip"></div>
+                            <div class="skeleton-filter-chip"></div>
+                            <div class="skeleton-filter-chip"></div>
+                            <div class="skeleton-filter-chip"></div>
+                            <div class="skeleton-filter-chip"></div>
+                        </div>
+                    `;
+                }
+            });
+
             // Chart container (main performance chart) - EXCLUDED from lo-fi mode
             // Left intentionally unchanged to preserve line chart UI
 
@@ -9750,12 +9832,27 @@
                 const originalContent = breakdownSection.innerHTML;
                 breakdownSection.dataset.originalContent = originalContent;
                 
-                // Find and preserve the header
+                // Find and preserve the header title and subtitle, but skeleton the controls
                 const header = breakdownSection.querySelector('.breakdown-header');
-                const headerHTML = header ? header.outerHTML : '';
+                const titleSection = header?.querySelector('.breakdown-title-section');
+                const titleHTML = titleSection ? titleSection.outerHTML : '';
                 
                 breakdownSection.innerHTML = `
-                    ${headerHTML}
+                    <div class="breakdown-header">
+                        ${titleHTML}
+                        <div class="breakdown-controls">
+                            <div class="skeleton-block skeleton-breakdown-filters">
+                                <div class="skeleton-filter-btn"></div>
+                                <div class="skeleton-filter-btn"></div>
+                                <div class="skeleton-filter-btn"></div>
+                                <div class="skeleton-filter-btn"></div>
+                            </div>
+                            <div class="skeleton-block skeleton-breakdown-dropdowns">
+                                <div class="skeleton-dropdown-btn"></div>
+                                <div class="skeleton-download-btn"></div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="skeleton-block skeleton-breakdown-total">
                         <div class="skeleton-total-label"></div>
                         <div class="skeleton-total-value"></div>
@@ -9887,6 +9984,15 @@
         const isAcceptancePage = document.querySelector('.nav-tab.active')?.textContent === 'Acceptance';
         if (isAcceptancePage) {
             // Chart container is excluded from lo-fi mode, so no restoration needed
+
+            // Restore page filters
+            const filterRows = document.querySelectorAll('.filter-row');
+            filterRows.forEach(section => {
+                if (section && section.dataset.originalContent) {
+                    section.innerHTML = section.dataset.originalContent;
+                    delete section.dataset.originalContent;
+                }
+            });
 
             // Restore breakdown sections
             const breakdownSections = document.querySelectorAll('.breakdown-section');
