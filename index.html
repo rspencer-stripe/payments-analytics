@@ -7191,7 +7191,7 @@
                 totalRevenueValue.textContent = formatCurrency(data.totalVolume);
             }
             
-            // Total revenue lost
+            // Total revenue recovered
             const revenueLostCard = performanceCards[1];
             const revenueLostValue = revenueLostCard.querySelector('.stat-value');
             if (revenueLostValue) {
@@ -9380,7 +9380,7 @@
                         </div>
                         <div class="performance-stat-card" data-metric="revenue-lost" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
                             <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
-                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Total revenue lost</div>
+                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Total revenue recovered</div>
                         </div>
                         <div class="performance-stat-card" data-metric="recovered-volume" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
                             <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
@@ -10137,7 +10137,7 @@
         // Set title based on metric
         const metricLabels = {
             'total-revenue': 'Total Revenue',
-            'revenue-lost': 'Total Revenue Lost',
+            'revenue-lost': 'Total Revenue Recovered',
             'recovered-volume': 'Recovered Volume',
             'success-rate': 'Success Rate'
         };
