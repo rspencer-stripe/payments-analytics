@@ -1439,6 +1439,581 @@
             border-right: 1px solid var(--color-gray-200);
         }
 
+        /* Lo-fi Mode Toggle Styles */
+        .lofi-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-gray-700);
+            border: 1px solid var(--color-gray-200);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--color-gray-300);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--color-purple-500);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(20px);
+        }
+
+        .toggle-label {
+            white-space: nowrap;
+        }
+
+        /* Skeleton Styles for Lo-fi Mode */
+        .skeleton-block {
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-block::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+            transform: translateX(-100%);
+        }
+
+        .skeleton-title {
+            height: 28px;
+            width: 240px;
+            margin-bottom: 16px;
+            background: #e8e8e8;
+        }
+
+        .skeleton-subtitle {
+            height: 18px;
+            width: 320px;
+            margin-bottom: 24px;
+            background: #f0f0f0;
+        }
+
+        .skeleton-card {
+            height: 140px;
+            width: 100%;
+            margin-bottom: 16px;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .skeleton-card-header {
+            height: 20px;
+            width: 60%;
+            background: #e8e8e8;
+            margin-bottom: 12px;
+            border-radius: 4px;
+        }
+
+        .skeleton-card-content {
+            height: 16px;
+            width: 80%;
+            background: #f0f0f0;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .skeleton-card-metric {
+            height: 32px;
+            width: 40%;
+            background: #e8e8e8;
+            border-radius: 6px;
+        }
+
+        .skeleton-table {
+            height: 240px;
+            width: 100%;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .skeleton-table-header {
+            height: 20px;
+            width: 100%;
+            background: #e8e8e8;
+            margin-bottom: 16px;
+            border-radius: 4px;
+        }
+
+        .skeleton-table-row {
+            height: 16px;
+            width: 100%;
+            background: #f0f0f0;
+            margin-bottom: 12px;
+            border-radius: 4px;
+        }
+
+        .skeleton-timeline {
+            height: 320px;
+            width: 100%;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .skeleton-timeline-item {
+            height: 60px;
+            width: 100%;
+            background: #f0f0f0;
+            margin-bottom: 16px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+        }
+
+        .skeleton-timeline-dot {
+            width: 12px;
+            height: 12px;
+            background: #e8e8e8;
+            border-radius: 50%;
+            margin-right: 16px;
+        }
+
+        .skeleton-timeline-content {
+            flex: 1;
+        }
+
+        .skeleton-timeline-title {
+            height: 16px;
+            width: 70%;
+            background: #e8e8e8;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .skeleton-timeline-subtitle {
+            height: 14px;
+            width: 50%;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .skeleton-insights {
+            height: 180px;
+            width: 100%;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .skeleton-insight-item {
+            height: 40px;
+            width: 100%;
+            background: #f0f0f0;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        .skeleton-insight-icon {
+            width: 16px;
+            height: 16px;
+            background: #e8e8e8;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .skeleton-insight-text {
+            flex: 1;
+            height: 14px;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        .skeleton-actions {
+            height: 120px;
+            width: 100%;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .skeleton-action-button {
+            height: 40px;
+            width: 100%;
+            background: #f0f0f0;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            border: 1px solid #e5e5e5;
+        }
+
+        /* High-fidelity skeleton styles */
+        .skeleton-waterfall {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+            height: 200px;
+            padding: 20px;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+        }
+
+        .skeleton-waterfall-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .skeleton-waterfall-bar {
+            width: 60px;
+            height: 80px;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        .skeleton-waterfall-label {
+            height: 16px;
+            width: 80%;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .skeleton-waterfall-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .skeleton-detail-value {
+            height: 14px;
+            width: 60px;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        .skeleton-detail-rate {
+            height: 12px;
+            width: 80px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .skeleton-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .skeleton-metric-card {
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .skeleton-metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .skeleton-metric-title {
+            height: 18px;
+            width: 120px;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        .skeleton-metric-value {
+            height: 24px;
+            width: 60px;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        .skeleton-metric-chart {
+            display: flex;
+            gap: 12px;
+        }
+
+        .skeleton-chart-y-axis {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 120px;
+        }
+
+        .skeleton-axis-label {
+            height: 12px;
+            width: 30px;
+            background: #f0f0f0;
+            border-radius: 2px;
+        }
+
+        .skeleton-chart-area {
+            flex: 1;
+            position: relative;
+            height: 120px;
+            background: #fafafa;
+            border-radius: 4px;
+        }
+
+        .skeleton-chart-line {
+            position: absolute;
+            height: 2px;
+            background: #e8e8e8;
+            border-radius: 1px;
+        }
+
+        .skeleton-chart-line:nth-child(1) {
+            top: 20%;
+            left: 0;
+            right: 0;
+            width: 100%;
+        }
+
+        .skeleton-chart-line:nth-child(2) {
+            top: 50%;
+            left: 0;
+            right: 0;
+            width: 100%;
+        }
+
+        .skeleton-chart-line:nth-child(3) {
+            top: 80%;
+            left: 0;
+            right: 0;
+            width: 100%;
+        }
+
+        .skeleton-chart-legend {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .skeleton-legend-item {
+            height: 12px;
+            width: 60px;
+            background: #f0f0f0;
+            border-radius: 2px;
+        }
+
+        .skeleton-table {
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .skeleton-table-header {
+            display: flex;
+            background: #f0f0f0;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .skeleton-table-th {
+            flex: 1;
+            height: 16px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin-right: 16px;
+        }
+
+        .skeleton-table-th:last-child {
+            margin-right: 0;
+        }
+
+        .skeleton-table-row {
+            display: flex;
+            padding: 16px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .skeleton-table-row:last-child {
+            border-bottom: none;
+        }
+
+        .skeleton-table-td {
+            flex: 1;
+            margin-right: 16px;
+        }
+
+        .skeleton-table-td:last-child {
+            margin-right: 0;
+        }
+
+        .skeleton-opportunity-title {
+            height: 16px;
+            width: 80%;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-opportunity-desc {
+            height: 12px;
+            width: 60%;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .skeleton-impact-value {
+            height: 16px;
+            width: 50px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin-bottom: 4px;
+        }
+
+        .skeleton-impact-label {
+            height: 12px;
+            width: 80px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .skeleton-revenue {
+            height: 16px;
+            width: 100px;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        .skeleton-effort-badge {
+            height: 20px;
+            width: 60px;
+            background: #e8e8e8;
+            border-radius: 12px;
+            margin-bottom: 4px;
+        }
+
+        .skeleton-action-btn {
+            height: 32px;
+            width: 80px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            border: 1px solid #e5e5e5;
+        }
+
+        /* Additional skeleton elements for experiments */
+        .skeleton-test-title {
+            height: 16px;
+            width: 80%;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-test-desc {
+            height: 12px;
+            width: 60%;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .skeleton-status-badge {
+            height: 20px;
+            width: 60px;
+            background: #e8e8e8;
+            border-radius: 12px;
+        }
+
+        .skeleton-progress-bar {
+            height: 8px;
+            width: 100px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin-bottom: 4px;
+        }
+
+        .skeleton-rate-value {
+            height: 16px;
+            width: 50px;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        .skeleton-improvement {
+            height: 16px;
+            width: 40px;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        /* Performance stats skeleton styles */
+        .skeleton-stat-card {
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .skeleton-stat-value {
+            height: 28px;
+            width: 80px;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        .skeleton-stat-label {
+            height: 16px;
+            width: 120px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
         /* AI Assistant Panel Styles */
         .ai-assistant-panel {
             position: fixed;
@@ -8535,6 +9110,494 @@
         topBar.classList.remove('ai-panel-open');
     }
 
+    // Lo-fi Mode Toggle Function
+    function toggleLofiMode() {
+        const toggle = document.querySelector('.toggle-switch');
+        const isActive = toggle.classList.contains('active');
+        
+        if (isActive) {
+            // Disable lo-fi mode
+            toggle.classList.remove('active');
+            document.body.classList.remove('lofi-mode');
+            restoreOriginalContent();
+        } else {
+            // Enable lo-fi mode
+            toggle.classList.add('active');
+            document.body.classList.add('lofi-mode');
+            convertToSkeletonMode();
+        }
+    }
+
+    function convertToSkeletonMode() {
+        // Performance stats at the top
+        const performanceStats = document.querySelector('.performance-stats');
+        if (performanceStats) {
+            const originalContent = performanceStats.innerHTML;
+            performanceStats.dataset.originalContent = originalContent;
+            performanceStats.innerHTML = `
+                <div class="skeleton-block skeleton-stat-card">
+                    <div class="skeleton-stat-value"></div>
+                    <div class="skeleton-stat-label"></div>
+                </div>
+                <div class="skeleton-block skeleton-stat-card">
+                    <div class="skeleton-stat-value"></div>
+                    <div class="skeleton-stat-label"></div>
+                </div>
+                <div class="skeleton-block skeleton-stat-card">
+                    <div class="skeleton-stat-value"></div>
+                    <div class="skeleton-stat-label"></div>
+                </div>
+                <div class="skeleton-block skeleton-stat-card">
+                    <div class="skeleton-stat-value"></div>
+                    <div class="skeleton-stat-label"></div>
+                </div>
+            `;
+        }
+
+        // Payment lifecycle waterfall chart
+        const waterfallChart = document.querySelector('.waterfall-chart');
+        if (waterfallChart) {
+            const originalContent = waterfallChart.innerHTML;
+            waterfallChart.dataset.originalContent = originalContent;
+            waterfallChart.innerHTML = `
+                <div class="skeleton-block skeleton-waterfall">
+                    <div class="skeleton-waterfall-item">
+                        <div class="skeleton-waterfall-bar"></div>
+                        <div class="skeleton-waterfall-label"></div>
+                        <div class="skeleton-waterfall-details">
+                            <div class="skeleton-detail-value"></div>
+                            <div class="skeleton-detail-rate"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-waterfall-item">
+                        <div class="skeleton-waterfall-bar"></div>
+                        <div class="skeleton-waterfall-label"></div>
+                        <div class="skeleton-waterfall-details">
+                            <div class="skeleton-detail-value"></div>
+                            <div class="skeleton-detail-rate"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-waterfall-item">
+                        <div class="skeleton-waterfall-bar"></div>
+                        <div class="skeleton-waterfall-label"></div>
+                        <div class="skeleton-waterfall-details">
+                            <div class="skeleton-detail-value"></div>
+                            <div class="skeleton-detail-rate"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-waterfall-item">
+                        <div class="skeleton-waterfall-bar"></div>
+                        <div class="skeleton-waterfall-label"></div>
+                        <div class="skeleton-waterfall-details">
+                            <div class="skeleton-detail-value"></div>
+                            <div class="skeleton-detail-rate"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-waterfall-item">
+                        <div class="skeleton-waterfall-bar"></div>
+                        <div class="skeleton-waterfall-label"></div>
+                        <div class="skeleton-waterfall-details">
+                            <div class="skeleton-detail-value"></div>
+                            <div class="skeleton-detail-rate"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Key metrics - preserve header, skeleton only the content
+        const metricsSection = document.querySelector('.performance-snapshot');
+        if (metricsSection) {
+            const originalContent = metricsSection.innerHTML;
+            metricsSection.dataset.originalContent = originalContent;
+            
+            // Find and preserve the header
+            const header = metricsSection.querySelector('.snapshot-title');
+            const headerHTML = header ? header.outerHTML : '';
+            
+            metricsSection.innerHTML = `
+                ${headerHTML}
+                <div class="skeleton-block skeleton-metrics-grid">
+                    <div class="skeleton-metric-card">
+                        <div class="skeleton-metric-header">
+                            <div class="skeleton-metric-title"></div>
+                            <div class="skeleton-metric-value"></div>
+                        </div>
+                        <div class="skeleton-metric-chart">
+                            <div class="skeleton-chart-y-axis">
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                            </div>
+                            <div class="skeleton-chart-area">
+                                <div class="skeleton-chart-line"></div>
+                                <div class="skeleton-chart-line"></div>
+                                <div class="skeleton-chart-line"></div>
+                            </div>
+                            <div class="skeleton-chart-legend">
+                                <div class="skeleton-legend-item"></div>
+                                <div class="skeleton-legend-item"></div>
+                                <div class="skeleton-legend-item"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skeleton-metric-card">
+                        <div class="skeleton-metric-header">
+                            <div class="skeleton-metric-title"></div>
+                            <div class="skeleton-metric-value"></div>
+                        </div>
+                        <div class="skeleton-metric-chart">
+                            <div class="skeleton-chart-y-axis">
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                            </div>
+                            <div class="skeleton-chart-area">
+                                <div class="skeleton-chart-line"></div>
+                                <div class="skeleton-chart-line"></div>
+                                <div class="skeleton-chart-line"></div>
+                            </div>
+                            <div class="skeleton-chart-legend">
+                                <div class="skeleton-legend-item"></div>
+                                <div class="skeleton-legend-item"></div>
+                                <div class="skeleton-legend-item"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skeleton-metric-card">
+                        <div class="skeleton-metric-header">
+                            <div class="skeleton-metric-title"></div>
+                            <div class="skeleton-metric-value"></div>
+                        </div>
+                        <div class="skeleton-metric-chart">
+                            <div class="skeleton-chart-y-axis">
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                            </div>
+                            <div class="skeleton-chart-area">
+                                <div class="skeleton-chart-line"></div>
+                                <div class="skeleton-chart-line"></div>
+                                <div class="skeleton-chart-line"></div>
+                            </div>
+                            <div class="skeleton-chart-legend">
+                                <div class="skeleton-legend-item"></div>
+                                <div class="skeleton-legend-item"></div>
+                                <div class="skeleton-legend-item"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skeleton-metric-card">
+                        <div class="skeleton-metric-header">
+                            <div class="skeleton-metric-title"></div>
+                            <div class="skeleton-metric-value"></div>
+                        </div>
+                        <div class="skeleton-metric-chart">
+                            <div class="skeleton-chart-y-axis">
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                            </div>
+                            <div class="skeleton-chart-area">
+                                <div class="skeleton-chart-line"></div>
+                                <div class="skeleton-chart-line"></div>
+                                <div class="skeleton-chart-line"></div>
+                            </div>
+                            <div class="skeleton-chart-legend">
+                                <div class="skeleton-legend-item"></div>
+                                <div class="skeleton-legend-item"></div>
+                                <div class="skeleton-legend-item"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Recommendations - preserve header, skeleton only the content
+        const recommendationsSection = document.querySelector('.optimization-opportunities');
+        if (recommendationsSection) {
+            const originalContent = recommendationsSection.innerHTML;
+            recommendationsSection.dataset.originalContent = originalContent;
+            
+            // Find and preserve the header
+            const header = recommendationsSection.querySelector('.opportunities-header');
+            const headerHTML = header ? header.outerHTML : '';
+            
+            recommendationsSection.innerHTML = `
+                ${headerHTML}
+                <div class="skeleton-block skeleton-table">
+                    <div class="skeleton-table-header">
+                        <div class="skeleton-table-th"></div>
+                        <div class="skeleton-table-th"></div>
+                        <div class="skeleton-table-th"></div>
+                        <div class="skeleton-table-th"></div>
+                        <div class="skeleton-table-th"></div>
+                    </div>
+                    <div class="skeleton-table-row">
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-opportunity-title"></div>
+                            <div class="skeleton-opportunity-desc"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-impact-value"></div>
+                            <div class="skeleton-impact-label"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-revenue"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-effort-badge"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-action-btn"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-table-row">
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-opportunity-title"></div>
+                            <div class="skeleton-opportunity-desc"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-impact-value"></div>
+                            <div class="skeleton-impact-label"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-revenue"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-effort-badge"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-action-btn"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-table-row">
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-opportunity-title"></div>
+                            <div class="skeleton-opportunity-desc"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-impact-value"></div>
+                            <div class="skeleton-impact-label"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-revenue"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-effort-badge"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-action-btn"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Experiments - preserve header, skeleton only the content
+        const experimentsSection = document.querySelector('.ab-testing-section');
+        if (experimentsSection) {
+            const originalContent = experimentsSection.innerHTML;
+            experimentsSection.dataset.originalContent = originalContent;
+            
+            // Find and preserve the header
+            const header = experimentsSection.querySelector('.ab-header');
+            const headerHTML = header ? header.outerHTML : '';
+            
+            experimentsSection.innerHTML = `
+                ${headerHTML}
+                <div class="skeleton-block skeleton-table">
+                    <div class="skeleton-table-header">
+                        <div class="skeleton-table-th"></div>
+                        <div class="skeleton-table-th"></div>
+                        <div class="skeleton-table-th"></div>
+                        <div class="skeleton-table-th"></div>
+                        <div class="skeleton-table-th"></div>
+                        <div class="skeleton-table-th"></div>
+                        <div class="skeleton-table-th"></div>
+                    </div>
+                    <div class="skeleton-table-row">
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-test-title"></div>
+                            <div class="skeleton-test-desc"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-status-badge"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-progress-bar"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-rate-value"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-rate-value"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-improvement"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-action-btn"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-table-row">
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-test-title"></div>
+                            <div class="skeleton-test-desc"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-status-badge"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-progress-bar"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-rate-value"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-rate-value"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-improvement"></div>
+                        </div>
+                        <div class="skeleton-table-td">
+                            <div class="skeleton-action-btn"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Optimization journey - preserve header, skeleton only the content
+        const timelineSection = document.querySelector('.progress-timeline');
+        if (timelineSection) {
+            const originalContent = timelineSection.innerHTML;
+            timelineSection.dataset.originalContent = originalContent;
+            
+            // Find and preserve the header
+            const header = timelineSection.querySelector('.timeline-header');
+            const headerHTML = header ? header.outerHTML : '';
+            
+            timelineSection.innerHTML = `
+                ${headerHTML}
+                <div class="skeleton-block skeleton-timeline">
+                    <div class="skeleton-timeline-item">
+                        <div class="skeleton-timeline-dot"></div>
+                        <div class="skeleton-timeline-content">
+                            <div class="skeleton-timeline-title"></div>
+                            <div class="skeleton-timeline-subtitle"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-timeline-item">
+                        <div class="skeleton-timeline-dot"></div>
+                        <div class="skeleton-timeline-content">
+                            <div class="skeleton-timeline-title"></div>
+                            <div class="skeleton-timeline-subtitle"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-timeline-item">
+                        <div class="skeleton-timeline-dot"></div>
+                        <div class="skeleton-timeline-content">
+                            <div class="skeleton-timeline-title"></div>
+                            <div class="skeleton-timeline-subtitle"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-timeline-item">
+                        <div class="skeleton-timeline-dot"></div>
+                        <div class="skeleton-timeline-content">
+                            <div class="skeleton-timeline-title"></div>
+                            <div class="skeleton-timeline-subtitle"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Performance insights - preserve header, skeleton only the content
+        const insightsSection = document.querySelector('.performance-insights');
+        if (insightsSection) {
+            const originalContent = insightsSection.innerHTML;
+            insightsSection.dataset.originalContent = originalContent;
+            
+            // Find and preserve the header
+            const header = insightsSection.querySelector('.insights-header');
+            const headerHTML = header ? header.outerHTML : '';
+            
+            insightsSection.innerHTML = `
+                ${headerHTML}
+                <div class="skeleton-block skeleton-insights">
+                    <div class="skeleton-insight-item">
+                        <div class="skeleton-insight-icon"></div>
+                        <div class="skeleton-insight-text"></div>
+                    </div>
+                    <div class="skeleton-insight-item">
+                        <div class="skeleton-insight-icon"></div>
+                        <div class="skeleton-insight-text"></div>
+                    </div>
+                    <div class="skeleton-insight-item">
+                        <div class="skeleton-insight-icon"></div>
+                        <div class="skeleton-insight-text"></div>
+                    </div>
+                    <div class="skeleton-insight-item">
+                        <div class="skeleton-insight-icon"></div>
+                        <div class="skeleton-insight-text"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Quick actions - preserve header, skeleton only the content
+        const actionsSection = document.querySelector('.quick-actions');
+        if (actionsSection) {
+            const originalContent = actionsSection.innerHTML;
+            actionsSection.dataset.originalContent = originalContent;
+            
+            // Find and preserve the header
+            const header = actionsSection.querySelector('.actions-header');
+            const headerHTML = header ? header.outerHTML : '';
+            
+            actionsSection.innerHTML = `
+                ${headerHTML}
+                <div class="skeleton-block skeleton-actions">
+                    <div class="skeleton-action-button"></div>
+                    <div class="skeleton-action-button"></div>
+                    <div class="skeleton-action-button"></div>
+                </div>
+            `;
+        }
+    }
+
+    function restoreOriginalContent() {
+        // Restore all sections to their original content
+        const sections = [
+            '.performance-stats',
+            '.waterfall-chart',
+            '.performance-snapshot',
+            '.optimization-opportunities',
+            '.ab-testing-section',
+            '.progress-timeline',
+            '.performance-insights',
+            '.quick-actions'
+        ];
+
+        sections.forEach(selector => {
+            const section = document.querySelector(selector);
+            if (section && section.dataset.originalContent) {
+                section.innerHTML = section.dataset.originalContent;
+                delete section.dataset.originalContent;
+            }
+        });
+    }
+
     function parseMarkdown(text) {
         // Clean up extra whitespace and normalize line breaks
         text = text.trim().replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -10424,9 +11487,17 @@
     <button class="business-type-tab" data-type="small" onclick="switchBusinessType('small')">Small Business</button>
     <button class="business-type-tab active" data-type="medium" onclick="switchBusinessType('medium')">Medium Business</button>
     <button class="business-type-tab" data-type="large" onclick="switchBusinessType('large')">Large Business</button>
-</div>
+    </div>
 
-<!-- AI Assistant Panel -->
+    <!-- Lo-fi Mode Toggle -->
+    <div id="lofiToggle" class="lofi-toggle">
+        <div class="toggle-switch" onclick="toggleLofiMode()">
+            <div class="toggle-slider"></div>
+        </div>
+        <span class="toggle-label">Lo-fi mode</span>
+    </div>
+
+    <!-- AI Assistant Panel -->
 <div class="ai-assistant-panel" id="aiAssistantPanel">
     <div class="ai-panel-header">
         <div class="ai-panel-title">
