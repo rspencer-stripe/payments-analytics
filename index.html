@@ -7123,7 +7123,8 @@
             revenueLost: Math.round(revenueLost),
             declinedTransactions: declinedTransactions,
             disputeTransactions: disputeTransactions,
-            fraudLosses: fraudLosses
+            fraudLosses: fraudLosses,
+            recoveredTransactions: 134 // Demo value for recovered payments count
         };
         
         // Update performance stats (the four cards at the top)
@@ -9379,11 +9380,11 @@
                             <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
                             <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Total revenue</div>
                         </div>
-                        <div class="performance-stat-card" data-metric="revenue-lost" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                        <div class="performance-stat-card" data-metric="revenue-recovered" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
                             <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
                             <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Total revenue recovered</div>
                         </div>
-                        <div class="performance-stat-card" data-metric="recovered-volume" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                        <div class="performance-stat-card" data-metric="recovered-payments" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
                             <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">0</div>
                             <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Recovered payments</div>
                         </div>
@@ -10138,8 +10139,8 @@
         // Set title based on metric
         const metricLabels = {
             'total-revenue': 'Total Revenue',
-            'revenue-lost': 'Total Revenue Recovered',
-            'recovered-volume': 'Recovered Payments',
+            'revenue-recovered': 'Total Revenue Recovered',
+            'recovered-payments': 'Recovered Payments',
             'success-rate': 'Success Rate'
         };
         
@@ -10190,11 +10191,11 @@
             currentData = generator.generateTimeSeriesData(50, 0.2, 0.05);
             previousData = currentData.map(v => v * 0.8);
             optimizedData = currentData.map(v => v * 1.25);
-        } else if (metric === 'revenue-lost') {
+        } else if (metric === 'revenue-recovered') {
             currentData = generator.generateTimeSeriesData(15, 0.3, 0.08);
             previousData = currentData.map(v => v * 0.9);
             optimizedData = currentData.map(v => v * 0.7);
-        } else if (metric === 'recovered-volume') {
+        } else if (metric === 'recovered-payments') {
             currentData = generator.generateTimeSeriesData(8, 0.4, 0.1);
             previousData = currentData.map(v => v * 0.7);
             optimizedData = currentData.map(v => v * 1.4);
