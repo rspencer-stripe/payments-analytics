@@ -103,4 +103,4 @@ The application is built with vanilla HTML, CSS, and JavaScript, making it easy 
 
 ## License
 
-MIT License - see LICENSE file for details 
+MIT License - see LICENSE file for details
