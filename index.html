@@ -2790,7 +2790,7 @@
             border-color: var(--color-purple-600);
         }
 
-        /* A/B Testing Styles */
+        /* Experiments Styles */
         .ab-testing-section {
             margin-bottom: 72px;
         }
@@ -3626,7 +3626,7 @@
             color: var(--color-gray-700);
         }
 
-        /* A/B Testing Table Specific Styles */
+        /* Experiments Table Specific Styles */
         .test-cell {
             display: flex;
             flex-direction: column;
@@ -7174,7 +7174,7 @@
         // Update optimization opportunities
         updateOptimizationOpportunities(optimizationView, businessType, data, dateRange);
         
-        // Update A/B testing table
+        // Update Experiments table
         updateABTestingTable(optimizationView, businessType, data, dateRange);
         
         // Update timeline
@@ -7320,8 +7320,8 @@
             const fraudItem = waterfallItems[3];
             const fraudHeight = Math.round(data.fraudLosses * scaleFactor);
             fraudItem.querySelector('.waterfall-bar').style.height = `${fraudHeight}px`;
-            fraudItem.querySelector('.detail-value').textContent = formatCurrency(data.fraudLosses);
-            fraudItem.querySelector('.detail-rate').textContent = `${formatCurrency(data.fraudLosses)} fraud losses`;
+            fraudItem.querySelector('.detail-value').textContent = formatCurrency(-data.fraudLosses);
+            fraudItem.querySelector('.detail-rate').textContent = `${formatCurrency(-data.fraudLosses)} fraud losses`;
             
             // Final Revenue
             const finalItem = waterfallItems[4];
@@ -7588,7 +7588,7 @@
                 },
                 {
                     title: "3D Secure Optimization",
-                    description: "A/B testing automatic vs. challenge-based authentication",
+                    description: "Experiments automatic vs. challenge-based authentication",
                     impact: "+2.6% authorization rate",
                     date: "Current"
                 },
@@ -7663,12 +7663,12 @@
             small: [
                 "What are my highest-impact optimization opportunities?",
                 "How do I calculate optimization ROI?",
-                "What A/B tests should I run?"
+                "What experiments should I run?"
             ],
             medium: [
                 "What are my highest-impact optimization opportunities?",
                 "How do I calculate optimization ROI?",
-                "What A/B tests should I run?"
+                "What experiments should I run?"
             ],
             large: [
                 "What enterprise optimization strategies should I implement?",
@@ -7807,7 +7807,7 @@
                                                 action === 'Pause' ? 'pause' : 
                                                 action === 'Deploy' ? 'check' : 'file-text';
                                     return `
-                                        <button class="table-btn secondary" onclick="openAIPanel('How do I ${action.toLowerCase()} this A/B test?', '${businessType}', 'ab-test-${action.toLowerCase()}', ${data.successRate}, '${dateRange}', ${data.totalTransactions})">
+                                        <button class="table-btn secondary" onclick="openAIPanel('How do I ${action.toLowerCase()} this experiment?', '${businessType}', 'ab-test-${action.toLowerCase()}', ${data.successRate}, '${dateRange}', ${data.totalTransactions})">
                                             <i data-lucide="${icon}" style="width: 14px; height: 14px;"></i>
                                             ${action}
                                         </button>
@@ -7919,7 +7919,7 @@
         const actions = {
             small: [
                 {
-                    text: "Create A/B test",
+                    text: "Create experiment",
                     icon: "plus",
                     action: "setup-ab-test"
                 },
@@ -7936,7 +7936,7 @@
             ],
             medium: [
                 {
-                    text: "Create A/B test",
+                    text: "Create experiment",
                     icon: "plus",
                     action: "setup-ab-test"
                 },
@@ -8011,7 +8011,7 @@
                     icon: "file-text"
                 },
                 {
-                    name: "A/B testing best practices",
+                    name: "Experiments best practices",
                     description: "Learn how to design and run effective payment optimization tests.",
                     icon: "bar-chart"
                 },
@@ -8030,7 +8030,7 @@
                     icon: "file-text"
                 },
                 {
-                    name: "A/B testing best practices",
+                    name: "Experiments best practices",
                     description: "Learn how to design and run effective payment optimization tests.",
                     icon: "bar-chart"
                 },
@@ -8049,7 +8049,7 @@
                     icon: "file-text"
                 },
                 {
-                    name: "Enterprise A/B testing",
+                    name: "Enterprise Experiments",
                     description: "Learn how to design and run enterprise-scale payment optimization tests.",
                     icon: "bar-chart"
                 },
@@ -8228,12 +8228,12 @@
             'failure-analysis': {
                 small: `Your failed payment volume of $${metric.toFixed(0)} represents a significant impact on revenue. Primary causes typically include insufficient funds, expired payment methods, and unclear pricing. Implement automatic retry logic with exponential backoff and consider pre-authorization for transactions over $50. Additionally, enable our Card Updater service to automatically refresh expired payment methods.`,
                 medium: `The $${metric.toFixed(0)} in failed payments requires immediate attention. Implement intelligent retry logic with 24-hour intervals and review your decline code patterns. If you're experiencing high "do_not_honor" rates, your acquiring bank may have overly conservative risk parameters. Consider implementing 3D Secure for high-risk transactions and review your fraud detection thresholds.`,
-                large: `Your failed payment volume of $${metric.toFixed(0)} necessitates a data-driven approach to optimization. Leverage your analytics to identify patterns across card types, geographic regions, and transaction amounts. Implement regional payment methods for your top markets and consider A/B testing different fraud rule configurations. At your scale, even marginal improvements can yield significant revenue gains.`
+                large: `Your failed payment volume of $${metric.toFixed(0)} necessitates a data-driven approach to optimization. Leverage your analytics to identify patterns across card types, geographic regions, and transaction amounts. Implement regional payment methods for your top markets and consider experiments with different fraud rule configurations. At your scale, even marginal improvements can yield significant revenue gains.`
             },
             'optimization': {
                 small: `To improve your ${metric.toFixed(1)}% authorization rate, focus on foundational optimizations: diversify your payment method portfolio, ensure transparent pricing throughout the checkout process, and maintain excellent customer service. Consider implementing basic address verification while prioritizing user experience over complex fraud prevention measures.`,
                 medium: `Your business has reached the scale where advanced optimization tools become valuable. Implement 3D Secure for transactions over $100, enable address verification, and deploy intelligent retry logic. Monitor fraud patterns weekly and consider implementing Radar rules for suspicious transaction patterns. Your ${payments} monthly payments provide sufficient data for meaningful trend analysis.`,
-                large: `With ${payments.toLocaleString()} monthly payments, enterprise-grade solutions are essential. Implement machine learning-based fraud detection systems, as manual rules cannot effectively scale to your volume. Add regional payment methods for your top five markets and consider establishing a dedicated fraud management team. Utilize A/B testing to optimize conversion rates—even incremental improvements can generate substantial revenue increases.`
+                large: `With ${payments.toLocaleString()} monthly payments, enterprise-grade solutions are essential. Implement machine learning-based fraud detection systems, as manual rules cannot effectively scale to your volume. Add regional payment methods for your top five markets and consider establishing a dedicated fraud management team. Utilize experiments to optimize conversion rates—even incremental improvements can generate substantial revenue increases.`
             }
         };
         
@@ -8352,7 +8352,7 @@
                     ]
                 },
                 large: {
-                    message: `**Current Situation:** ${numericMetric.toFixed(1)}% authorization rate for the ${dateRange.toLowerCase()} with ${payments ? payments.toLocaleString() : 'large volume'} monthly payments.\n\n**Enterprise Scale:** Manual rules can't effectively manage your transaction volume.\n\n**Enterprise Solutions:**\n• Implement machine learning fraud detection\n• Add regional payment methods for top 5 markets\n• Establish dedicated fraud management team\n• Deploy A/B testing for conversion optimization`,
+                    message: `**Current Situation:** ${numericMetric.toFixed(1)}% authorization rate for the ${dateRange.toLowerCase()} with ${payments ? payments.toLocaleString() : 'large volume'} monthly payments.\n\n**Enterprise Scale:** Manual rules can't effectively manage your transaction volume.\n\n**Enterprise Solutions:**\n• Implement machine learning fraud detection\n• Add regional payment methods for top 5 markets\n• Establish dedicated fraud management team\n• Deploy experiments for conversion optimization`,
                     pills: [
                         { text: "Enable ML fraud", icon: "brain", type: "primary", action: "enable-ml-fraud" },
                         { text: "Regional payments", icon: "globe", type: "secondary", action: "regional-payments" },
@@ -8378,7 +8378,7 @@
                     ]
                 },
                 large: {
-                    message: `**Current Situation:** $${numericMetric.toFixed(0)} in failed payments for the ${dateRange.toLowerCase()} necessitates data-driven optimization.\n\n**Enterprise Analysis:** At your scale, pattern analysis across card types, regions, and amounts is essential.\n\n**Enterprise Solutions:**\n• Leverage analytics to identify failure patterns\n• Implement regional payment methods for top markets\n• A/B test different fraud rule configurations\n• Establish dedicated payment optimization team`,
+                    message: `**Current Situation:** $${numericMetric.toFixed(0)} in failed payments for the ${dateRange.toLowerCase()} necessitates data-driven optimization.\n\n**Enterprise Analysis:** At your scale, pattern analysis across card types, regions, and amounts is essential.\n\n**Enterprise Solutions:**\n• Leverage analytics to identify failure patterns\n• Implement regional payment methods for top markets\n• Experiment with different fraud rule configurations\n• Establish dedicated payment optimization team`,
                     pills: [
                         { text: "Data analysis", icon: "bar-chart", type: "primary", action: "data-analysis" },
                         { text: "Regional methods", icon: "globe", type: "secondary", action: "regional-payments" },
@@ -8404,10 +8404,10 @@
                     ]
                 },
                 large: {
-                    message: `**Current Situation:** ${numericMetric.toFixed(1)}% authorization rate for the ${dateRange.toLowerCase()} with ${payments ? payments.toLocaleString() : 'large volume'} monthly payments.\n\n**Enterprise Scale:** Manual rules can't effectively manage your transaction volume.\n\n**Enterprise Solutions:**\n• Implement machine learning fraud detection\n• Add regional payment methods for top 5 markets\n• Establish dedicated fraud management team\n• Deploy A/B testing for conversion optimization`,
+                    message: `**Current Situation:** ${numericMetric.toFixed(1)}% authorization rate for the ${dateRange.toLowerCase()} with ${payments ? payments.toLocaleString() : 'large volume'} monthly payments.\n\n**Enterprise Scale:** Manual rules can't effectively manage your transaction volume.\n\n**Enterprise Solutions:**\n• Implement machine learning fraud detection\n• Add regional payment methods for top 5 markets\n• Establish dedicated fraud management team\n• Deploy experiments for conversion optimization`,
                     pills: [
                         { text: "ML fraud detection", icon: "brain", type: "primary", action: "ml-fraud" },
-                        { text: "Enterprise A/B testing", icon: "test-tube", type: "secondary", action: "enterprise-ab-test" },
+                        { text: "Enterprise Experiments", icon: "test-tube", type: "secondary", action: "enterprise-ab-test" },
                         { text: "Dedicated support", icon: "message-circle", type: "secondary", action: "contact-support" }
                     ]
                 }
@@ -8422,7 +8422,7 @@
                     ]
                 },
                 medium: {
-                    message: '**Current Situation:** {insight}\n\n**Growth Stage:** {recommendation}\n\n**Recommended Actions:**\n• Configure Link authentication with custom branding\n• Optimize 3D Secure rules for your transaction patterns\n• Set up automated monitoring and alerting\n• Implement A/B testing for conversion optimization',
+                    message: '**Current Situation:** {insight}\n\n**Growth Stage:** {recommendation}\n\n**Recommended Actions:**\n• Configure Link authentication with custom branding\n• Optimize 3D Secure rules for your transaction patterns\n• Set up automated monitoring and alerting\n• Implement experiments for conversion optimization',
                     pills: [
                         { text: "Advanced Link setup", icon: "shield", type: "primary", action: "advanced-link-setup" },
                         { text: "3D Secure optimization", icon: "settings", type: "secondary", action: "3d-secure-optimization" },
@@ -8758,7 +8758,7 @@
                 ]
             },
             'ab-test': {
-                message: "A/B testing can help you optimize your payment flows. Let's set up a test to compare different configurations.",
+                message: "Experiments can help you optimize your payment flows. Let's set up an experiment to compare different configurations.",
                 pills: [
                     { text: "Create test", icon: "test-tube", type: "primary", action: "create-test" },
                     { text: "View templates", icon: "file-text", type: "secondary", action: "view-templates" },
@@ -9495,7 +9495,7 @@
                                 <div class="waterfall-label">Fraud</div>
                                 <div class="waterfall-details">
                                     <span class="detail-value">$0</span>
-                                    <span class="detail-rate">$0 fraud losses</span>
+                                    <span class="detail-rate">-$0 fraud losses</span>
                                 </div>
                             </div>
 
@@ -9817,13 +9817,13 @@
                         </div>
                     </div>
 
-                    <!-- A/B Testing Table -->
+                    <!-- Experiments Table -->
                     <div class="ab-testing-section">
                         <div class="ab-header">
-                            <h2 class="ab-title">A/B testing</h2>
-                            <button class="new-test-btn" onclick="openAIPanel('How do I set up A/B tests for payment optimization?', '${currentBusinessType}', 'ab-testing', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                            <h2 class="ab-title">Experiments</h2>
+                            <button class="new-test-btn" onclick="openAIPanel('How do I set up experiments for payment optimization?', '${currentBusinessType}', 'ab-testing', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
-                                New test
+                                New experiment
                             </button>
                         </div>
                         
@@ -9981,7 +9981,7 @@
                                         <h3 class="event-title">3D Secure Optimization</h3>
                                         <span class="event-date">Current</span>
                                     </div>
-                                    <p class="event-description">A/B testing automatic vs. challenge-based authentication</p>
+                                    <p class="event-description">Experiments automatic vs. challenge-based authentication</p>
                                     <div class="event-impact">
                                         <span class="impact-label">Expected:</span>
                                         <span class="impact-value">+2.6% authorization rate</span>
@@ -10024,8 +10024,8 @@
                                 <button class="prompt-btn" onclick="openAIPanel('How do I calculate the ROI of payment optimizations?', '${currentBusinessType}', 'optimization-roi', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
                                     How do I calculate optimization ROI?
                                 </button>
-                                <button class="prompt-btn" onclick="openAIPanel('What A/B tests should I run for payment optimization?', '${currentBusinessType}', 'ab-testing-strategy', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
-                                    What A/B tests should I run?
+                                <button class="prompt-btn" onclick="openAIPanel('What experiments should I run for payment optimization?', '${currentBusinessType}', 'ab-testing-strategy', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                                    What experiments should I run?
                                 </button>
                             </div>
                         </div>
@@ -10064,9 +10064,9 @@
                         <!-- Quick Actions -->
                         <div class="quick-actions">
                             <h3 class="actions-title">Quick actions</h3>
-                            <button class="quick-action-btn" onclick="openAIPanel('How do I set up a new A/B test?', '${currentBusinessType}', 'setup-ab-test', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                            <button class="quick-action-btn" onclick="openAIPanel('How do I set up a new experiment?', '${currentBusinessType}', 'setup-ab-test', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
-                                Create A/B test
+                                Create experiment
                             </button>
                             <button class="quick-action-btn" onclick="openAIPanel('How do I implement Payment Intents?', '${currentBusinessType}', 'implement-payment-intents', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
                                 <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i>
@@ -10091,7 +10091,7 @@
                             <div class="resource-item">
                                 <i data-lucide="bar-chart" class="resource-icon"></i>
                                 <div class="resource-content">
-                                    <span class="resource-name">A/B testing best practices</span>
+                                    <span class="resource-name">Experiments best practices</span>
                                     <span class="resource-description">Learn how to design and run effective payment optimization tests.</span>
                                 </div>
                             </div>
