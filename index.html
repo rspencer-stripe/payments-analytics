@@ -2014,6 +2014,167 @@
             border-radius: 4px;
         }
 
+        /* Acceptance page skeleton styles */
+        .skeleton-chart {
+            display: flex;
+            gap: 12px;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+            height: 200px;
+        }
+
+        .skeleton-breakdown-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .skeleton-total-label {
+            height: 16px;
+            width: 120px;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        .skeleton-total-value {
+            height: 24px;
+            width: 80px;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        .skeleton-bar-chart {
+            display: flex;
+            gap: 12px;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+            height: 200px;
+            margin-bottom: 16px;
+        }
+
+        .skeleton-bar-chart-y-axis {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .skeleton-bar-chart-area {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            padding-bottom: 20px;
+        }
+
+        .skeleton-bar {
+            flex: 1;
+            background: #e8e8e8;
+            border-radius: 2px;
+            min-height: 20px;
+        }
+
+        .skeleton-bar-chart-x-axis {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .skeleton-data-table {
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .skeleton-resource-item {
+            display: flex;
+            gap: 12px;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .skeleton-resource-icon {
+            width: 20px;
+            height: 20px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .skeleton-resource-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .skeleton-resource-name {
+            height: 16px;
+            width: 80%;
+            background: #e8e8e8;
+            border-radius: 4px;
+        }
+
+        .skeleton-resource-description {
+            height: 12px;
+            width: 60%;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .skeleton-resource-subsection {
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .skeleton-subsection-title {
+            height: 16px;
+            width: 70%;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-resource-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-arrow-icon {
+            width: 12px;
+            height: 12px;
+            background: #e8e8e8;
+            border-radius: 2px;
+        }
+
+        .skeleton-link-text {
+            height: 14px;
+            width: 100px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
         /* AI Assistant Panel Styles */
         .ai-assistant-panel {
             position: fixed;
@@ -8046,7 +8207,7 @@
             ],
             large: [
                 {
-                    title: "Radar Advanced",
+                    title: "Custom Radar Rules",
                     description: "Implement custom fraud rules and machine learning",
                     impact: "+3.5%",
                     impactLabel: "approval rate",
@@ -8314,7 +8475,7 @@
             ],
             large: [
                 {
-                    title: "Radar Advanced",
+                    title: "Custom Radar Rules",
                     description: "Testing custom fraud rules and machine learning",
                     status: "active",
                     progress: 78,
@@ -8439,7 +8600,7 @@
                 {
                     type: "top",
                     label: "Top Performing Area",
-                    value: "Radar Advanced",
+                    value: "Custom Radar Rules",
                     description: `${data.authRate}% success rate - excellent Radar fraud detection`,
                     icon: "trending-up",
                     color: "var(--color-green-500)"
@@ -8528,7 +8689,7 @@
             ],
             large: [
                 {
-                    text: "Setup Radar Advanced",
+                    text: "Setup Custom Radar Rules",
                     icon: "brain",
                     action: "setup-radar"
                 },
@@ -8631,7 +8792,7 @@
                 {
                     subsection: "View other optimization tools",
                     links: [
-                        "Radar Advanced fraud prevention",
+                        "Custom Radar Rules fraud prevention",
                         "Connect marketplace payments"
                     ]
                 }
@@ -9574,6 +9735,168 @@
                 </div>
             `;
         }
+
+        // Acceptance page sections - exclude key metrics and ask assistant
+        // Only apply to acceptance page elements when on acceptance tab
+        const isAcceptancePage = document.querySelector('.nav-tab.active')?.textContent === 'Acceptance';
+        
+        if (isAcceptancePage) {
+            // Chart container (main performance chart) - only in left column
+            const leftColumn = document.querySelector('.left-column');
+            if (leftColumn) {
+                const chartContainer = leftColumn.querySelector('.chart-container');
+                if (chartContainer) {
+                    const originalContent = chartContainer.innerHTML;
+                    chartContainer.dataset.originalContent = originalContent;
+                    chartContainer.innerHTML = `
+                        <div class="skeleton-block skeleton-chart">
+                            <div class="skeleton-chart-y-axis">
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                            </div>
+                            <div class="skeleton-chart-area">
+                                <div class="skeleton-chart-line"></div>
+                                <div class="skeleton-chart-line"></div>
+                                <div class="skeleton-chart-line"></div>
+                            </div>
+                            <div class="skeleton-chart-x-axis">
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                                <div class="skeleton-axis-label"></div>
+                            </div>
+                            <div class="skeleton-chart-legend">
+                                <div class="skeleton-legend-item"></div>
+                                <div class="skeleton-legend-item"></div>
+                                <div class="skeleton-legend-item"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Card payments breakdown section - preserve header, skeleton content
+            const breakdownSections = document.querySelectorAll('.breakdown-section');
+            breakdownSections.forEach((breakdownSection, index) => {
+                const originalContent = breakdownSection.innerHTML;
+                breakdownSection.dataset.originalContent = originalContent;
+                
+                // Find and preserve the header
+                const header = breakdownSection.querySelector('.breakdown-header');
+                const headerHTML = header ? header.outerHTML : '';
+                
+                breakdownSection.innerHTML = `
+                    ${headerHTML}
+                    <div class="skeleton-block skeleton-breakdown-total">
+                        <div class="skeleton-total-label"></div>
+                        <div class="skeleton-total-value"></div>
+                    </div>
+                    <div class="skeleton-block skeleton-bar-chart">
+                        <div class="skeleton-bar-chart-y-axis">
+                            <div class="skeleton-axis-label"></div>
+                            <div class="skeleton-axis-label"></div>
+                            <div class="skeleton-axis-label"></div>
+                            <div class="skeleton-axis-label"></div>
+                            <div class="skeleton-axis-label"></div>
+                        </div>
+                        <div class="skeleton-bar-chart-area">
+                            <div class="skeleton-bar"></div>
+                            <div class="skeleton-bar"></div>
+                            <div class="skeleton-bar"></div>
+                            <div class="skeleton-bar"></div>
+                            <div class="skeleton-bar"></div>
+                            <div class="skeleton-bar"></div>
+                            <div class="skeleton-bar"></div>
+                        </div>
+                        <div class="skeleton-bar-chart-x-axis">
+                            <div class="skeleton-axis-label"></div>
+                            <div class="skeleton-axis-label"></div>
+                            <div class="skeleton-axis-label"></div>
+                            <div class="skeleton-axis-label"></div>
+                            <div class="skeleton-axis-label"></div>
+                            <div class="skeleton-axis-label"></div>
+                            <div class="skeleton-axis-label"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-block skeleton-data-table">
+                        <div class="skeleton-table-header">
+                            <div class="skeleton-table-th"></div>
+                            <div class="skeleton-table-th"></div>
+                            <div class="skeleton-table-th"></div>
+                            <div class="skeleton-table-th"></div>
+                            <div class="skeleton-table-th"></div>
+                            <div class="skeleton-table-th"></div>
+                        </div>
+                        <div class="skeleton-table-row">
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                        </div>
+                        <div class="skeleton-table-row">
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                        </div>
+                        <div class="skeleton-table-row">
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                            <div class="skeleton-table-td"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Resources section - preserve header, skeleton content (only in right column)
+            const rightColumn = document.querySelector('.right-column');
+            if (rightColumn) {
+                const resourcesSection = rightColumn.querySelector('.resources-section');
+                if (resourcesSection) {
+                    const originalContent = resourcesSection.innerHTML;
+                    resourcesSection.dataset.originalContent = originalContent;
+                    
+                    // Find and preserve the header
+                    const header = resourcesSection.querySelector('.resources-title');
+                    const headerHTML = header ? header.outerHTML : '';
+                    
+                    resourcesSection.innerHTML = `
+                        ${headerHTML}
+                        <div class="skeleton-block skeleton-resource-item">
+                            <div class="skeleton-resource-icon"></div>
+                            <div class="skeleton-resource-content">
+                                <div class="skeleton-resource-name"></div>
+                                <div class="skeleton-resource-description"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-block skeleton-resource-subsection">
+                            <div class="skeleton-subsection-title"></div>
+                            <div class="skeleton-resource-link">
+                                <div class="skeleton-arrow-icon"></div>
+                                <div class="skeleton-link-text"></div>
+                            </div>
+                            <div class="skeleton-resource-link">
+                                <div class="skeleton-arrow-icon"></div>
+                                <div class="skeleton-link-text"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
     }
 
     function restoreOriginalContent() {
@@ -9596,6 +9919,39 @@
                 delete section.dataset.originalContent;
             }
         });
+
+        // Handle acceptance page sections specifically
+        const isAcceptancePage = document.querySelector('.nav-tab.active')?.textContent === 'Acceptance';
+        if (isAcceptancePage) {
+            // Restore chart container in left column
+            const leftColumn = document.querySelector('.left-column');
+            if (leftColumn) {
+                const chartContainer = leftColumn.querySelector('.chart-container');
+                if (chartContainer && chartContainer.dataset.originalContent) {
+                    chartContainer.innerHTML = chartContainer.dataset.originalContent;
+                    delete chartContainer.dataset.originalContent;
+                }
+            }
+
+            // Restore breakdown sections
+            const breakdownSections = document.querySelectorAll('.breakdown-section');
+            breakdownSections.forEach(section => {
+                if (section && section.dataset.originalContent) {
+                    section.innerHTML = section.dataset.originalContent;
+                    delete section.dataset.originalContent;
+                }
+            });
+
+            // Restore resources section in right column
+            const rightColumn = document.querySelector('.right-column');
+            if (rightColumn) {
+                const resourcesSection = rightColumn.querySelector('.resources-section');
+                if (resourcesSection && resourcesSection.dataset.originalContent) {
+                    resourcesSection.innerHTML = resourcesSection.dataset.originalContent;
+                    delete resourcesSection.dataset.originalContent;
+                }
+            }
+        }
     }
 
     function parseMarkdown(text) {
