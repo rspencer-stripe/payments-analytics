@@ -9736,50 +9736,13 @@
             `;
         }
 
-        // Acceptance page sections - exclude key metrics and ask assistant
+        // Acceptance page sections - exclude key metrics, ask assistant, and line chart UI
         // Only apply to acceptance page elements when on acceptance tab
         const isAcceptancePage = document.querySelector('.nav-tab.active')?.textContent === 'Acceptance';
         
         if (isAcceptancePage) {
-            // Chart container (main performance chart) - only in left column
-            const leftColumn = document.querySelector('.left-column');
-            if (leftColumn) {
-                const chartContainer = leftColumn.querySelector('.chart-container');
-                if (chartContainer) {
-                    const originalContent = chartContainer.innerHTML;
-                    chartContainer.dataset.originalContent = originalContent;
-                    chartContainer.innerHTML = `
-                        <div class="skeleton-block skeleton-chart">
-                            <div class="skeleton-chart-y-axis">
-                                <div class="skeleton-axis-label"></div>
-                                <div class="skeleton-axis-label"></div>
-                                <div class="skeleton-axis-label"></div>
-                                <div class="skeleton-axis-label"></div>
-                                <div class="skeleton-axis-label"></div>
-                            </div>
-                            <div class="skeleton-chart-area">
-                                <div class="skeleton-chart-line"></div>
-                                <div class="skeleton-chart-line"></div>
-                                <div class="skeleton-chart-line"></div>
-                            </div>
-                            <div class="skeleton-chart-x-axis">
-                                <div class="skeleton-axis-label"></div>
-                                <div class="skeleton-axis-label"></div>
-                                <div class="skeleton-axis-label"></div>
-                                <div class="skeleton-axis-label"></div>
-                                <div class="skeleton-axis-label"></div>
-                                <div class="skeleton-axis-label"></div>
-                                <div class="skeleton-axis-label"></div>
-                            </div>
-                            <div class="skeleton-chart-legend">
-                                <div class="skeleton-legend-item"></div>
-                                <div class="skeleton-legend-item"></div>
-                                <div class="skeleton-legend-item"></div>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
+            // Chart container (main performance chart) - EXCLUDED from lo-fi mode
+            // Left intentionally unchanged to preserve line chart UI
 
             // Card payments breakdown section - preserve header, skeleton content
             const breakdownSections = document.querySelectorAll('.breakdown-section');
@@ -9923,15 +9886,7 @@
         // Handle acceptance page sections specifically
         const isAcceptancePage = document.querySelector('.nav-tab.active')?.textContent === 'Acceptance';
         if (isAcceptancePage) {
-            // Restore chart container in left column
-            const leftColumn = document.querySelector('.left-column');
-            if (leftColumn) {
-                const chartContainer = leftColumn.querySelector('.chart-container');
-                if (chartContainer && chartContainer.dataset.originalContent) {
-                    chartContainer.innerHTML = chartContainer.dataset.originalContent;
-                    delete chartContainer.dataset.originalContent;
-                }
-            }
+            // Chart container is excluded from lo-fi mode, so no restoration needed
 
             // Restore breakdown sections
             const breakdownSections = document.querySelectorAll('.breakdown-section');
