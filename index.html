@@ -3095,10 +3095,10 @@
         }
         
         .timeline-event .event-impact .impact-value {
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    color: var(--color-gray-900) !important;
-}
+            font-size: 20px !important;
+            font-weight: 700 !important;
+            color: var(--color-gray-900) !important;
+        }
 
         /* Right Column Additional Styles */
         .performance-insights {
@@ -5120,6 +5120,90 @@
                     recommendation: recommendation
                 };
             }
+        } else if (data.creditVolume && data.debitVolume) {
+            // Bar chart data
+            dataHTML = `
+                <div class="tooltip-data-item">
+                    <span class="tooltip-label">
+                        <div class="tooltip-color-swatch" style="background: #3B82F6;"></div>
+                        Credit Card Volume:
+                    </span>
+                    <span class="tooltip-value">${data.creditVolume}</span>
+                </div>
+                <div class="tooltip-data-item">
+                    <span class="tooltip-label">
+                        <div class="tooltip-color-swatch" style="background: #3B82F6;"></div>
+                        Credit Card Payments:
+                    </span>
+                    <span class="tooltip-value">${data.creditPayments}</span>
+                </div>
+                <div class="tooltip-data-item">
+                    <span class="tooltip-label">
+                        <div class="tooltip-color-swatch" style="background: #533AFD;"></div>
+                        Debit Card Volume:
+                    </span>
+                    <span class="tooltip-value">${data.debitVolume}</span>
+                </div>
+                <div class="tooltip-data-item">
+                    <span class="tooltip-label">
+                        <div class="tooltip-color-swatch" style="background: #533AFD;"></div>
+                        Debit Card Payments:
+                    </span>
+                    <span class="tooltip-value">${data.debitPayments}</span>
+                </div>
+            `;
+            
+            // Add AI insight for bar chart sparkle icon
+            if (isAIInsight) {
+                const creditVolume = parseFloat(data.creditVolume.replace('$', ''));
+                const debitVolume = parseFloat(data.debitVolume.replace('$', ''));
+                const totalVolume = creditVolume + debitVolume;
+                const creditShare = (creditVolume / totalVolume * 100).toFixed(1);
+                const debitShare = (debitVolume / totalVolume * 100).toFixed(1);
+                
+                let insight = '';
+                let recommendation = '';
+                
+                if (creditShare > 70) {
+                    insight = `Credit cards dominate ${creditShare}% of your payment volume on ${data.date}.`;
+                    recommendation = 'Consider optimizing debit card acceptance to reduce processing fees.';
+                } else if (debitShare > 40) {
+                    insight = `Strong debit card usage at ${debitShare}% shows good payment method diversity.`;
+                    recommendation = 'Explore adding digital wallets to capture more mobile transactions.';
+                } else if (totalVolume > 100) {
+                    insight = `High payment volume of $${totalVolume.toFixed(0)} indicates strong customer engagement.`;
+                    recommendation = 'Review your payment method mix to optimize for lower fees.';
+                } else {
+                    insight = `Payment volume of $${totalVolume.toFixed(0)} shows room for growth.`;
+                    recommendation = 'Consider enabling more payment methods to increase conversion.';
+                }
+                
+                dataHTML += `
+                    <div class="tooltip-insight" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #E4E7EC;">
+                        <div style="font-size: 12px; color: #6C7689; margin-bottom: 4px;">
+                            <i data-lucide="sparkles" style="width: 12px; height: 12px; display: inline-block; margin-right: 4px;"></i>
+                            AI Insight
+                        </div>
+                        <div style="font-size: 13px; color: #1A1F2E; margin-bottom: 6px; line-height: 1.4;">
+                            ${insight}
+                        </div>
+                        <div style="font-size: 12px; color: #533AFD; font-weight: 500;">
+                            💡 ${recommendation}
+                        </div>
+                    </div>
+                `;
+
+                // Store hover data for assistant integration
+                window.currentHoverData = {
+                    date: data.date,
+                    current: data.current,
+                    baseline: data.baseline,
+                    optimized: data.optimized,
+                    type: 'payment-volume',
+                    insight: insight,
+                    recommendation: recommendation
+                };
+            }
         } else if (data.failedVolume && data.failedPayments) {
             // Failed payments data
             dataHTML = `
@@ -5824,22 +5908,19 @@
                     successRate: 78.5,
                     avgTransactionValue: 8.0,
                     dailyTransactions: 2.2,
-                    failureRate: 21.5,
-                    disputeRate: 0.4
+                    failureRate: 21.5
                 },
                 'medium': {
                     successRate: 85.2,
                     avgTransactionValue: 10.3,
                     dailyTransactions: 13.8,
-                    failureRate: 14.8,
-                    disputeRate: 0.3
+                    failureRate: 14.8
                 },
                 'large': {
                     successRate: 91.7,
                     avgTransactionValue: 10.0,
                     dailyTransactions: 99.4,
-                    failureRate: 8.3,
-                    disputeRate: 0.2
+                    failureRate: 8.3
                 }
             };
             return metrics[this.businessType];
@@ -7221,7 +7302,7 @@
     function updatePerformanceSnapshot(container, data) {
         const snapshotCards = container.querySelectorAll('.snapshot-card');
         if (snapshotCards.length >= 4) {
-            // Revenue capture rate
+            // Checkout conversion
             snapshotCards[0].querySelector('.snapshot-card-value').textContent = `${data.successRate}%`;
             updateSnapshotChart(snapshotCards[0], data.successRate, 100);
             
@@ -9383,7 +9464,7 @@
                         <div class="snapshot-grid">
                             <div class="snapshot-card">
                                 <div class="snapshot-card-header">
-                                    <h3 class="snapshot-card-title">Revenue capture rate</h3>
+                                    <h3 class="snapshot-card-title">Checkout conversion</h3>
                                     <div class="snapshot-card-value">0%</div>
                                 </div>
                                 <div class="snapshot-chart-container">
@@ -9640,192 +9721,121 @@
                         </div>
                     </div>
 
-                    <!-- A/B Test Creation Modal (hidden by default) -->
-                    <div id="abTestModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(30,30,40,0.35); z-index:2000; align-items:center; justify-content:center;">
-                      <div class="modal-content" style="background:white; border-radius:12px; max-width:420px; width:90vw; padding:32px 24px; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative;">
-                        <button onclick="closeAbTestModal()" style="position:absolute; top:18px; right:18px; background:none; border:none; font-size:22px; color:#888; cursor:pointer;">&times;</button>
-                        <div id="abTestModalStepper">
-                          <!-- Stepper content will be injected here -->
+                    <!-- A/B Testing Table -->
+                    <div class="ab-testing-section">
+                        <div class="ab-header">
+                            <h2 class="ab-title">A/B testing</h2>
+                            <button class="new-test-btn" onclick="openAIPanel('How do I set up A/B tests for payment optimization?', '${currentBusinessType}', 'ab-testing', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                                <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                                New test
+                            </button>
                         </div>
-                      </div>
+                        
+                        <div class="ab-tests-table-container">
+                            <table class="ab-tests-table">
+                                <thead>
+                                    <tr>
+                                        <th>Test name</th>
+                                        <th>Status</th>
+                                        <th>Progress</th>
+                                        <th>Control</th>
+                                        <th>Variant</th>
+                                        <th>Improvement</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="active">
+                                        <td>
+                                            <div class="test-cell">
+                                                <div class="test-title">3D Secure optimization</div>
+                                                <div class="test-description">Testing automatic vs. challenge-based 3D Secure</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="status-cell active">
+                                                <span class="status-dot"></span>
+                                                <span class="status-text">Active</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="progress-cell">
+                                                <div class="progress-bar">
+                                                    <div class="progress-fill" style="width: 67%"></div>
+                                                </div>
+                                                <span class="progress-text">67% Complete</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="rate-value">89.2%</span>
+                                        </td>
+                                        <td>
+                                            <span class="rate-value">91.8%</span>
+                                        </td>
+                                        <td>
+                                            <span class="improvement">+2.6%</span>
+                                        </td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <button class="table-btn secondary">
+                                                    <i data-lucide="bar-chart" style="width: 14px; height: 14px;"></i>
+                                                    Details
+                                                </button>
+                                                <button class="table-btn secondary">
+                                                    <i data-lucide="pause" style="width: 14px; height: 14px;"></i>
+                                                    Pause
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="completed">
+                                        <td>
+                                            <div class="test-cell">
+                                                <div class="test-title">Retry logic configuration</div>
+                                                <div class="test-description">Testing different retry strategies for declined payments</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="status-cell completed">
+                                                <span class="status-dot"></span>
+                                                <span class="status-text">Completed</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="progress-cell">
+                                                <div class="progress-bar">
+                                                    <div class="progress-fill" style="width: 100%"></div>
+                                                </div>
+                                                <span class="progress-text">100% Complete</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="rate-value">85.1%</span>
+                                        </td>
+                                        <td>
+                                            <span class="rate-value winner">87.3%</span>
+                                        </td>
+                                        <td>
+                                            <span class="improvement">+2.2%</span>
+                                        </td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <button class="table-btn secondary">
+                                                    <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+                                                    Deploy
+                                                </button>
+                                                <button class="table-btn secondary">
+                                                    <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+                                                    Report
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <script>
-                    // Modal state
-                    let abTestStep = 0;
-                    let abTestConfig = {
-                      type: '',
-                      control: '',
-                      variant: '',
-                      split: 50,
-                      duration: 14
-                    };
-
-                    const abTestSteps = [
-                      // Step 1: Select Test Type
-                      function renderStep1() {
-                        return `
-                          <h2 style="font-size:1.3em; font-weight:600; margin-bottom:12px;">Create A/B Test</h2>
-                          <div style="margin-bottom:18px; color:#555;">What do you want to test?</div>
-                          <div style="display:flex; flex-direction:column; gap:10px;">
-                            <button class="abtest-type-btn" onclick="setAbTestType('Payment Method')">Payment Method</button>
-                            <button class="abtest-type-btn" onclick="setAbTestType('Retry Logic')">Retry Logic</button>
-                            <button class="abtest-type-btn" onclick="setAbTestType('3D Secure')">3D Secure</button>
-                            <button class="abtest-type-btn" onclick="setAbTestType('Fraud Rules')">Fraud Rules</button>
-                          </div>
-                          <div style="margin-top:24px; text-align:right;">
-                            <button onclick="closeAbTestModal()" class="modal-cancel-btn">Cancel</button>
-                          </div>
-                        `;
-                      },
-                      // Step 2: Configure Test
-                      function renderStep2() {
-                        return `
-                          <h2 style="font-size:1.2em; font-weight:600; margin-bottom:12px;">Configure Test</h2>
-                          <div style="margin-bottom:10px; color:#555;">Test: <b>${abTestConfig.type}</b></div>
-                          <div style="margin-bottom:10px;">
-                            <label style="font-size:13px;">Control Group:</label><br/>
-                            <input type="text" id="abTestControl" value="${abTestConfig.control}" placeholder="e.g. Current settings" style="width:100%; padding:6px; margin-top:2px; border:1px solid #ddd; border-radius:6px;" />
-                          </div>
-                          <div style="margin-bottom:10px;">
-                            <label style="font-size:13px;">Variant Group:</label><br/>
-                            <input type="text" id="abTestVariant" value="${abTestConfig.variant}" placeholder="e.g. New method/logic" style="width:100%; padding:6px; margin-top:2px; border:1px solid #ddd; border-radius:6px;" />
-                          </div>
-                          <div style="margin-bottom:10px;">
-                            <label style="font-size:13px;">Traffic Split: <span id="abTestSplitValue">${abTestConfig.split}</span>%</label><br/>
-                            <input type="range" id="abTestSplit" min="10" max="90" value="${abTestConfig.split}" style="width:100%;" oninput="document.getElementById('abTestSplitValue').innerText=this.value" />
-                          </div>
-                          <div style="margin-bottom:10px;">
-                            <label style="font-size:13px;">Duration (days):</label><br/>
-                            <input type="number" id="abTestDuration" min="7" max="60" value="${abTestConfig.duration}" style="width:60px; padding:4px; border:1px solid #ddd; border-radius:6px;" />
-                          </div>
-                          <div style="margin-top:18px; display:flex; justify-content:space-between;">
-                            <button onclick="abTestPrevStep()" class="modal-back-btn">Back</button>
-                            <button onclick="abTestNextStep()" class="modal-next-btn">Next</button>
-                          </div>
-                        `;
-                      },
-                      // Step 3: Review & Deploy
-                      function renderStep3() {
-                        return `
-                          <h2 style="font-size:1.2em; font-weight:600; margin-bottom:12px;">Review & Deploy</h2>
-                          <div style="margin-bottom:10px; color:#555;">Please review your test configuration:</div>
-                          <ul style="font-size:14px; margin-bottom:16px;">
-                            <li><b>Test:</b> ${abTestConfig.type}</li>
-                            <li><b>Control:</b> ${abTestConfig.control}</li>
-                            <li><b>Variant:</b> ${abTestConfig.variant}</li>
-                            <li><b>Traffic Split:</b> ${abTestConfig.split}%</li>
-                            <li><b>Duration:</b> ${abTestConfig.duration} days</li>
-                          </ul>
-                          <div style="margin-top:18px; display:flex; justify-content:space-between;">
-                            <button onclick="abTestPrevStep()" class="modal-back-btn">Back</button>
-                            <button onclick="abTestNextStep()" class="modal-next-btn">Deploy</button>
-                          </div>
-                        `;
-                      },
-                      // Step 4: Monitor
-                      function renderStep4() {
-                        return `
-                          <h2 style="font-size:1.2em; font-weight:600; margin-bottom:12px;">Test Deployed!</h2>
-                          <div style="margin-bottom:10px; color:#555;">Your A/B test is now running. Monitor results below:</div>
-                          <div style="background:#f9fafb; border-radius:8px; padding:16px; margin-bottom:12px;">
-                            <div style="font-size:15px; font-weight:600; margin-bottom:6px;">Key Metrics</div>
-                            <div style="display:flex; justify-content:space-between; font-size:14px;">
-                              <div><b>Control</b><br/><span id="abTestMonitorControl">${abTestConfig.control || 'Current'}</span></div>
-                              <div><b>Variant</b><br/><span id="abTestMonitorVariant">${abTestConfig.variant || 'Variant'}</span></div>
-                            </div>
-                            <div style="margin-top:10px; font-size:13px; color:#888;">(Metrics will update as data comes in)</div>
-                          </div>
-                          <div style="margin-top:18px; text-align:right;">
-                            <button onclick="closeAbTestModal()" class="modal-next-btn">Finish</button>
-                          </div>
-                        `;
-                      }
-                    ];
-
-                    function openAbTestModal() {
-                      abTestStep = 0;
-                      abTestConfig = { type: '', control: '', variant: '', split: 50, duration: 14 };
-                      renderAbTestStep();
-                      document.getElementById('abTestModal').style.display = 'flex';
-                    }
-                    function closeAbTestModal() {
-                      document.getElementById('abTestModal').style.display = 'none';
-                    }
-                    function renderAbTestStep() {
-                      document.getElementById('abTestModalStepper').innerHTML = abTestSteps[abTestStep]();
-                    }
-                    function abTestNextStep() {
-                      if (abTestStep === 0 && !abTestConfig.type) return;
-                      if (abTestStep === 1) {
-                        abTestConfig.control = document.getElementById('abTestControl').value;
-                        abTestConfig.variant = document.getElementById('abTestVariant').value;
-                        abTestConfig.split = parseInt(document.getElementById('abTestSplit').value, 10);
-                        abTestConfig.duration = parseInt(document.getElementById('abTestDuration').value, 10);
-                        if (!abTestConfig.control || !abTestConfig.variant) return;
-                      }
-                      abTestStep = Math.min(abTestStep + 1, abTestSteps.length - 1);
-                      renderAbTestStep();
-                    }
-                    function abTestPrevStep() {
-                      abTestStep = Math.max(abTestStep - 1, 0);
-                      renderAbTestStep();
-                    }
-                    function setAbTestType(type) {
-                      abTestConfig.type = type;
-                      abTestNextStep();
-                    }
-                    </script>
-
-                    <!-- Style for modal and buttons -->
-                    <style>
-                    .modal-overlay { animation: fadeIn 0.2s; }
-                    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-                    .modal-content { animation: modalPop 0.2s; }
-                    @keyframes modalPop { from { transform: scale(0.96); opacity: 0.7; } to { transform: scale(1); opacity: 1; } }
-                    .abtest-type-btn {
-                      background: var(--color-gray-100);
-                      border: none;
-                      border-radius: 6px;
-                      padding: 10px 0;
-                      font-size: 15px;
-                      font-weight: 500;
-                      color: var(--color-gray-900);
-                      cursor: pointer;
-                      transition: background 0.15s;
-                    }
-                    .abtest-type-btn:hover { background: var(--color-purple-100); }
-                    .modal-cancel-btn, .modal-back-btn {
-                      background: none;
-                      border: none;
-                      color: var(--color-gray-500);
-                      font-size: 15px;
-                      font-weight: 500;
-                      cursor: pointer;
-                      margin-right: 8px;
-                    }
-                    .modal-next-btn {
-                      background: var(--color-purple-500);
-                      color: white;
-                      border: none;
-                      border-radius: 6px;
-                      padding: 8px 18px;
-                      font-size: 15px;
-                      font-weight: 600;
-                      cursor: pointer;
-                      transition: background 0.15s;
-                    }
-                    .modal-next-btn:hover { background: var(--color-purple-600); }
-                    </style>
-
-                    <!-- Replace the New test button's onclick to open the modal -->
-                    <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                      var btn = document.querySelector('.new-test-btn');
-                      if (btn) btn.onclick = openAbTestModal;
-                    });
-                    </script>
-                    
                     <!-- Progress Timeline -->
                     <div class="progress-timeline">
                         <h2 class="timeline-title">Optimization journey</h2>
@@ -9835,19 +9845,19 @@
                             <div class="timeline-event completed">
                                 <div class="event-marker completed">
                                     <i data-lucide="check" style="width: 16px; height: 16px; color: white;"></i>
-                          </div>
+                                </div>
                                 <div class="event-content">
                                     <div class="event-header">
                                         <h3 class="event-title">Smart Retries Implemented</h3>
                                         <span class="event-date">June 15, 2024</span>
-                          </div>
+                                    </div>
                                     <p class="event-description">Configured intelligent retry logic for declined transactions</p>
                                     <div class="event-impact">
                                         <span class="impact-label">Impact:</span>
-                                        <span class="impact-value" style="font-size: 20px; font-weight: 700;">+2.2% authorization rate</span>
-                          </div>
-                          </div>
-                          </div>
+                                        <span class="impact-value">+2.2% authorization rate</span>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="timeline-event completed">
                                 <div class="event-marker completed">
@@ -10002,8 +10012,8 @@
                             </div>
                         </div>
                     </div>
-                          </div>
-                        `;
+                </div>
+        `;
 
         // Add the view to the main content area
         const mainContentInner = document.querySelector('.main-content-inner');
@@ -10048,8 +10058,8 @@
             </div>
             <div class="auth-content">
                 <p>Authentication view coming soon...</p>
-                          </div>
-                        `;
+            </div>
+        `;
 
         document.body.appendChild(authView);
         return authView;
@@ -10072,10 +10082,10 @@
             <div class="disputes-header">
                 <h1 class="disputes-title">Disputes & Chargebacks</h1>
                 <p class="disputes-subtitle">Monitor and manage payment disputes</p>
-                            </div>
+            </div>
             <div class="disputes-content">
                 <p>Disputes view coming soon...</p>
-                          </div>
+            </div>
         `;
 
         document.body.appendChild(disputesView);
@@ -10102,8 +10112,8 @@
             </div>
             <div class="payment-methods-content">
                 <p>Payment methods view coming soon...</p>
-                          </div>
-                        `;
+            </div>
+        `;
 
         document.body.appendChild(paymentMethodsView);
         return paymentMethodsView;
@@ -10256,14 +10266,14 @@
 
 
 
-                    </script>
+</script>
 
 <!-- Business Type Tabs -->
 <div class="business-type-tabs">
     <button class="business-type-tab" data-type="small" onclick="switchBusinessType('small')">Small Business</button>
     <button class="business-type-tab active" data-type="medium" onclick="switchBusinessType('medium')">Medium Business</button>
     <button class="business-type-tab" data-type="large" onclick="switchBusinessType('large')">Large Business</button>
-                </div>
+</div>
 
 <!-- AI Assistant Panel -->
 <div class="ai-assistant-panel" id="aiAssistantPanel">
