@@ -846,6 +846,17 @@
             gap: 16px;
         }
 
+        .snapshot-chart-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            justify-content: center;
+            padding: 8px 0;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid var(--color-gray-200);
+        }
+
         .legend-item {
             display: flex;
             align-items: center;
@@ -2419,7 +2430,7 @@
         .snapshot-chart-content {
             position: relative;
             height: 200px;
-            margin-bottom: 12px;
+            margin-bottom: 24px;
             width: 100%;
             padding: 0;
         }
@@ -2642,6 +2653,10 @@
 
         .opportunity-card.medium-priority {
             border-left: 4px solid #F59E0B;
+        }
+
+        .opportunity-card.complex {
+            border-left: 4px solid #EF4444;
         }
 
         .opportunity-header {
@@ -5908,19 +5923,22 @@
                     successRate: 78.5,
                     avgTransactionValue: 8.0,
                     dailyTransactions: 2.2,
-                    failureRate: 21.5
+                    failureRate: 21.5,
+                    disputeRate: 0.8
                 },
                 'medium': {
                     successRate: 85.2,
                     avgTransactionValue: 10.3,
                     dailyTransactions: 13.8,
-                    failureRate: 14.8
+                    failureRate: 14.8,
+                    disputeRate: 0.4
                 },
                 'large': {
                     successRate: 91.7,
                     avgTransactionValue: 10.0,
                     dailyTransactions: 99.4,
-                    failureRate: 8.3
+                    failureRate: 8.3,
+                    disputeRate: 0.2
                 }
             };
             return metrics[this.businessType];
@@ -7130,8 +7148,8 @@
         // Update performance stats (the four cards at the top)
         updatePerformanceStats(optimizationView, data);
         
-        // Update summary stats
-        const summaryStats = optimizationView.querySelectorAll('.stat-value');
+        // Update summary stats (only if they exist)
+        const summaryStats = optimizationView.querySelectorAll('.summary-stats .stat-value');
         if (summaryStats.length >= 4) {
             summaryStats[0].textContent = formatCurrency(data.totalVolume);
             summaryStats[1].textContent = formatCurrency(Math.abs(data.revenueLost));
@@ -7144,7 +7162,7 @@
                 successRate: `${data.successRate}%`
             });
         } else {
-            console.error('Could not find summary stats elements:', summaryStats.length);
+            console.log('No summary stats found, skipping summary stats update');
         }
         
         // Update waterfall chart
@@ -7183,7 +7201,10 @@
     
     // Function to update performance stats cards
     function updatePerformanceStats(container, data) {
+        console.log('updatePerformanceStats called with data:', data);
+        console.log('Recovered transactions value:', data.recoveredTransactions);
         const performanceCards = container.querySelectorAll('.performance-stat-card');
+        console.log('Found performance cards:', performanceCards.length);
         if (performanceCards.length >= 4) {
             // Total revenue
             const totalRevenueCard = performanceCards[0];
@@ -7204,7 +7225,19 @@
             const recoveredVolumeCard = performanceCards[2];
             const recoveredVolumeValue = recoveredVolumeCard.querySelector('.stat-value');
             if (recoveredVolumeValue) {
-                recoveredVolumeValue.textContent = data.recoveredTransactions || 0;
+                // Ensure we display as a count, not currency
+                const count = data.recoveredTransactions || 0;
+                recoveredVolumeValue.textContent = count.toString();
+                console.log('Updated recovered payments card:', {
+                    cardIndex: 2,
+                    dataValue: data.recoveredTransactions,
+                    displayValue: count.toString(),
+                    elementFound: !!recoveredVolumeValue,
+                    currentTextContent: recoveredVolumeValue.textContent,
+                    element: recoveredVolumeValue
+                });
+            } else {
+                console.error('Could not find recovered payments value element');
             }
             
             // Success rate
@@ -7323,27 +7356,50 @@
     function updateSnapshotChart(card, currentValue, maxValue) {
         const svg = card.querySelector('.snapshot-chart-svg');
         if (!svg) return;
-        
-        // Calculate bar heights (max height 200px)
-        const baselineHeight = Math.round((currentValue * 0.85) / maxValue * 200);
-        const currentHeight = Math.round(currentValue / maxValue * 200);
-        const potentialHeight = Math.round((currentValue * 1.08) / maxValue * 200);
-        
-        // Update the SVG rect elements
-        const rects = svg.querySelectorAll('rect');
-        if (rects.length >= 3) {
-            // Baseline bar
-            rects[0].setAttribute('y', 200 - baselineHeight);
-            rects[0].setAttribute('height', baselineHeight);
-            
-            // Current bar
-            rects[1].setAttribute('y', 200 - currentHeight);
-            rects[1].setAttribute('height', currentHeight);
-            
-            // Potential bar
-            rects[2].setAttribute('y', 200 - potentialHeight);
-            rects[2].setAttribute('height', potentialHeight);
+
+        // Generate time series data for the line chart
+        const generator = new RealisticDataGenerator(currentBusinessType, 'Last 90 days');
+
+        // Generate data points for the three lines
+        const baselineData = generator.generateTimeSeriesData(currentValue * 0.85, 0.1, 0.05);
+        const currentData = generator.generateTimeSeriesData(currentValue, 0.08, 0.02);
+        const optimizedData = generator.generateTimeSeriesData(Math.min(currentValue * 1.08, maxValue), 0.06, 0.03);
+
+        // Define x-coordinates for the line chart (3 points for baseline, current, potential)
+        // Use coordinates that span the full width of the SVG (0 to 200)
+        const xPoints = [0, 100, 200]; // Span the full width from 0 to 200 (200 units wide)
+
+        // Convert to Y coordinates (invert for SVG coordinate system)
+        const baselineY = baselineData.slice(0, 3).map(v => 200 - (v / maxValue * 200));
+        const currentY = currentData.slice(0, 3).map(v => 200 - (v / maxValue * 200));
+        const optimizedY = optimizedData.slice(0, 3).map(v => 200 - (v / maxValue * 200));
+
+        // Build SVG paths
+        let baselineLine = '';
+        let currentLine = '';
+        let optimizedLine = '';
+
+        for (let i = 0; i < xPoints.length; i++) {
+            if (i === 0) {
+                baselineLine = `M${xPoints[i]},${baselineY[i]}`;
+                currentLine = `M${xPoints[i]},${currentY[i]}`;
+                optimizedLine = `M${xPoints[i]},${optimizedY[i]}`;
+            } else {
+                baselineLine += ` L${xPoints[i]},${baselineY[i]}`;
+                currentLine += ` L${xPoints[i]},${currentY[i]}`;
+                optimizedLine += ` L${xPoints[i]},${optimizedY[i]}`;
+            }
         }
+
+        // Update SVG content with line paths
+        svg.innerHTML = `
+            <!-- Baseline performance line (gray) -->
+            <path d="${baselineLine}" stroke="#E4E7EC" stroke-width="2" fill="none"/>
+            <!-- Current performance line (purple) -->
+            <path d="${currentLine}" stroke="#533AFD" stroke-width="3" fill="none"/>
+            <!-- AI-optimized performance line (green) -->
+            <path d="${optimizedLine}" stroke="#22C55E" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
+        `;
     }
     
     function updateOptimizationOpportunities(container, businessType, data, dateRange) {
@@ -9385,7 +9441,7 @@
                             <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Total revenue recovered</div>
                         </div>
                         <div class="performance-stat-card" data-metric="recovered-payments" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">0</div>
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">134</div>
                             <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Recovered payments</div>
                         </div>
                         <div class="performance-stat-card" data-metric="success-rate" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
@@ -9447,7 +9503,7 @@
                             <!-- Final Total -->
                             <div class="waterfall-item total">
                                 <div class="waterfall-bar" style="height: 80px; background: linear-gradient(180deg, #533AFD 0%, #4A2FE8 100%);"></div>
-                                <div class="waterfall-label">Final Revenue</div>
+                                <div class="waterfall-label">Total revenue</div>
                                 <div class="waterfall-details">
                                     <span class="detail-value">$0</span>
                                     <span class="detail-rate">0% success rate</span>
@@ -9480,15 +9536,26 @@
                                             <div class="snapshot-chart-grid"></div>
                                             <div class="snapshot-chart-bars">
                                                 <svg class="snapshot-chart-svg" viewBox="0 0 200 200">
-                                                    <rect x="10" y="34" width="40" height="166" fill="#E4E7EC" opacity="0.8"/>
-                                                    <rect x="80" y="16" width="40" height="184" fill="#533AFD" opacity="0.8"/>
-                                                    <rect x="150" y="4" width="40" height="196" fill="#22C55E" opacity="0.8"/>
+                                                    <path d="M0,34 L100,16 L200,4" stroke="#E4E7EC" stroke-width="2" fill="none"/>
+                                                    <path d="M0,38 L100,22 L200,10" stroke="#533AFD" stroke-width="3" fill="none"/>
+                                                    <path d="M0,84 L100,66 L200,44" stroke="#22C55E" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
                                                 </svg>
                                             </div>
                                             <div class="snapshot-chart-x-axis">
-                                                <span>Baseline</span>
+                                            </div>
+                                        </div>
+                                        <div class="snapshot-chart-legend">
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #533AFD; border-radius: 2px;"></div>
                                                 <span>Current</span>
-                                                <span>Potential</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #E4E7EC; border-radius: 2px;"></div>
+                                                <span>Baseline</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #22C55E; border-radius: 2px; background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #22C55E 2px, #22C55E 4px);"></div>
+                                                <span>AI-optimized</span>
                                             </div>
                                         </div>
                                     </div>
@@ -9513,15 +9580,26 @@
                                             <div class="snapshot-chart-grid"></div>
                                             <div class="snapshot-chart-bars">
                                                 <svg class="snapshot-chart-svg" viewBox="0 0 200 200">
-                                                    <rect x="10" y="38" width="40" height="162" fill="#E4E7EC" opacity="0.8"/>
-                                                    <rect x="80" y="22" width="40" height="178" fill="#533AFD" opacity="0.8"/>
-                                                    <rect x="150" y="10" width="40" height="190" fill="#22C55E" opacity="0.8"/>
+                                                    <path d="M0,38 L100,22 L200,10" stroke="#E4E7EC" stroke-width="2" fill="none"/>
+                                                    <path d="M0,38 L100,22 L200,10" stroke="#533AFD" stroke-width="3" fill="none"/>
+                                                    <path d="M0,84 L100,66 L200,44" stroke="#22C55E" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
                                                 </svg>
                                             </div>
                                             <div class="snapshot-chart-x-axis">
-                                                <span>Baseline</span>
+                                            </div>
+                                        </div>
+                                        <div class="snapshot-chart-legend">
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #533AFD; border-radius: 2px;"></div>
                                                 <span>Current</span>
-                                                <span>Potential</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #E4E7EC; border-radius: 2px;"></div>
+                                                <span>Baseline</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #22C55E; border-radius: 2px; background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #22C55E 2px, #22C55E 4px);"></div>
+                                                <span>AI-optimized</span>
                                             </div>
                                         </div>
                                     </div>
@@ -9546,15 +9624,26 @@
                                             <div class="snapshot-chart-grid"></div>
                                             <div class="snapshot-chart-bars">
                                                 <svg class="snapshot-chart-svg" viewBox="0 0 200 200">
-                                                    <rect x="10" y="184" width="40" height="16" fill="#E4E7EC" opacity="0.8"/>
-                                                    <rect x="80" y="192" width="40" height="8" fill="#533AFD" opacity="0.8"/>
-                                                    <rect x="150" y="196" width="40" height="4" fill="#22C55E" opacity="0.8"/>
+                                                    <path d="M0,184 L100,192 L200,196" stroke="#E4E7EC" stroke-width="2" fill="none"/>
+                                                    <path d="M0,184 L100,192 L200,196" stroke="#533AFD" stroke-width="3" fill="none"/>
+                                                    <path d="M0,184 L100,192 L200,196" stroke="#22C55E" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
                                                 </svg>
                                             </div>
                                             <div class="snapshot-chart-x-axis">
-                                                <span>Baseline</span>
+                                            </div>
+                                        </div>
+                                        <div class="snapshot-chart-legend">
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #533AFD; border-radius: 2px;"></div>
                                                 <span>Current</span>
-                                                <span>Potential</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #E4E7EC; border-radius: 2px;"></div>
+                                                <span>Baseline</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #22C55E; border-radius: 2px; background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #22C55E 2px, #22C55E 4px);"></div>
+                                                <span>AI-optimized</span>
                                             </div>
                                         </div>
                                     </div>
@@ -9579,15 +9668,26 @@
                                             <div class="snapshot-chart-grid"></div>
                                             <div class="snapshot-chart-bars">
                                                 <svg class="snapshot-chart-svg" viewBox="0 0 200 200">
-                                                    <rect x="10" y="84" width="40" height="116" fill="#E4E7EC" opacity="0.8"/>
-                                                    <rect x="80" y="66" width="40" height="134" fill="#533AFD" opacity="0.8"/>
-                                                    <rect x="150" y="44" width="40" height="156" fill="#22C55E" opacity="0.8"/>
+                                                    <path d="M0,84 L100,66 L200,44" stroke="#E4E7EC" stroke-width="2" fill="none"/>
+                                                    <path d="M0,84 L100,66 L200,44" stroke="#533AFD" stroke-width="3" fill="none"/>
+                                                    <path d="M0,84 L100,66 L200,44" stroke="#22C55E" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
                                                 </svg>
                                             </div>
                                             <div class="snapshot-chart-x-axis">
-                                                <span>Baseline</span>
+                                            </div>
+                                        </div>
+                                        <div class="snapshot-chart-legend">
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #533AFD; border-radius: 2px;"></div>
                                                 <span>Current</span>
-                                                <span>Potential</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #E4E7EC; border-radius: 2px;"></div>
+                                                <span>Baseline</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #22C55E; border-radius: 2px; background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #22C55E 2px, #22C55E 4px);"></div>
+                                                <span>AI-optimized</span>
                                             </div>
                                         </div>
                                     </div>
@@ -10150,6 +10250,9 @@
         // Generate and display chart data
         generateMetricChart(metric);
         
+        // Update AI insights based on metric
+        updateAIInsights(metric);
+        
         // Show modal
         modal.style.display = 'block';
         
@@ -10178,6 +10281,9 @@
         if (metric === 'success-rate') {
             yAxisMax.textContent = '100%';
             yAxisMin.textContent = '0%';
+        } else if (metric === 'recovered-payments') {
+            yAxisMax.textContent = '12';
+            yAxisMin.textContent = '0';
         } else {
             yAxisMax.textContent = '$12K';
             yAxisMin.textContent = '$0';
@@ -10208,7 +10314,14 @@
         // Convert to Y coordinates
         const xPoints = [60, 140, 220, 300, 380, 460, 540, 620];
         const maxValue = Math.max(...currentData, ...previousData, ...optimizedData);
-        const scale = metric === 'success-rate' ? 300 / 100 : 300 / maxValue;
+        let scale;
+        if (metric === 'success-rate') {
+            scale = 300 / 100;
+        } else if (metric === 'recovered-payments') {
+            scale = 300 / 12; // Use count-based scale for recovered payments
+        } else {
+            scale = 300 / maxValue;
+        }
         
         const currentY = currentData.map(v => 300 - (v * scale));
         const previousY = previousData.map(v => 300 - (v * scale));
@@ -10243,6 +10356,48 @@
         
         // Update X-axis labels
         xAxis.innerHTML = dateLabels.map(label => `<span>${label}</span>`).join('');
+    }
+
+    // Update AI insights based on metric
+    function updateAIInsights(metric) {
+        const insightMetricName = document.getElementById('insight-metric-name');
+        const insightTrend = document.getElementById('insight-trend');
+        const insightImprovement = document.getElementById('insight-improvement');
+        const aiRecommendationText = document.getElementById('ai-recommendation-text');
+        
+        const insights = {
+            'total-revenue': {
+                metricName: 'total revenue',
+                trend: 'strong upward trend',
+                improvement: '18% increase',
+                recommendation: 'Consider expanding payment methods and implementing dynamic pricing to capture an additional 15-20% in revenue potential.'
+            },
+            'revenue-recovered': {
+                metricName: 'revenue recovery',
+                trend: 'stable recovery pattern',
+                improvement: '8% improvement',
+                recommendation: 'Implement smart retry logic and fraud detection systems to potentially recover an additional 25-30% of declined transactions.'
+            },
+            'recovered-payments': {
+                metricName: 'payment recovery',
+                trend: 'positive recovery trend',
+                improvement: '14% increase',
+                recommendation: 'Optimize retry strategies and add alternative payment methods to potentially recover 40-50% more failed transactions.'
+            },
+            'success-rate': {
+                metricName: 'success rate',
+                trend: 'positive trend',
+                improvement: '12% improvement',
+                recommendation: 'Consider implementing smart retry logic to recover declined transactions and potentially improve your success rate by an additional 3-5%.'
+            }
+        };
+        
+        const insight = insights[metric] || insights['success-rate'];
+        
+        if (insightMetricName) insightMetricName.textContent = insight.metricName;
+        if (insightTrend) insightTrend.textContent = insight.trend;
+        if (insightImprovement) insightImprovement.textContent = insight.improvement;
+        if (aiRecommendationText) aiRecommendationText.textContent = insight.recommendation;
     }
 
     // Close modal when clicking outside
@@ -10319,14 +10474,20 @@
 <!-- Metric Details Popup Modal -->
 <div class="metric-details-modal" id="metricDetailsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 10000; backdrop-filter: blur(4px);">
     <div class="metric-modal-content" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 12px; padding: 32px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
-        <div class="metric-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div class="metric-modal-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
             <div>
                 <h2 class="metric-modal-title" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 8px 0;">Metric Details</h2>
                 <p class="metric-modal-subtitle" style="font-size: 14px; color: var(--color-gray-600); margin: 0;">Time series data and trends</p>
             </div>
-            <button class="metric-modal-close" onclick="closeMetricDetailsModal()" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.15s;">
-                <i data-lucide="x" style="width: 20px; height: 20px; color: var(--color-gray-500);"></i>
-            </button>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button class="view-in-studio-btn" style="background: var(--color-purple-500); color: white; border: none; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                    View in studio
+                </button>
+                <button class="metric-modal-close" onclick="closeMetricDetailsModal()" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.15s;">
+                    <i data-lucide="x" style="width: 20px; height: 20px; color: var(--color-gray-500);"></i>
+                </button>
+            </div>
         </div>
         
         <div class="metric-modal-body">
@@ -10366,6 +10527,28 @@
                         </div>
                     </div>
                     <span class="update-status" style="font-size: 12px; color: var(--color-gray-500);">Updated yesterday</span>
+                </div>
+            </div>
+            
+            <!-- AI Insights Section -->
+            <div class="ai-insights-section" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--color-gray-200);">
+                <div class="ai-insights-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                    <i data-lucide="sparkles" style="width: 16px; height: 16px; color: var(--color-purple-500);"></i>
+                    <h3 style="font-size: 18px; font-weight: 600; color: var(--color-gray-900); margin: 0;">AI Insights</h3>
+                </div>
+                <div class="ai-insight-content" style="background: var(--color-gray-50); border-radius: 8px; padding: 16px;">
+                    <p style="font-size: 14px; color: var(--color-gray-700); margin: 0 0 12px 0; line-height: 1.5;">
+                        <strong>Performance Analysis:</strong> Your <span id="insight-metric-name">success rate</span> shows a <span id="insight-trend">positive trend</span> over the last 90 days, with a <span id="insight-improvement">12% improvement</span> compared to baseline performance.
+                    </p>
+                    <div class="ai-recommendation" style="background: white; border-radius: 6px; padding: 12px; margin-top: 12px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <i data-lucide="lightbulb" style="width: 14px; height: 14px; color: var(--color-yellow-500);"></i>
+                            <span style="font-size: 13px; font-weight: 600; color: var(--color-gray-900);">Recommendation</span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--color-gray-700); margin: 0; line-height: 1.4;">
+                            <span id="ai-recommendation-text">Consider implementing smart retry logic to recover declined transactions and potentially improve your success rate by an additional 3-5%.</span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
