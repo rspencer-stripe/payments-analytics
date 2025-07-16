@@ -8,9 +8,8 @@ This guide explains how to make your Stripe Payment Analytics Dashboard publicly
 1. Go to your GitHub repository: https://github.com/rspencerstripe/rspencer
 2. Click on "Settings" tab
 3. Scroll down to "Pages" section in the left sidebar
-4. Under "Source", select "Deploy from a branch"
-5. Choose "gh-pages" branch and "/ (root)" folder
-6. Click "Save"
+4. Under "Source", select **"GitHub Actions"**
+5. Click "Save"
 
 ### Result:
 - Your site will be available at: `https://rspencerstripe.github.io/rspencer/`
