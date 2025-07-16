@@ -7133,13 +7133,13 @@
         const summaryStats = optimizationView.querySelectorAll('.stat-value');
         if (summaryStats.length >= 4) {
             summaryStats[0].textContent = formatCurrency(data.totalVolume);
-            summaryStats[1].textContent = formatCurrency(-data.revenueLost);
+            summaryStats[1].textContent = formatCurrency(Math.abs(data.revenueLost));
             summaryStats[2].textContent = formatCurrency(data.finalRevenue);
             summaryStats[3].textContent = `${data.successRate}%`;
             console.log('Updated summary stats for', businessType, ':', {
                 totalRevenue: formatCurrency(data.totalVolume),
-                revenueLost: formatCurrency(-data.revenueLost),
-                recoveredVolume: formatCurrency(data.finalRevenue),
+                revenueRecovered: formatCurrency(Math.abs(data.revenueLost)),
+                finalRevenue: formatCurrency(data.finalRevenue),
                 successRate: `${data.successRate}%`
             });
         } else {
@@ -7195,7 +7195,8 @@
             const revenueLostCard = performanceCards[1];
             const revenueLostValue = revenueLostCard.querySelector('.stat-value');
             if (revenueLostValue) {
-                revenueLostValue.textContent = formatCurrency(data.revenueLost);
+                // Display as positive value since it's "recovered" revenue
+                revenueLostValue.textContent = formatCurrency(Math.abs(data.revenueLost));
             }
             
             // Recovered payments (count of recovered transactions)
@@ -7214,7 +7215,7 @@
             
             console.log('Updated performance stats:', {
                 totalRevenue: formatCurrency(data.totalVolume),
-                revenueLost: formatCurrency(data.revenueLost),
+                revenueRecovered: formatCurrency(Math.abs(data.revenueLost)),
                 recoveredPayments: data.recoveredTransactions || 0,
                 successRate: `${data.successRate}%`
             });
