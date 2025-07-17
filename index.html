@@ -1207,19 +1207,23 @@
         }
 
         .insights-section {
-            margin-bottom: 32px;
+            margin-bottom: 24px;
             padding: 0;
             background: transparent;
             width: 100%;
             display: block !important;
             visibility: visible !important;
             opacity: 1 !important;
+            position: relative !important;
+            z-index: 1 !important;
         }
         
         .insights-header {
             display: flex;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 4px;
+            min-height: auto;
+            line-height: 1;
         }
         
         .insights-icon {
@@ -1229,15 +1233,17 @@
         }
         
         .insights-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: var(--color-gray-900);
             margin: 0;
+            line-height: 1.2;
         }
         
         .insights-content {
             display: flex;
             flex-direction: column;
+            padding: 0;
         }
         
         .insight-item {
@@ -3077,6 +3083,35 @@
         }
 
         .tooltip-ask-btn i {
+            width: 10px;
+            height: 10px;
+        }
+
+        .tooltip-changes-btn {
+            background: white;
+            color: var(--color-gray-600);
+            border: 1px solid var(--color-gray-200);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            z-index: 10000;
+            position: relative;
+        }
+
+        .tooltip-changes-btn:hover {
+            background: var(--color-gray-100);
+            border-color: var(--color-gray-300);
+            color: var(--color-gray-900);
+        }
+
+        .tooltip-changes-btn i {
             width: 10px;
             height: 10px;
         }
@@ -5644,6 +5679,26 @@
                             <!-- Insights will be dynamically populated based on current tab -->
                         </div>
                     </div>
+                    <script>
+                        // Immediate insights initialization when section is available
+                        (function() {
+                            console.log('Insights section found in DOM, initializing immediately...');
+                            if (typeof updateInsights === 'function') {
+                                setTimeout(() => {
+                                    console.log('Calling updateInsights from inline script...');
+                                    updateInsights('acceptance');
+                                }, 10);
+                            } else {
+                                console.log('updateInsights function not available yet, will retry...');
+                                setTimeout(() => {
+                                    if (typeof updateInsights === 'function') {
+                                        console.log('Retrying updateInsights from inline script...');
+                                        updateInsights('acceptance');
+                                    }
+                                }, 100);
+                            }
+                        })();
+                    </script>
                     
                     <!-- Ask Assistant Section -->
                     <div class="assistant-section">
@@ -5700,10 +5755,33 @@
         <!-- Data will be populated dynamically -->
     </div>
     <div class="tooltip-actions">
+        <button class="tooltip-changes-btn" id="tooltipChangesBtn">
+            <i data-lucide="trending-up" style="width: 10px; height: 10px;"></i>
+            What's changed?
+        </button>
         <button class="tooltip-ask-btn" id="tooltipAskBtn">
-            <i data-lucide="sparkles" style="width: 10px; height: 10;"></i>
+            <i data-lucide="sparkles" style="width: 10px; height: 10px;"></i>
             Ask Assistant
         </button>
+    </div>
+</div>
+
+<!-- Changes Analysis Popup -->
+<div class="changes-popup" id="changesPopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 10001; backdrop-filter: blur(4px);">
+    <div class="changes-popup-content" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+        <div class="changes-popup-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+            <div>
+                <h3 class="changes-popup-title" style="font-size: 18px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 4px 0;">What's Changed</h3>
+                <p class="changes-popup-subtitle" style="font-size: 13px; color: var(--color-gray-600); margin: 0;" id="changesPopupSubtitle">Analysis for this data point</p>
+            </div>
+            <button class="changes-popup-close" onclick="closeChangesPopup()" style="background: none; border: none; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.15s;">
+                <i data-lucide="x" style="width: 20px; height: 20px; color: var(--color-gray-500);"></i>
+            </button>
+        </div>
+        
+        <div class="changes-popup-body" id="changesPopupBody">
+            <!-- Content will be populated dynamically -->
+        </div>
     </div>
 </div>
 
@@ -5724,13 +5802,38 @@
     function initializeChartTooltips() {
         const tooltip = document.getElementById('chartTooltip');
         const tooltipAskBtn = document.getElementById('tooltipAskBtn');
+        const tooltipChangesBtn = document.getElementById('tooltipChangesBtn');
         
-        if (!tooltip || !tooltipAskBtn) {
+        if (!tooltip || !tooltipAskBtn || !tooltipChangesBtn) {
             console.error('Tooltip elements not found');
             return;
         }
         
-        console.log('Tooltip elements found:', { tooltip, tooltipAskBtn });
+        console.log('Tooltip elements found:', { tooltip, tooltipAskBtn, tooltipChangesBtn });
+        
+        // Add click handler for the "What's changed?" button
+        tooltipChangesBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('What\'s changed button clicked');
+            console.log('currentTooltipData:', currentTooltipData);
+            
+            // Add visual feedback
+            this.style.backgroundColor = '#533AFD';
+            this.style.color = 'white';
+            setTimeout(() => {
+                this.style.backgroundColor = '';
+                this.style.color = '';
+            }, 200);
+            
+            if (currentTooltipData) {
+                showChangesPopup(currentTooltipData);
+                hideTooltip();
+            } else {
+                console.error('No tooltip data available for changes analysis');
+            }
+        });
         
         // Add click handler for the "Ask Assistant" button
         tooltipAskBtn.addEventListener('click', function(e) {
@@ -6540,6 +6643,191 @@
             tooltip.classList.remove('visible');
             // Don't clear currentTooltipData immediately - let the AI panel handle it
         }
+    }
+    
+    function showChangesPopup(tooltipData) {
+        const popup = document.getElementById('changesPopup');
+        const subtitle = document.getElementById('changesPopupSubtitle');
+        const body = document.getElementById('changesPopupBody');
+        
+        if (!popup || !subtitle || !body) {
+            console.error('Changes popup elements not found');
+            return;
+        }
+        
+        // Set subtitle
+        subtitle.textContent = `Analysis for ${tooltipData.date} (${tooltipData.dateRange || 'Last 7 days'})`;
+        
+        // Generate analysis content based on the data
+        const analysis = generateChangesAnalysis(tooltipData);
+        
+        // Populate the popup body
+        body.innerHTML = analysis;
+        
+        // Show the popup
+        popup.style.display = 'block';
+        
+        // Reinitialize lucide icons
+        lucide.createIcons();
+    }
+    
+    function closeChangesPopup() {
+        const popup = document.getElementById('changesPopup');
+        if (popup) {
+            popup.style.display = 'none';
+        }
+    }
+    
+    function generateChangesAnalysis(tooltipData) {
+        const current = parseFloat(tooltipData.current);
+        const baseline = parseFloat(tooltipData.baseline);
+        const optimized = parseFloat(tooltipData.optimized);
+        const change = current - baseline;
+        const optimizationGap = optimized - current;
+        
+        let analysis = '';
+        
+        // Determine chart type and generate appropriate analysis
+        const chartArea = document.querySelector('.chart-area');
+        const barChartArea = document.querySelector('.bar-chart-area');
+        const failedChartArea = document.querySelector('.breakdown-section:last-child .bar-chart-area');
+        
+        if (chartArea && chartArea.contains(document.querySelector('.chart-svg'))) {
+            // Authorization rate chart analysis
+            analysis = `
+                <div class="changes-section">
+                    <h4 style="font-size: 14px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 12px 0;">Authorization Rate Changes</h4>
+                    <div class="change-item" style="margin-bottom: 16px;">
+                        <div class="change-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span class="change-indicator ${change >= 0 ? 'positive' : 'negative'}" style="width: 8px; height: 8px; border-radius: 50%; background: ${change >= 0 ? '#22C55E' : '#EF4444'};"></span>
+                            <span style="font-size: 13px; font-weight: 500; color: var(--color-gray-900);">
+                                ${change >= 0 ? '+' : ''}${change.toFixed(1)}% vs baseline
+                            </span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--color-gray-700); margin: 0; line-height: 1.4;">
+                            ${change >= 0 ? 
+                                'Your authorization rate has improved compared to the baseline period. This could be due to:' :
+                                'Your authorization rate has decreased compared to the baseline period. This could be due to:'
+                            }
+                        </p>
+                        <ul style="font-size: 13px; color: var(--color-gray-700); margin: 8px 0 0 0; padding-left: 20px; line-height: 1.4;">
+                            ${change >= 0 ? `
+                                <li>Improved fraud detection rules</li>
+                                <li>Better 3D Secure authentication</li>
+                                <li>Enhanced payment form optimization</li>
+                                <li>Stronger customer verification</li>
+                            ` : `
+                                <li>Increased fraud attempts</li>
+                                <li>3D Secure authentication issues</li>
+                                <li>Payment form friction</li>
+                                <li>Regional payment restrictions</li>
+                            `}
+                        </ul>
+                    </div>
+                    
+                    <div class="optimization-opportunity" style="background: var(--color-gray-100); border-radius: 8px; padding: 12px; margin-top: 16px;">
+                        <div class="opportunity-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <i data-lucide="lightbulb" style="width: 14px; height: 14px; color: var(--color-purple-500);"></i>
+                            <span style="font-size: 13px; font-weight: 600; color: var(--color-gray-900);">Optimization Opportunity</span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--color-gray-700); margin: 0; line-height: 1.4;">
+                            You could improve your authorization rate by an additional <strong>${optimizationGap.toFixed(1)}%</strong> by implementing AI-optimized strategies.
+                        </p>
+                    </div>
+                </div>
+            `;
+        } else if (barChartArea && !failedChartArea) {
+            // Payment volume chart analysis
+            analysis = `
+                <div class="changes-section">
+                    <h4 style="font-size: 14px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 12px 0;">Payment Volume Changes</h4>
+                    <div class="change-item" style="margin-bottom: 16px;">
+                        <div class="change-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span class="change-indicator positive" style="width: 8px; height: 8px; border-radius: 50%; background: #22C55E;"></span>
+                            <span style="font-size: 13px; font-weight: 500; color: var(--color-gray-900);">
+                                Payment mix analysis
+                            </span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--color-gray-700); margin: 0; line-height: 1.4;">
+                            Your payment volume breakdown shows the following trends:
+                        </p>
+                        <ul style="font-size: 13px; color: var(--color-gray-700); margin: 8px 0 0 0; padding-left: 20px; line-height: 1.4;">
+                            <li>Credit card volume: ${tooltipData.creditVolume || '$12.4K'} (${tooltipData.creditPayments || '1,240'} payments)</li>
+                            <li>Debit card volume: ${tooltipData.debitVolume || '$8.2K'} (${tooltipData.debitPayments || '820'} payments)</li>
+                            <li>Digital wallet adoption increasing</li>
+                            <li>Regional payment preferences vary</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="optimization-opportunity" style="background: var(--color-gray-100); border-radius: 8px; padding: 12px; margin-top: 16px;">
+                        <div class="opportunity-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <i data-lucide="lightbulb" style="width: 14px; height: 14px; color: var(--color-purple-500);"></i>
+                            <span style="font-size: 13px; font-weight: 600; color: var(--color-gray-900);">Optimization Opportunity</span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--color-gray-700); margin: 0; line-height: 1.4;">
+                            Consider expanding digital wallet options and optimizing for regional payment preferences to increase volume.
+                        </p>
+                    </div>
+                </div>
+            `;
+        } else if (failedChartArea) {
+            // Failed payments chart analysis
+            analysis = `
+                <div class="changes-section">
+                    <h4 style="font-size: 14px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 12px 0;">Failed Payment Analysis</h4>
+                    <div class="change-item" style="margin-bottom: 16px;">
+                        <div class="change-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span class="change-indicator negative" style="width: 8px; height: 8px; border-radius: 50%; background: #EF4444;"></span>
+                            <span style="font-size: 13px; font-weight: 500; color: var(--color-gray-900);">
+                                ${tooltipData.failureRate || '2.1%'} failure rate
+                            </span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--color-gray-700); margin: 0; line-height: 1.4;">
+                            Failed payment volume of ${tooltipData.failedVolume || '$2.1K'} (${tooltipData.failedPayments || '210'} payments) could be due to:
+                        </p>
+                        <ul style="font-size: 13px; color: var(--color-gray-700); margin: 8px 0 0 0; padding-left: 20px; line-height: 1.4;">
+                            <li>Insufficient funds</li>
+                            <li>Card expiration</li>
+                            <li>Fraud detection blocks</li>
+                            <li>3D Secure authentication failures</li>
+                            <li>Regional payment restrictions</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="optimization-opportunity" style="background: var(--color-gray-100); border-radius: 8px; padding: 12px; margin-top: 16px;">
+                        <div class="opportunity-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <i data-lucide="lightbulb" style="width: 14px; height: 14px; color: var(--color-purple-500);"></i>
+                            <span style="font-size: 13px; font-weight: 600; color: var(--color-gray-900);">Reduction Opportunity</span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--color-gray-700); margin: 0; line-height: 1.4;">
+                            Implement smart retry logic and improve fraud detection to reduce failed payments by up to 40%.
+                        </p>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Generic analysis
+            analysis = `
+                <div class="changes-section">
+                    <h4 style="font-size: 14px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 12px 0;">Data Point Analysis</h4>
+                    <div class="change-item" style="margin-bottom: 16px;">
+                        <div class="change-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span class="change-indicator neutral" style="width: 8px; height: 8px; border-radius: 50%; background: var(--color-gray-400);"></span>
+                            <span style="font-size: 13px; font-weight: 500; color: var(--color-gray-900);">
+                                Performance analysis
+                            </span>
+                        </div>
+                        <p style="font-size: 13px; color: var(--color-gray-700); margin: 0; line-height: 1.4;">
+                            Current performance: ${tooltipData.current || 'N/A'}<br>
+                            Baseline comparison: ${tooltipData.baseline || 'N/A'}<br>
+                            Optimization potential: ${tooltipData.optimized || 'N/A'}
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        return analysis;
     }
     
     // Test function to verify JavaScript is working
@@ -11175,10 +11463,11 @@
         }
     }
 
-    // Initialize chart tooltips
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeChartTooltips();
-        lucide.createIcons();
+            // Initialize chart tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOMContentLoaded event fired');
+            initializeChartTooltips();
+            lucide.createIcons();
         
         // Initialize business type switching
         // initializeBusinessTypeSwitching();
@@ -11198,6 +11487,49 @@
         // Initialize assistant prompts
         updateAssistantPrompts();
         
+        // Initialize insights for the default tab (acceptance)
+        function initializeInsights() {
+            console.log('Starting insights initialization...');
+            // Ensure insights section is visible
+            const insightsSection = document.getElementById('insightsSection');
+            console.log('Insights section element:', insightsSection);
+            
+            if (insightsSection) {
+                // Force the insights section to be visible
+                insightsSection.style.cssText = `
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    position: relative !important;
+                    z-index: 1 !important;
+                `;
+                console.log('Insights section made visible on page load');
+                
+                // Check if the section is actually visible
+                const computedStyle = window.getComputedStyle(insightsSection);
+                console.log('Insights section computed display:', computedStyle.display);
+                console.log('Insights section computed visibility:', computedStyle.visibility);
+                console.log('Insights section computed opacity:', computedStyle.opacity);
+                
+                console.log('Calling updateInsights with acceptance...');
+                updateInsights('acceptance');
+                return true; // Success
+            } else {
+                console.error('Insights section not found on page load');
+                return false; // Failed
+            }
+        }
+        
+        // Immediate insights initialization attempt
+        console.log('Attempting immediate insights initialization...');
+        let insightsInitialized = initializeInsights();
+        
+        // Direct call to update insights for acceptance tab
+        setTimeout(() => {
+            console.log('Direct updateInsights call for acceptance...');
+            updateInsights('acceptance');
+        }, 50);
+        
         // Initialize navigation tabs
         initializeNavigationTabs();
         
@@ -11213,38 +11545,63 @@
             }
         }, 500);
         
-        // Initialize insights for the default tab (acceptance)
-        function initializeInsights() {
-            console.log('Starting insights initialization...');
-            // Ensure insights section is visible
-            const insightsSection = document.getElementById('insightsSection');
-            console.log('Insights section element:', insightsSection);
-            
-            if (insightsSection) {
-                insightsSection.style.display = 'block';
-                insightsSection.style.visibility = 'visible';
-                insightsSection.style.opacity = '1';
-                console.log('Insights section made visible on page load');
-                
-                // Check if the section is actually visible
-                const computedStyle = window.getComputedStyle(insightsSection);
-                console.log('Insights section computed display:', computedStyle.display);
-                console.log('Insights section computed visibility:', computedStyle.visibility);
-                console.log('Insights section computed opacity:', computedStyle.opacity);
-                
-                console.log('Calling updateInsights with acceptance...');
-                updateInsights('acceptance');
-            } else {
-                console.error('Insights section not found on page load');
-                // Retry after a short delay
-                setTimeout(initializeInsights, 100);
-            }
-        }
-        
         // Try multiple times to ensure insights are initialized
-        setTimeout(initializeInsights, 100);
-        setTimeout(initializeInsights, 500);
-        setTimeout(initializeInsights, 1000);
+        const initAttempts = [100, 300, 600, 1000, 2000];
+        
+        initAttempts.forEach((delay, index) => {
+            setTimeout(() => {
+                if (!insightsInitialized) {
+                    console.log(`Insights initialization attempt ${index + 1} at ${delay}ms`);
+                    insightsInitialized = initializeInsights();
+                }
+            }, delay);
+        });
+        
+        // Also try to initialize insights when the window is fully loaded
+        window.addEventListener('load', function() {
+            console.log('Window load event fired, attempting insights initialization');
+            if (!insightsInitialized) {
+                insightsInitialized = initializeInsights();
+            }
+            
+            // Force update insights regardless of initialization status
+            console.log('Forcing insights update on window load...');
+            updateInsights('acceptance');
+        });
+        
+        // Fallback: try to initialize insights on first user interaction
+        let userInteracted = false;
+        const interactionEvents = ['click', 'mousemove', 'keydown', 'scroll'];
+        
+        interactionEvents.forEach(eventType => {
+            document.addEventListener(eventType, function() {
+                if (!userInteracted && !insightsInitialized) {
+                    console.log(`User interaction detected (${eventType}), attempting insights initialization`);
+                    userInteracted = true;
+                    insightsInitialized = initializeInsights();
+                }
+            }, { once: true });
+        });
+        
+        // Mutation observer to detect when insights section becomes available
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    const insightsSection = document.getElementById('insightsSection');
+                    if (insightsSection && !insightsInitialized) {
+                        console.log('Insights section detected by mutation observer, initializing...');
+                        insightsInitialized = initializeInsights();
+                        observer.disconnect(); // Stop observing once found
+                    }
+                }
+            });
+        });
+        
+        // Start observing
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
     });
 
     // Function to reset graph animations when charts are updated
