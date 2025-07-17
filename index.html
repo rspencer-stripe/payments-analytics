@@ -1,4 +1,4 @@
-<!DOCTYPE html> 250hot 
+<!DOCTYPE html>
 <!-- Payment Assistant AI - Deployed via GitHub Pages -->
 <html lang="en">
 <head>
@@ -7,6 +7,25 @@
     <title>Stripe Payment Analytics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js" onerror="console.error('Primary Lucide CDN failed, trying fallback...')"></script>
+<script>
+        // Test if Lucide is loaded
+        window.addEventListener("load", function() {
+            console.log("Page loaded, checking Lucide...");
+            if (typeof lucide !== "undefined") {
+                console.log("Lucide library found, creating icons...");
+                lucide.createIcons();
+                console.log("Icons created successfully");
+                // Re-initialize icons after a delay to ensure all are created
+                setTimeout(() => {
+                    lucide.createIcons();
+                    console.log("Icons re-initialized");
+                }, 1000);
+            } else {
+                console.error("Lucide library not found!");
+            }
+        });
+    </script>
     <style>
         :root {
             --color-purple-500: #533AFD;
@@ -57,10 +76,10 @@
             justify-content: center;
             font-weight: 600;
             color: var(--color-gray-500);
-            font-size: 14px;
+            font-size: 13px;
         }
         .sidebar-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--color-gray-900);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
@@ -109,7 +128,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
             font-style: normal;
             font-weight: 400;
-            font-size: 14px;
+            font-size: 13px;
             line-height: 20px;
             letter-spacing: -0.15px;
             text-decoration: none;
@@ -182,7 +201,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
             font-style: normal;
             font-weight: 400;
-            font-size: 14px;
+            font-size: 13px;
             line-height: 20px;
             letter-spacing: -0.15px;
             padding: 5px 14px 5px 40px;
@@ -253,7 +272,7 @@
             padding: 8px 12px 8px 36px;
             border: none;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             background: var(--color-gray-100);
             transition: background 0.15s;
             color: var(--color-gray-600);
@@ -269,21 +288,27 @@
             box-shadow: 0 0 0 1px var(--color-purple-500);
         }
         
-        .top-right-controls {
+        .top-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        
+        .right-controls {
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-right: 0;
         }
         
-        .icon-group {
+        .segmented-control {
             display: flex;
             align-items: center;
             gap: 4px;
             padding: 6px;
             border: 1px solid var(--color-gray-200);
             border-radius: 8px;
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
         }
         
         .icon-btn {
@@ -304,10 +329,54 @@
             background: var(--color-gray-100);
         }
         
+        .search-container {
+            flex: 0 0 auto;
+            min-width: 300px;
+        }
+        
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            width: 18px;
+            height: 18px;
+            color: var(--color-gray-600);
+            z-index: 1;
+        }
+        
+        .search-input {
+            width: 100%;
+            height: 40px;
+            padding: 10px 16px 10px 44px;
+            border: none;
+            border-radius: 12px;
+            background: var(--color-gray-100);
+            font-size: 14px;
+            color: var(--color-gray-700);
+            transition: all 0.15s;
+            font-weight: 500;
+        }
+        
+        .search-input::placeholder {
+            color: var(--color-gray-500);
+            font-weight: 400;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 1px var(--color-gray-200);
+        }
+        
         .standalone-icons {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 16px;
         }
         
         .standalone-icon-btn {
@@ -319,7 +388,7 @@
             border: none;
             background: none;
             border-radius: 6px;
-            color: var(--color-gray-600);
+            color: var(--color-gray-900);
             cursor: pointer;
             transition: background 0.15s;
             position: relative;
@@ -329,8 +398,176 @@
             background: var(--color-gray-100);
         }
         
-        .notification-btn {
+        .notification-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: none;
+            border-radius: 6px;
+            color: var(--color-gray-900);
+            cursor: pointer;
+            transition: background 0.15s;
             position: relative;
+        }
+        
+        .notification-container:hover {
+            background: var(--color-gray-100);
+        }
+        
+        .notification-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: #3B82F6;
+            border-radius: 50%;
+        }
+        
+        /* Notification Panel Styles */
+        .notification-panel {
+            position: fixed;
+            top: 72px;
+            right: 32px;
+            width: 400px;
+            max-height: 70vh;
+            background: #fff;
+            border: 1px solid var(--color-gray-200);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.2s;
+        }
+        
+        .notification-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px 12px 20px;
+            border-bottom: 1px solid var(--color-gray-100);
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .notification-list {
+            padding: 12px 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .notification-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--color-gray-200);
+            transition: all 0.15s;
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+
+        
+        .notification-dot-indicator {
+            width: 8px;
+            height: 8px;
+            background: #3B82F6;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+        
+        .notification-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+        
+        .notification-type {
+            font-size: 12px;
+            font-weight: 600;
+            color: #EF4444;
+            background: #FEF2F2;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .notification-timestamp {
+            font-size: 12px;
+            color: var(--color-gray-500);
+        }
+        
+        .notification-message {
+            display: block;
+            font-size: 14px;
+            color: var(--color-gray-900);
+            margin-bottom: 12px;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+        
+        .notification-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .notification-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .notification-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--color-gray-200);
+            border-radius: 6px;
+            background: white;
+            color: var(--color-gray-700);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .notification-btn:hover {
+            background: var(--color-gray-100);
+        }
+        
+        .notification-btn.primary {
+            background: var(--color-purple-500);
+            color: white;
+            border-color: var(--color-purple-500);
+        }
+        
+        .notification-btn.primary:hover {
+            background: var(--color-purple-600);
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--color-gray-400);
+            font-size: 18px;
+            padding: 4px;
+            border-radius: 4px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px);}
+            to { opacity: 1; transform: translateY(0);}
         }
         
         .notification-dot {
@@ -364,6 +601,10 @@
         .icon {
             width: 16px;
             height: 16px;
+            color: inherit;
+            stroke-width: 2;
+            stroke: currentColor;
+            fill: none;
         }
         
         .new-icon {
@@ -424,7 +665,7 @@
         }
         
         .share-feedback-btn:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             border-color: var(--color-gray-300);
         }
         
@@ -442,7 +683,7 @@
             border: none;
             background: none;
             color: var(--color-gray-600);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             position: relative;
@@ -590,7 +831,7 @@
         }
 
         .dropdown-item:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
         }
 
         .dropdown-item.active {
@@ -654,7 +895,7 @@
         }
 
         .compared-to {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
         }
 
@@ -674,7 +915,7 @@
         }
 
         .comparison-dropdown:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             border-color: var(--color-gray-300);
         }
 
@@ -685,7 +926,7 @@
         }
 
         .date-range {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
         }
 
@@ -800,14 +1041,14 @@
             border-radius: 8px;
             background: white;
             color: var(--color-gray-600);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.15s;
         }
 
         .chart-filter-btn:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             border-color: var(--color-gray-300);
         }
 
@@ -965,6 +1206,128 @@
             color: var(--color-gray-500);
         }
 
+        .insights-section {
+            margin-bottom: 32px;
+            padding: 0;
+            background: transparent;
+            width: 100%;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .insights-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .insights-icon {
+            width: 16px;
+            height: 16px;
+            color: var(--color-purple-500);
+        }
+        
+        .insights-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-gray-900);
+            margin: 0;
+        }
+        
+        .insights-content {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--color-gray-200);
+            transition: all 0.15s;
+        }
+        
+        .insight-item:last-child {
+            border-bottom: none;
+        }
+        
+        .insight-dot-indicator {
+            width: 8px;
+            height: 8px;
+            background: #3B82F6;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+        
+        .insight-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .insight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+        
+        .insight-type {
+            font-size: 12px;
+            font-weight: 600;
+            color: #EF4444;
+            background: #FEF2F2;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .insight-timestamp {
+            font-size: 12px;
+            color: var(--color-gray-500);
+        }
+        
+        .insight-message {
+            display: block;
+            font-size: 14px;
+            color: var(--color-gray-900);
+            margin-bottom: 12px;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+        
+        .insight-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .insight-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--color-gray-200);
+            border-radius: 6px;
+            background: white;
+            color: var(--color-gray-700);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .insight-btn:hover {
+            background: var(--color-gray-100);
+        }
+        
+        .insight-btn.primary {
+            background: var(--color-purple-500);
+            color: white;
+            border-color: var(--color-purple-500);
+        }
+        
+        .insight-btn.primary:hover {
+            background: var(--color-purple-600);
+        }
+        
         .assistant-section {
             margin-bottom: 32px;
             padding: 0;
@@ -1008,7 +1371,7 @@
             border-radius: 24px;
             background: white;
             color: var(--color-gray-900);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.15s;
@@ -1018,7 +1381,7 @@
         }
 
         .prompt-btn:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             box-shadow: 0 2px 8px rgba(83, 58, 253, 0.1);
         }
 
@@ -1042,7 +1405,7 @@
             padding: 16px;
             border: none;
             border-radius: 12px;
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             margin-bottom: 16px;
             transition: all 0.15s;
             cursor: pointer;
@@ -1068,7 +1431,7 @@
         }
 
         .resource-name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--color-gray-900);
         }
@@ -1084,7 +1447,7 @@
         }
 
         .subsection-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--color-gray-900);
             margin-bottom: 16px;
@@ -1139,7 +1502,7 @@
         }
 
         .breakdown-subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
             margin: 0;
             line-height: 20px;
@@ -1169,7 +1532,7 @@
         }
 
         .breakdown-filter-btn:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             border-color: var(--color-gray-300);
         }
 
@@ -1202,7 +1565,7 @@
         }
 
         .dropdown-btn:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             border-color: var(--color-gray-300);
         }
 
@@ -1213,7 +1576,7 @@
         }
 
         .total-label {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
             margin-right: 8px;
             display: flex;
@@ -1324,7 +1687,7 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 13px;
             background: white;
             border-radius: 8px;
             overflow: hidden;
@@ -1345,7 +1708,7 @@
             padding: 16px 20px;
             border-bottom: 1px solid var(--color-gray-150);
             color: var(--color-gray-900);
-            font-size: 14px;
+            font-size: 13px;
             line-height: 20px;
             background: white;
         }
@@ -1384,7 +1747,7 @@
         .total-row td {
             font-weight: 600;
             color: var(--color-gray-900);
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .data-table .reason-cell {
@@ -1428,7 +1791,7 @@
             white-space: nowrap;
         }
         .business-type-tab:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
         }
         .business-type-tab.active {
             color: var(--color-purple-500);
@@ -1453,7 +1816,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             z-index: 1000;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--color-gray-700);
             border: 1px solid var(--color-gray-200);
@@ -2584,7 +2947,7 @@
         }
 
         .ai-prompt-pill:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             border-color: var(--color-gray-300);
             color: var(--color-gray-900);
             transform: translateY(-1px);
@@ -2656,7 +3019,7 @@
             font-weight: 600;
             color: var(--color-gray-900);
             margin-bottom: 8px;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .tooltip-data {
@@ -2708,7 +3071,7 @@
         }
 
         .tooltip-ask-btn:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             border-color: var(--color-gray-300);
             color: var(--color-gray-900);
         }
@@ -2889,7 +3252,7 @@
         }
 
         .lifecycle-subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
             margin: -10px 0 0 0;
         }
@@ -2914,7 +3277,7 @@
         }
 
         .waterfall-header p {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
             margin: 0;
         }
@@ -2965,7 +3328,7 @@
         }
 
         .bar-value {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--color-gray-700);
             text-align: center;
@@ -3028,7 +3391,7 @@
             align-items: center;
             gap: 12px;
             padding: 12px;
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             border-radius: 8px;
         }
 
@@ -3113,7 +3476,7 @@
         }
 
         .stage-description {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
             margin: 0 0 8px 0;
         }
@@ -3328,7 +3691,7 @@
         }
 
         .impact-label {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
         }
 
@@ -3359,7 +3722,7 @@
             border-radius: 8px;
             background: var(--color-purple-500);
             color: white;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.15s;
@@ -3405,7 +3768,7 @@
             gap: 6px;
             padding: 8px 12px;
             color: var(--color-purple-500);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             text-decoration: none;
             border-radius: 6px;
@@ -3431,7 +3794,7 @@
         }
 
         .opportunity-card:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
         }
 
         .opportunity-card.high-priority {
@@ -3488,7 +3851,7 @@
         }
 
         .impact-label {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
         }
 
@@ -3509,12 +3872,12 @@
         }
 
         .detail-label {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
         }
 
         .detail-value {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--color-gray-900);
         }
@@ -3541,6 +3904,48 @@
             color: #991B1B;
         }
 
+        .category-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            background: var(--color-gray-100);
+            color: var(--color-gray-600);
+            margin-top: 4px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .status-badge.completed {
+            background: #DCFCE7;
+            color: #166534;
+        }
+
+        .status-badge.in-progress {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-badge.blocked {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .status-badge.future {
+            background: #F3F4F6;
+            color: #6B7280;
+        }
+
+
+
         .opportunity-actions {
             display: flex;
             gap: 12px;
@@ -3555,14 +3960,14 @@
             border-radius: 8px;
             background: white;
             color: var(--color-gray-700);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.15s;
         }
 
         .implement-btn:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             border-color: var(--color-gray-300);
         }
 
@@ -3629,7 +4034,7 @@
         }
 
         .ab-test-card:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
         }
 
         .ab-test-card.active {
@@ -3685,7 +4090,7 @@
         }
 
         .test-description {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
             margin: 0;
         }
@@ -3702,12 +4107,12 @@
         }
 
         .progress-label {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
         }
 
         .progress-value {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--color-gray-900);
         }
@@ -3749,12 +4154,12 @@
         }
 
         .variant-label {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-700);
         }
 
         .variant-rate {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--color-gray-900);
         }
@@ -3786,7 +4191,7 @@
         }
 
         .test-action-btn:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             border-color: var(--color-gray-300);
         }
 
@@ -3810,7 +4215,6 @@
 
         .timeline-container {
             position: relative;
-            padding-left: 24px;
         }
 
 
@@ -3874,7 +4278,7 @@
         }
 
         .event-description {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
             margin: 0 0 8px 0;
         }
@@ -3935,7 +4339,7 @@
         }
 
         .insight-value {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--color-gray-900);
             margin-bottom: 4px;
@@ -3985,7 +4389,7 @@
             padding: 8px 0;
             background: transparent;
             color: var(--color-gray-700);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             margin-bottom: 6px;
@@ -4030,7 +4434,7 @@
         }
 
         .ai-insight-text {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-700);
             line-height: 1.6;
             margin-bottom: 20px;
@@ -4045,7 +4449,7 @@
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.2s ease;
@@ -4069,7 +4473,7 @@
             margin-bottom: 16px;
             padding: 16px;
             border-radius: 8px;
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             transition: all 0.15s;
         }
 
@@ -4105,7 +4509,7 @@
 
         .funnel-label {
             color: white;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
@@ -4140,7 +4544,7 @@
         }
 
         .funnel-description {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-600);
             margin: 0 0 8px 0;
         }
@@ -4233,7 +4637,7 @@
         }
 
         .loss-amount {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--color-gray-700);
         }
@@ -4277,7 +4681,7 @@
         .summary-stat {
             text-align: center;
             padding: 12px 8px;
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             width: 100%;
             box-sizing: border-box;
             min-width: 0;
@@ -4309,7 +4713,7 @@
         .ab-tests-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .opportunities-table thead,
@@ -4367,7 +4771,7 @@
         }
 
         .opportunity-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--color-gray-900);
             margin-bottom: 4px;
@@ -4397,7 +4801,7 @@
         }
 
         .revenue-impact {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--color-gray-900);
         }
@@ -4409,7 +4813,7 @@
         }
 
         .implementation-time {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-gray-700);
         }
 
@@ -4421,7 +4825,7 @@
         }
 
         .test-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--color-gray-900);
         }
@@ -4444,6 +4848,10 @@
 
         .status-cell.completed .status-dot {
             background: #3B82F6;
+        }
+
+        .status-cell.future .status-dot {
+            background: #9CA3AF;
         }
 
         .status-text {
@@ -4477,7 +4885,7 @@
         }
 
         .rate-value {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--color-gray-900);
         }
@@ -4490,6 +4898,18 @@
             font-size: 12px;
             font-weight: 600;
             color: var(--color-gray-900);
+        }
+
+        .date-value {
+            font-size: 13px;
+            color: var(--color-gray-600);
+            font-weight: 500;
+        }
+
+        .outcome-value {
+            font-size: 13px;
+            color: var(--color-gray-700);
+            font-weight: 500;
         }
 
         /* Table Actions */
@@ -4514,7 +4934,7 @@
         }
 
         .table-btn:hover {
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             border-color: var(--color-gray-300);
         }
 
@@ -4706,37 +5126,41 @@
         <!-- Top Bar -->
         <div class="top-bar">
             <div class="top-bar-inner">
-                <div class="search-container">
-                    <i data-lucide="search" class="search-icon"></i>
-                    <input type="text" placeholder="Search" class="search-input">
-                </div>
-                <div class="top-right-controls">
-                    <div class="icon-group">
-                        <button class="icon-btn">
-                            <i data-lucide="square" class="icon"></i>
-                        </button>
-                        <button class="icon-btn">
-                            <i data-lucide="star" class="icon"></i>
-                        </button>
-                        <button class="icon-btn">
-                            <i data-lucide="grid-3x3" class="icon"></i>
+                <div class="top-controls">
+                    <div class="search-container">
+                        <div class="search-input-wrapper">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Search">
+                        </div>
+                    </div>
+                    <div class="right-controls">
+                        <div class="segmented-control">
+                            <button class="icon-btn">
+                                <i data-lucide="square" class="icon"></i>
+                            </button>
+                            <button class="icon-btn">
+                                <i data-lucide="grid-3x3" class="icon"></i>
+                            </button>
+                            <button class="icon-btn">
+                                <i data-lucide="star" class="icon"></i>
+                            </button>
+                        </div>
+                        <div class="standalone-icons">
+                            <button class="standalone-icon-btn">
+                                <i data-lucide="help-circle" class="icon"></i>
+                            </button>
+                            <button class="notification-container" onclick="toggleNotificationPanel()">
+                                <i data-lucide="bell" class="icon"></i>
+                                <div class="notification-dot"></div>
+                            </button>
+                            <button class="standalone-icon-btn">
+                                <i data-lucide="settings" class="icon"></i>
+                            </button>
+                        </div>
+                        <button class="new-btn">
+                            <i data-lucide="plus" class="new-icon"></i>
                         </button>
                     </div>
-                    <div class="standalone-icons">
-                        <button class="standalone-icon-btn">
-                            <i data-lucide="help-circle" class="icon"></i>
-                        </button>
-                        <button class="standalone-icon-btn notification-btn">
-                            <i data-lucide="bell" class="icon"></i>
-                            <div class="notification-dot"></div>
-                        </button>
-                        <button class="standalone-icon-btn">
-                            <i data-lucide="settings" class="icon"></i>
-                        </button>
-                    </div>
-                    <button class="new-btn">
-                        <i data-lucide="plus" class="new-icon"></i>
-                    </button>
                 </div>
             </div>
         </div>
@@ -5211,6 +5635,16 @@
                 
                 <!-- Right Column: Assistant and Resources -->
                 <div class="right-column">
+                    <!-- Insights Section -->
+                    <div class="insights-section" id="insightsSection">
+                        <div class="insights-header">
+                            <h3 class="insights-title">Insights</h3>
+                        </div>
+                        <div class="insights-content" id="insightsContent">
+                            <!-- Insights will be dynamically populated based on current tab -->
+                        </div>
+                    </div>
+                    
                     <!-- Ask Assistant Section -->
                     <div class="assistant-section">
                         <div class="assistant-header">
@@ -7330,6 +7764,7 @@
         
         // Initialize chart tooltips
         initializeChartTooltips();
+        lucide.createIcons();
         
         // Optimization Date Range Dropdown Functionality
         const optimizationDateRangeDropdown = document.getElementById('optimizationDateRangeDropdown');
@@ -8194,98 +8629,203 @@
         const opportunities = {
             small: [
                 {
-                    title: "Elements integration",
-                    description: "Upgrade to Elements for better UX and security",
-                    impact: "+1.8%",
-                    impactLabel: "conversion rate",
-                    revenue: "+$3,200/year",
+                    title: "Excessive 3DS Outside SCA Scope",
+                    description: "You're frequently triggering 3DS outside SCA-mandated regions on low-risk transactions, reducing conversion with a minor effect on fraud",
+                    impact: "Up to $120K",
+                    impactLabel: "USD annual revenue increase",
+                    revenue: "+$120,000/year",
                     effort: "Easy",
-                    effortDetail: "2-3 hours",
-                    timeline: "Same day"
+                    effortDetail: "No code required",
+                    timeline: "Same day",
+                    category: "Authentication",
+                    cta: "Enable in settings",
+                    implementation: "No code required",
+                    appearsOn: "/acceptance"
                 },
                 {
-                    title: "Radar fraud detection",
-                    description: "Enable Radar to prevent fraudulent transactions",
-                    impact: "+1.5%",
-                    impactLabel: "approval rate",
-                    revenue: "+$2,100/year",
+                    title: "3DS Abandonment",
+                    description: "High 3DS abandonment could point to an error in your integration setup",
+                    impact: "Up to $120K",
+                    impactLabel: "USD annual revenue increase",
+                    revenue: "+$120,000/year",
                     effort: "Easy",
-                    effortDetail: "15 minute setup",
-                    timeline: "Same day"
+                    effortDetail: "No code required",
+                    timeline: "Same day",
+                    category: "Authentication",
+                    cta: "Enable in settings",
+                    implementation: "No code required"
                 },
                 {
-                    title: "Checkout optimization",
-                    description: "Use Checkout for optimized payment flows",
-                    impact: "+1.2%",
-                    impactLabel: "conversion rate",
-                    revenue: "+$1,800/year",
+                    title: "Enable Adaptive Acceptance",
+                    description: "Improve your authorization rate by selectively retrying declined payments in real time",
+                    impact: "Up to $5K",
+                    impactLabel: "CAD revenue annually",
+                    revenue: "+$5,000/year",
                     effort: "Easy",
-                    effortDetail: "1 hour setup",
-                    timeline: "Same day"
+                    effortDetail: "No code required",
+                    timeline: "Same day",
+                    category: "Acceptance",
+                    cta: "Enable in settings",
+                    implementation: "No code required",
+                    appearsOn: "/acceptance"
+                },
+                {
+                    title: "Enable [Afterpay/Klarna]",
+                    description: "Help improve your conversion rate by enabling {Afterpay/Klarna}, a Buy Now, Pay Later (BNPL) payment method",
+                    impact: "Up to $120K",
+                    impactLabel: "USD annual revenue increase",
+                    revenue: "+$120,000/year",
+                    effort: "Medium",
+                    effortDetail: "Depends on Integration",
+                    timeline: "1-2 weeks",
+                    category: "Acceptance / LPM",
+                    cta: "Depends on integration",
+                    implementation: "Depends on Integration",
+                    appearsOn: "/acceptance, /payment-methods"
+                },
+                {
+                    title: "Enable Apple Pay",
+                    description: "Help improve your conversion rate by enabling Apple Pay",
+                    impact: "Up to $120K",
+                    impactLabel: "USD annual revenue increase",
+                    revenue: "+$120,000/year",
+                    effort: "Medium",
+                    effortDetail: "Depends on Integration",
+                    timeline: "1-2 weeks",
+                    category: "Acceptance / LPM",
+                    cta: "Depends on integration",
+                    implementation: "Depends on Integration",
+                    appearsOn: "/acceptance, /payment-methods"
                 }
             ],
             medium: [
                 {
-                    title: "Payment Intents",
-                    description: "Implement Payment Intents for better authorization rates",
-                    impact: "+2.5%",
-                    impactLabel: "approval rate",
-                    revenue: "+$45,000/year",
-                    effort: "Medium",
-                    effortDetail: "1-2 dev days",
-                    timeline: "1 week"
-                },
-                {
-                    title: "Smart Retries",
-                    description: "Enable intelligent retry logic for declined payments",
-                    impact: "+2.1%",
-                    impactLabel: "recovery rate",
-                    revenue: "+$38,000/year",
+                    title: "Enable Network Tokens",
+                    description: "Increase your authorization rate by replacing card numbers with secure tokens",
+                    impact: "Up to $6.72M",
+                    impactLabel: "GBP revenue annually",
+                    revenue: "+$6,720,000/year",
                     effort: "Easy",
-                    effortDetail: "30 minute setup",
-                    timeline: "Same day"
+                    effortDetail: "No code required",
+                    timeline: "Same day",
+                    category: "Acceptance",
+                    cta: "Enable in settings",
+                    implementation: "No code required",
+                    appearsOn: "/acceptance"
                 },
                 {
-                    title: "Connect marketplace",
-                    description: "Set up Connect for multi-party payment flows",
-                    impact: "+1.8%",
-                    impactLabel: "revenue growth",
-                    revenue: "+$32,000/year",
+                    title: "Enable Card Account Updater",
+                    description: "Raise your authorization rate by refreshing outdated customer payment details",
+                    impact: "Up to $650K",
+                    impactLabel: "USD revenue annually",
+                    revenue: "+$650,000/year",
+                    effort: "Easy",
+                    effortDetail: "No code required",
+                    timeline: "Same day",
+                    category: "Acceptance",
+                    cta: "Enable in settings",
+                    implementation: "No code required",
+                    appearsOn: "/acceptance"
+                },
+                {
+                    title: "Use Stored Credentials API (Private Preview)",
+                    description: "Send authorization messages in card networks' required format to increase authorization rate",
+                    impact: "Up to $650K",
+                    impactLabel: "USD revenue annually",
+                    revenue: "+$650,000/year",
                     effort: "Medium",
-                    effortDetail: "3-5 dev days",
-                    timeline: "1-2 weeks"
+                    effortDetail: "Requires code",
+                    timeline: "1-2 weeks",
+                    category: "Acceptance",
+                    cta: "View docs",
+                    implementation: "Requires code",
+                    status: "Code Finished - Blocked on Launch"
+                },
+                {
+                    title: "Share ZIP Code for Visa Cards",
+                    description: "Decrease penalties by sending your customer's billing address and zip code in the API",
+                    impact: "Up to $9.1K",
+                    impactLabel: "USD cost savings annually",
+                    revenue: "+$9,100/year",
+                    effort: "Medium",
+                    effortDetail: "Requires code",
+                    timeline: "1 week",
+                    category: "Cost",
+                    cta: "View docs",
+                    implementation: "Requires code",
+                    status: "In Progress"
+                },
+                {
+                    title: "Share Payment Fraud Signals",
+                    description: "Decrease fraud by using Stripe.js to collect device information and IP addresses for card payments",
+                    impact: "Up to 36%",
+                    impactLabel: "fraud model improvement",
+                    revenue: "+36% fraud reduction",
+                    effort: "Medium",
+                    effortDetail: "Requires code",
+                    timeline: "1 week",
+                    category: "Acceptance / Fraud",
+                    cta: "View docs",
+                    implementation: "Requires code",
+                    appearsOn: "/acceptance"
                 }
             ],
             large: [
                 {
-                    title: "Custom Radar Rules",
-                    description: "Implement custom fraud rules and machine learning",
-                    impact: "+3.5%",
-                    impactLabel: "approval rate",
-                    revenue: "+$320,000/year",
-                    effort: "Hard",
-                    effortDetail: "1-2 weeks",
-                    timeline: "2-3 weeks"
+                    title: "Share ZIP Code for Visa Cards",
+                    description: "Decrease penalties by sending your customer's billing address and zip code in the API",
+                    impact: "Up to $9.1K",
+                    impactLabel: "USD cost savings annually",
+                    revenue: "+$9,100/year",
+                    effort: "Medium",
+                    effortDetail: "Requires code",
+                    timeline: "1 week",
+                    category: "Cost",
+                    cta: "View docs",
+                    implementation: "Requires code",
+                    status: "In Progress"
                 },
                 {
-                    title: "Treasury integration",
-                    description: "Add banking-as-a-service capabilities",
-                    impact: "+2.9%",
-                    impactLabel: "revenue growth",
-                    revenue: "+$210,000/year",
+                    title: "Send Sales and Tax Data",
+                    description: "Decrease network costs by sharing detailed sales information on business and corporate cards",
+                    impact: "Up to $650K",
+                    impactLabel: "CZK cost savings annually",
+                    revenue: "+$650,000/year",
                     effort: "Medium",
-                    effortDetail: "2-3 weeks",
-                    timeline: "1 month"
+                    effortDetail: "Requires code",
+                    timeline: "1-2 weeks",
+                    category: "Cost",
+                    cta: "View docs",
+                    implementation: "Requires code",
+                    status: "Code Finished - Blocked on Launch"
                 },
                 {
-                    title: "Issuing cards",
-                    description: "Create virtual and physical cards for your business",
-                    impact: "+2.3%",
-                    impactLabel: "operational efficiency",
-                    revenue: "+$180,000/year",
+                    title: "Share Customer Fraud Signals",
+                    description: "Reduce fraud by sharing your customer's name and email address in the API for all card payments",
+                    impact: "Up to 11%",
+                    impactLabel: "fraud model improvement",
+                    revenue: "+11% fraud reduction",
                     effort: "Medium",
-                    effortDetail: "1 week",
-                    timeline: "1-2 weeks"
+                    effortDetail: "Requires code",
+                    timeline: "1 week",
+                    category: "Acceptance / Fraud",
+                    cta: "View docs",
+                    implementation: "Requires code",
+                    appearsOn: "/acceptance"
+                },
+                {
+                    title: "Send Sales and Tax Data",
+                    description: "Decrease network costs by sharing detailed sales information on business and corporate cards",
+                    impact: "Up to $650K",
+                    impactLabel: "CZK cost savings annually",
+                    revenue: "+$650,000/year",
+                    effort: "Medium",
+                    effortDetail: "Requires code",
+                    timeline: "1-2 weeks",
+                    category: "Cost",
+                    cta: "View docs",
+                    implementation: "Requires code",
+                    status: "Code Finished - Blocked on Launch"
                 }
             ]
         };
@@ -8297,38 +8837,45 @@
         console.log('Business opportunities for', businessType, ':', businessOpportunities.length, 'items');
         
         if (tableBody) {
-            tableBody.innerHTML = businessOpportunities.map((opp, index) => `
-                <tr class="${index === 0 ? 'high-priority' : index === 1 ? 'high-priority' : 'medium-priority'}">
-                    <td>
-                        <div class="opportunity-cell">
-                            <div class="opportunity-info">
-                                <div class="opportunity-title">${opp.title}</div>
-                                <div class="opportunity-description">${opp.description}</div>
+            tableBody.innerHTML = businessOpportunities.map((opp, index) => {
+                const statusBadge = opp.status ? `<span class="status-badge ${opp.status.toLowerCase().includes('finished') ? 'completed' : opp.status.toLowerCase().includes('progress') ? 'in-progress' : 'blocked'}">${opp.status}</span>` : '';
+                const categoryBadge = opp.category ? `<span class="category-badge">${opp.category}</span>` : '';
+                
+                return `
+                    <tr class="${index === 0 ? 'high-priority' : index === 1 ? 'high-priority' : 'medium-priority'}">
+                        <td>
+                            <div class="opportunity-cell">
+                                <div class="opportunity-info">
+                                    <div class="opportunity-title">${opp.title}</div>
+                                    <div class="opportunity-description">${opp.description}</div>
+                                    ${categoryBadge}
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="impact-cell">
-                            <span class="impact-value">${opp.impact}</span>
-                            <span class="impact-label">${opp.impactLabel}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="revenue-impact">${opp.revenue}</span>
-                    </td>
-                    <td>
-                        <span class="effort-badge ${opp.effort.toLowerCase()}">${opp.effort}</span>
-                        <div class="effort-detail">${opp.effortDetail}</div>
-                    </td>
-                    <td>
-                        <div class="table-actions">
-                                                            <button class="table-btn secondary" onclick="openAIPanel('How do I implement ${opp.title.toLowerCase()}?', '${businessType}', '${opp.title.toLowerCase().replace(/\s+/g, '-')}', ${data.successRate}, '${dateRange}', ${data.totalTransactions})">
-                                Get started
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+                        </td>
+                        <td>
+                            <div class="impact-cell">
+                                <span class="impact-value">${opp.impact}</span>
+                                <span class="impact-label">${opp.impactLabel}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="revenue-impact">${opp.revenue}</span>
+                        </td>
+                        <td>
+                            <span class="effort-badge ${opp.effort.toLowerCase()}">${opp.effort}</span>
+                            <div class="effort-detail">${opp.implementation || opp.effortDetail}</div>
+                            ${statusBadge}
+                        </td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="table-btn secondary" onclick="openAIPanel('How do I implement ${opp.title.toLowerCase()}?', '${businessType}', '${opp.title.toLowerCase().replace(/\s+/g, '-')}', ${data.successRate}, '${dateRange}', ${data.totalTransactions})">
+                                    ${opp.cta || 'Get started'}
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
     }
     
@@ -8336,80 +8883,128 @@
         const timelines = {
             small: [
                 {
-                    title: "Digital Wallets Added",
-                    description: "Integrated Apple Pay and Google Pay for mobile users",
-                    impact: "+1.5% conversion rate",
-                    date: "June 15, 2024"
+                    title: "Digital Wallets Implementation",
+                    description: "Successfully integrated Apple Pay and Google Pay for mobile users",
+                    impact: "+1.5%",
+                    impactLabel: "conversion rate",
+                    date: "June 15, 2024",
+                    status: "completed",
+                    revenue: "+$2,100/year",
+                    outcome: "Mobile conversion improved by 15%"
                 },
                 {
-                    title: "Basic Retry Logic",
-                    description: "Configured simple retry rules for declined transactions",
-                    impact: "+1.2% recovery rate",
-                    date: "May 28, 2024"
+                    title: "Basic Retry Logic Setup",
+                    description: "Implemented simple retry rules for declined transactions",
+                    impact: "+1.2%",
+                    impactLabel: "recovery rate",
+                    date: "May 28, 2024",
+                    status: "completed",
+                    revenue: "+$1,800/year",
+                    outcome: "Recovered $1,800 in previously lost revenue"
                 },
                 {
                     title: "Payment Method Expansion",
                     description: "Added local payment options for your region",
-                    impact: "+0.8% conversion rate",
-                    date: "Current"
+                    impact: "+0.8%",
+                    impactLabel: "conversion rate",
+                    date: "April 10, 2024",
+                    status: "completed",
+                    revenue: "+$1,200/year",
+                    outcome: "Regional payment adoption at 23%"
                 },
                 {
-                    title: "Advanced Fraud Detection",
-                    description: "Implement basic fraud prevention measures",
-                    impact: "+1.1% approval rate",
-                    date: "Planned"
+                    title: "Address Verification",
+                    description: "Implemented basic address verification for fraud prevention",
+                    impact: "+1.1%",
+                    impactLabel: "approval rate",
+                    date: "March 22, 2024",
+                    status: "completed",
+                    revenue: "+$1,600/year",
+                    outcome: "Fraud rate reduced by 0.3%"
                 }
             ],
             medium: [
                 {
-                    title: "Smart Retries Implemented",
-                    description: "Configured intelligent retry logic for declined transactions",
-                    impact: "+2.2% authorization rate",
-                    date: "June 15, 2024"
+                    title: "Smart Retries Implementation",
+                    description: "Successfully configured intelligent retry logic for declined transactions",
+                    impact: "+2.2%",
+                    impactLabel: "authorization rate",
+                    date: "June 15, 2024",
+                    status: "completed",
+                    revenue: "+$38,000/year",
+                    outcome: "Recovered $38K in previously declined payments"
                 },
                 {
-                    title: "Digital Wallets Added",
-                    description: "Integrated Apple Pay and Google Pay for mobile users",
-                    impact: "+1.5% conversion rate",
-                    date: "May 28, 2024"
+                    title: "Digital Wallets Integration",
+                    description: "Successfully integrated Apple Pay and Google Pay for mobile users",
+                    impact: "+1.5%",
+                    impactLabel: "conversion rate",
+                    date: "May 28, 2024",
+                    status: "completed",
+                    revenue: "+$26,000/year",
+                    outcome: "Mobile conversion improved by 18%"
                 },
                 {
                     title: "3D Secure Optimization",
-                    description: "Experiments automatic vs. challenge-based authentication",
-                    impact: "+2.6% authorization rate",
-                    date: "Current"
+                    description: "Successfully implemented automatic vs. challenge-based authentication",
+                    impact: "+2.6%",
+                    impactLabel: "authorization rate",
+                    date: "April 12, 2024",
+                    status: "completed",
+                    revenue: "+$45,000/year",
+                    outcome: "3DS abandonment reduced by 40%"
                 },
                 {
                     title: "Card Network Tokens",
-                    description: "Implement card network tokenization for improved security",
-                    impact: "+2.3% authorization rate",
-                    date: "Planned"
+                    description: "Successfully implemented card network tokenization for improved security",
+                    impact: "+2.3%",
+                    impactLabel: "authorization rate",
+                    date: "March 8, 2024",
+                    status: "completed",
+                    revenue: "+$40,000/year",
+                    outcome: "Tokenization coverage at 87%"
                 }
             ],
             large: [
                 {
                     title: "Machine Learning Fraud Detection",
-                    description: "Deployed AI-powered fraud prevention systems",
-                    impact: "+3.2% authorization rate",
-                    date: "June 15, 2024"
+                    description: "Successfully deployed AI-powered fraud prevention systems",
+                    impact: "+3.2%",
+                    impactLabel: "authorization rate",
+                    date: "June 15, 2024",
+                    status: "completed",
+                    revenue: "+$320,000/year",
+                    outcome: "Fraud rate reduced by 0.8%"
                 },
                 {
                     title: "Regional Payment Methods",
-                    description: "Added local payment options for international markets",
-                    impact: "+2.8% conversion rate",
-                    date: "May 28, 2024"
+                    description: "Successfully added local payment options for international markets",
+                    impact: "+2.8%",
+                    impactLabel: "conversion rate",
+                    date: "May 28, 2024",
+                    status: "completed",
+                    revenue: "+$280,000/year",
+                    outcome: "International conversion improved by 25%"
                 },
                 {
                     title: "Advanced 3D Secure",
-                    description: "Implementing intelligent authentication routing",
-                    impact: "+2.1% authorization rate",
-                    date: "Current"
+                    description: "Successfully implemented intelligent authentication routing",
+                    impact: "+2.1%",
+                    impactLabel: "authorization rate",
+                    date: "April 20, 2024",
+                    status: "completed",
+                    revenue: "+$210,000/year",
+                    outcome: "3DS success rate improved to 94%"
                 },
                 {
                     title: "Enterprise Link Deployment",
-                    description: "Deploy Link authentication across all customer touchpoints",
-                    impact: "+1.8% conversion rate",
-                    date: "Planned"
+                    description: "Successfully deployed Link authentication across all customer touchpoints",
+                    impact: "+1.8%",
+                    impactLabel: "conversion rate",
+                    date: "March 15, 2024",
+                    status: "completed",
+                    revenue: "+$180,000/year",
+                    outcome: "Link adoption rate at 67%"
                 }
             ]
         };
@@ -8418,30 +9013,72 @@
         const timelineContainer = container.querySelector('.timeline-container');
         
         if (timelineContainer) {
-            timelineContainer.innerHTML = businessTimeline.map((event, index) => {
-                const status = index === 0 || index === 1 ? 'completed' : index === 2 ? 'active' : 'future';
-                const icon = status === 'completed' ? 'check' : status === 'active' ? 'play' : 'target';
-                const iconColor = status === 'completed' ? 'white' : status === 'active' ? 'white' : 'var(--color-gray-400)';
-                
-                return `
-                    <div class="timeline-event ${status}">
-                        <div class="event-marker ${status}">
-                            <i data-lucide="${icon}" style="width: 16px; height: 16px; color: ${iconColor};"></i>
-                        </div>
-                        <div class="event-content">
-                            <div class="event-header">
-                                <h3 class="event-title">${event.title}</h3>
-                                <span class="event-date">${event.date}</span>
-                            </div>
-                            <p class="event-description">${event.description}</p>
-                            <div class="event-impact">
-                                <span class="impact-label">${status === 'future' ? 'Expected:' : 'Impact:'}</span>
-                                <span class="impact-value">${event.impact}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            timelineContainer.innerHTML = `
+                <div class="ab-tests-table-container">
+                    <table class="ab-tests-table">
+                        <thead>
+                            <tr>
+                                <th>Optimization</th>
+                                <th>Status</th>
+                                <th>Impact</th>
+                                <th>Revenue</th>
+                                <th>Outcome</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${businessTimeline.map((event, index) => {
+                                const statusCell = event.status === 'completed' ? 
+                                    '<div class="status-cell completed"><span class="status-dot"></span><span class="status-text">Completed</span></div>' : 
+                                    event.status === 'active' ? 
+                                    '<div class="status-cell active"><span class="status-dot"></span><span class="status-text">Active</span></div>' : 
+                                    '<div class="status-cell future"><span class="status-dot"></span><span class="status-text">Planned</span></div>';
+                                
+                                const actionButton = event.status === 'completed' ? 
+                                    '<button class="table-btn secondary"><i data-lucide="bar-chart" style="width: 14px; height: 14px;"></i> Report</button>' :
+                                    event.status === 'active' ? 
+                                    '<button class="table-btn secondary"><i data-lucide="pause" style="width: 14px; height: 14px;"></i> Pause</button>' :
+                                    '<button class="table-btn secondary"><i data-lucide="play" style="width: 14px; height: 14px;"></i> Start</button>';
+                                
+                                return `
+                                    <tr class="${event.status}">
+                                        <td>
+                                            <div class="test-cell">
+                                                <div class="test-title">${event.title}</div>
+                                                <div class="test-description">${event.description}</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            ${statusCell}
+                                        </td>
+                                        <td>
+                                            <div class="impact-cell">
+                                                <span class="impact-value">${event.impact}</span>
+                                                <span class="impact-label">${event.impactLabel}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="revenue-impact">${event.revenue}</span>
+                                        </td>
+                                        <td>
+                                            <span class="outcome-value">${event.outcome}</span>
+                                        </td>
+                                        <td>
+                                            <span class="date-value">${event.date}</span>
+                                        </td>
+                                        <td>
+                                            <div class="table-actions">
+                                                ${actionButton}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
         }
     }
     
@@ -9051,7 +9688,7 @@
                 </div>
                 <h3 style="margin: 0; font-size: 18px; font-weight: 600; color: var(--color-gray-900);">Assistant Response</h3>
             </div>
-            <p style="margin: 0; line-height: 1.6; color: var(--color-gray-700); font-size: 14px;">${response}</p>
+            <p style="margin: 0; line-height: 1.6; color: var(--color-gray-700); font-size: 13px;">${response}</p>
             <button onclick="this.parentElement.remove()" style="
                 margin-top: 16px;
                 padding: 8px 16px;
@@ -9060,7 +9697,7 @@
                 border: none;
                 border-radius: 6px;
                 cursor: pointer;
-                font-size: 14px;
+                font-size: 13px;
                 font-weight: 500;
             ">Got it</button>
         `;
@@ -10541,33 +11178,73 @@
     // Initialize chart tooltips
     document.addEventListener('DOMContentLoaded', function() {
         initializeChartTooltips();
+        lucide.createIcons();
         
         // Initialize business type switching
-        initializeBusinessTypeSwitching();
+        // initializeBusinessTypeSwitching();
         
         // Initialize date range switching
-        initializeDateRangeSwitching();
+        // initializeDateRangeSwitching();
         
         // Initialize metric card interactions
-        initializeMetricCardInteractions();
+        // initializeMetricCardInteractions();
         
         // Initialize breakdown filter interactions
-        initializeBreakdownFilterInteractions();
+        // initializeBreakdownFilterInteractions();
         
         // Initialize failed payments filter interactions
-        initializeFailedPaymentsFilterInteractions();
+        // initializeFailedPaymentsFilterInteractions();
         
         // Initialize assistant prompts
         updateAssistantPrompts();
-        
-        // Initialize chart tooltips
-        initializeChartTooltips();
         
         // Initialize navigation tabs
         initializeNavigationTabs();
         
         // Trigger initial graph animations after a short delay
         setTimeout(() => resetGraphAnimations(), 200);
+        // Ensure icons are properly initialized
+        setTimeout(() => {
+            if (typeof lucide !== "undefined") {
+                lucide.createIcons();
+                console.log("Icons initialized");
+            } else {
+                console.error("Lucide library not loaded");
+            }
+        }, 500);
+        
+        // Initialize insights for the default tab (acceptance)
+        function initializeInsights() {
+            console.log('Starting insights initialization...');
+            // Ensure insights section is visible
+            const insightsSection = document.getElementById('insightsSection');
+            console.log('Insights section element:', insightsSection);
+            
+            if (insightsSection) {
+                insightsSection.style.display = 'block';
+                insightsSection.style.visibility = 'visible';
+                insightsSection.style.opacity = '1';
+                console.log('Insights section made visible on page load');
+                
+                // Check if the section is actually visible
+                const computedStyle = window.getComputedStyle(insightsSection);
+                console.log('Insights section computed display:', computedStyle.display);
+                console.log('Insights section computed visibility:', computedStyle.visibility);
+                console.log('Insights section computed opacity:', computedStyle.opacity);
+                
+                console.log('Calling updateInsights with acceptance...');
+                updateInsights('acceptance');
+            } else {
+                console.error('Insights section not found on page load');
+                // Retry after a short delay
+                setTimeout(initializeInsights, 100);
+            }
+        }
+        
+        // Try multiple times to ensure insights are initialized
+        setTimeout(initializeInsights, 100);
+        setTimeout(initializeInsights, 500);
+        setTimeout(initializeInsights, 1000);
     });
 
     // Function to reset graph animations when charts are updated
@@ -10665,6 +11342,15 @@
             case 'acceptance':
                 console.log('Showing acceptance view');
                 showAcceptanceView();
+                // Ensure insights section is visible for acceptance tab
+                setTimeout(() => {
+                    const insightsSection = document.getElementById('insightsSection');
+                    if (insightsSection) {
+                        insightsSection.style.display = 'block';
+                        insightsSection.style.visibility = 'visible';
+                        insightsSection.style.opacity = '1';
+                    }
+                }, 100);
                 break;
             case 'authentication':
                 console.log('Showing authentication view');
@@ -10686,6 +11372,166 @@
                 console.log('Showing default acceptance view');
                 showAcceptanceView();
         }
+        
+        // Update insights based on current tab
+        setTimeout(() => {
+            updateInsights(tabName.toLowerCase());
+        }, 50);
+    }
+    
+    // Insights data for different tabs
+    const insightsData = {
+        acceptance: [
+            {
+                type: 'Acceptance Alert',
+                message: 'Acceptance rate dropped 2.1% in Germany over the last 24 hours. This represents a potential revenue loss of $1,200.',
+                timestamp: 'Jul 17',
+                actions: [
+                    { text: 'Ask AI', onclick: 'askAIAboutAcceptanceDrop()' },
+                    { text: 'View Details', onclick: 'viewAcceptanceDetails()', primary: true }
+                ]
+            },
+            {
+                type: 'Fraud Alert',
+                message: 'Unusual fraud pattern detected in card payments. 15% increase in declined transactions.',
+                timestamp: 'Jul 16',
+                actions: [
+                    { text: 'Ask AI', onclick: 'askAIAboutFraudPattern()' },
+                    { text: 'Review', onclick: 'reviewFraudDetails()', primary: true }
+                ]
+            }
+        ],
+        authentication: [
+            {
+                type: '3D Secure Alert',
+                message: '3D Secure authentication rate dropped 8% in the last week. This may impact your liability protection.',
+                timestamp: 'Jul 17',
+                actions: [
+                    { text: 'Ask AI', onclick: 'askAIAbout3DSDrop()' },
+                    { text: 'Configure', onclick: 'configure3DSettings()', primary: true }
+                ]
+            }
+        ],
+        disputes: [
+            {
+                type: 'Dispute Alert',
+                message: 'Dispute rate increased 12% this month. High volume of "fraudulent" chargebacks detected.',
+                timestamp: 'Jul 17',
+                actions: [
+                    { text: 'Ask AI', onclick: 'askAIAboutDisputes()' },
+                    { text: 'Review', onclick: 'reviewDisputes()', primary: true }
+                ]
+            }
+        ],
+        'payment methods': [
+            {
+                type: 'Apple Pay Alert',
+                message: 'Apple Pay acceptance rate is 15% below industry average. Opportunity to increase revenue by $2,400/month.',
+                timestamp: 'Jul 16',
+                actions: [
+                    { text: 'Ask AI', onclick: 'askAIAboutApplePay()' },
+                    { text: 'Enable', onclick: 'enableApplePay()', primary: true }
+                ]
+            }
+        ],
+        optimization: [
+            {
+                type: 'Optimization',
+                message: 'Apple Pay conversion rate improved 15% this month. Consider expanding to other regions.',
+                timestamp: 'Jul 17',
+                actions: [
+                    { text: 'Ask AI', onclick: 'askAIAboutApplePayOptimization()' },
+                    { text: 'Expand', onclick: 'expandApplePay()', primary: true }
+                ]
+            },
+            {
+                type: 'Optimization Alert',
+                message: 'New optimization opportunity detected. Potential 3.2% increase in acceptance rate with Link authentication.',
+                timestamp: 'Jul 16',
+                actions: [
+                    { text: 'Ask AI', onclick: 'askAIAboutOptimization()' },
+                    { text: 'Implement', onclick: 'implementOptimization()', primary: true }
+                ]
+            }
+        ]
+    };
+    
+    function updateInsights(tabName) {
+        console.log('updateInsights called with tabName:', tabName);
+        const insightsContent = document.getElementById('insightsContent');
+        const insightsSection = document.getElementById('insightsSection');
+        
+        console.log('insightsContent found:', !!insightsContent);
+        console.log('insightsSection found:', !!insightsSection);
+        console.log('insightsContent element:', insightsContent);
+        console.log('insightsSection element:', insightsSection);
+        
+        if (!insightsContent || !insightsSection) {
+            console.log('Insights elements not found');
+            return;
+        }
+        
+        // Ensure the insights section is visible
+        insightsSection.style.display = 'block';
+        insightsSection.style.visibility = 'visible';
+        insightsSection.style.opacity = '1';
+        
+        // Check if parent elements might be hiding it
+        let parent = insightsSection.parentElement;
+        let parentLevel = 0;
+        while (parent && parentLevel < 5) {
+            const parentStyle = window.getComputedStyle(parent);
+            console.log(`Parent level ${parentLevel} display:`, parentStyle.display);
+            console.log(`Parent level ${parentLevel} visibility:`, parentStyle.visibility);
+            console.log(`Parent level ${parentLevel} opacity:`, parentStyle.opacity);
+            parent = parent.parentElement;
+            parentLevel++;
+        }
+        
+        if (typeof insightsData === 'undefined') {
+            console.error('insightsData is not defined!');
+            return;
+        }
+        
+        const insights = insightsData[tabName] || [];
+        console.log('Insights for tab', tabName, ':', insights);
+        console.log('Available insightsData keys:', Object.keys(insightsData));
+        console.log('Full insightsData object:', insightsData);
+        
+        if (insights.length === 0) {
+            console.log('No insights found for tab:', tabName);
+            // Don't hide the section, just show empty state
+            insightsContent.innerHTML = '<div class="insight-item"><div class="insight-message">No insights available for this tab.</div></div>';
+            return;
+        }
+        
+        insightsContent.innerHTML = '';
+        console.log('Showing insights section with', insights.length, 'insights');
+        
+        insights.forEach(insight => {
+            const insightItem = document.createElement('div');
+            insightItem.className = 'insight-item';
+            
+            insightItem.innerHTML = `
+                <div class="insight-dot-indicator"></div>
+                <div class="insight-content">
+                    <div class="insight-header">
+                        <span class="insight-type">${insight.type}</span>
+                        <span class="insight-timestamp">${insight.timestamp}</span>
+                    </div>
+                    <div class="insight-message">${insight.message}</div>
+                    <div class="insight-actions">
+                        ${insight.actions.map(action => 
+                            `<button class="insight-btn ${action.primary ? 'primary' : ''}" onclick="${action.onclick}">${action.text}</button>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+            
+            insightsContent.appendChild(insightItem);
+        });
+        
+        console.log('Insights updated successfully');
     }
 
     function showAcceptanceView() {
@@ -10716,12 +11562,31 @@
         if (separator) {
             separator.style.display = 'block';
         }
+        
+        // Ensure insights section is visible
+        const insightsSection = document.getElementById('insightsSection');
+        if (insightsSection) {
+            insightsSection.style.display = 'block';
+            insightsSection.style.visibility = 'visible';
+            insightsSection.style.opacity = '1';
+        }
+        
+        // Update insights for acceptance tab
+        setTimeout(() => {
+            updateInsights('acceptance');
+        }, 100);
     }
 
     function showAuthenticationView() {
         const mainContent = document.querySelector('.two-column-layout');
         if (mainContent) {
             mainContent.style.display = 'none';
+        }
+        
+        // Hide insights section for other tabs
+        const insightsSection = document.getElementById('insightsSection');
+        if (insightsSection) {
+            insightsSection.style.display = 'none';
         }
         
         // Hide the optimization view if it exists
@@ -10756,6 +11621,12 @@
             mainContent.style.display = 'none';
         }
         
+        // Hide insights section for other tabs
+        const insightsSection = document.getElementById('insightsSection');
+        if (insightsSection) {
+            insightsSection.style.display = 'none';
+        }
+        
         // Hide the optimization view if it exists
         const optimizationView = document.getElementById('optimization-view');
         if (optimizationView) {
@@ -10786,6 +11657,12 @@
         const mainContent = document.querySelector('.two-column-layout');
         if (mainContent) {
             mainContent.style.display = 'none';
+        }
+        
+        // Hide insights section for other tabs
+        const insightsSection = document.getElementById('insightsSection');
+        if (insightsSection) {
+            insightsSection.style.display = 'none';
         }
         
         // Hide the optimization view if it exists
@@ -10833,6 +11710,12 @@
         const twoColumnLayout = document.querySelector('.two-column-layout');
         if (twoColumnLayout) {
             twoColumnLayout.style.display = 'none';
+        }
+        
+        // Hide insights section for optimization tab
+        const insightsSection = document.getElementById('insightsSection');
+        if (insightsSection) {
+            insightsSection.style.display = 'none';
         }
         
         // Create or show optimization view
@@ -10913,19 +11796,19 @@
                     <div class="performance-stats" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 72px;">
                         <div class="performance-stat-card" data-metric="total-revenue" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
                             <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
-                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Total revenue</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Total revenue</div>
                         </div>
                         <div class="performance-stat-card" data-metric="revenue-recovered" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
                             <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
-                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Total revenue recovered</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Total revenue recovered</div>
                         </div>
                         <div class="performance-stat-card" data-metric="recovered-payments" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
                             <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">134</div>
-                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Recovered payments</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Recovered payments</div>
                         </div>
                         <div class="performance-stat-card" data-metric="success-rate" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
                             <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">0%</div>
-                            <div class="stat-label" style="font-size: 14px; color: var(--color-gray-600);">Success rate</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Success rate</div>
                         </div>
                     </div>
 
@@ -11182,7 +12065,7 @@
                         <div class="opportunities-header">
                             <div class="opportunities-title-section">
                                                             <h2 class="opportunities-title">Recommendations</h2>
-                            <p class="opportunities-subtitle">Product recommendations to optimize your payment performance</p>
+                            <p class="opportunities-subtitle">Synthesized user card recommendations to optimize your payment performance</p>
                             </div>
                             <a href="#" class="view-all-link" onclick="openAIPanel('Show me all optimization opportunities and their detailed analysis', '${currentBusinessType}', 'all-optimizations', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
                                 View all
@@ -11194,10 +12077,10 @@
                             <table class="opportunities-table">
                                 <thead>
                                     <tr>
-                                        <th>Opportunity</th>
+                                        <th>Recommendation</th>
                                         <th>Impact</th>
                                         <th>Revenue</th>
-                                        <th>Level</th>
+                                        <th>Implementation</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -11412,79 +12295,15 @@
                         </div>
                     </div>
 
-                    <!-- Progress Timeline -->
-                    <div class="progress-timeline">
-                        <h2 class="timeline-title">Optimization journey</h2>
-                        <p class="timeline-subtitle">Track your progress and see the impact of implemented optimizations</p>
+                    <!-- Past Optimizations Table -->
+                    <div class="ab-testing-section">
+                        <div class="ab-header">
+                            <h2 class="ab-title">Past optimizations</h2>
+                            <p class="timeline-subtitle">Review your implemented optimizations and their outcomes</p>
+                        </div>
                         
                         <div class="timeline-container">
-                            <div class="timeline-event completed">
-                                <div class="event-marker completed">
-                                    <i data-lucide="check" style="width: 16px; height: 16px; color: white;"></i>
-                                </div>
-                                <div class="event-content">
-                                    <div class="event-header">
-                                        <h3 class="event-title">Smart Retries Implemented</h3>
-                                        <span class="event-date">June 15, 2024</span>
-                                    </div>
-                                    <p class="event-description">Configured intelligent retry logic for declined transactions</p>
-                                    <div class="event-impact">
-                                        <span class="impact-label">Impact:</span>
-                                        <span class="impact-value">+2.2% authorization rate</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="timeline-event completed">
-                                <div class="event-marker completed">
-                                    <i data-lucide="check" style="width: 16px; height: 16px; color: white;"></i>
-                                </div>
-                                <div class="event-content">
-                                    <div class="event-header">
-                                        <h3 class="event-title">Digital Wallets Added</h3>
-                                        <span class="event-date">May 28, 2024</span>
-                                    </div>
-                                    <p class="event-description">Integrated Apple Pay and Google Pay for mobile users</p>
-                                    <div class="event-impact">
-                                        <span class="impact-label">Impact:</span>
-                                        <span class="impact-value">+1.5% conversion rate</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="timeline-event active">
-                                <div class="event-marker active">
-                                    <i data-lucide="play" style="width: 16px; height: 16px; color: white;"></i>
-                                </div>
-                                <div class="event-content">
-                                    <div class="event-header">
-                                        <h3 class="event-title">3D Secure Optimization</h3>
-                                        <span class="event-date">Current</span>
-                                    </div>
-                                    <p class="event-description">Experiments automatic vs. challenge-based authentication</p>
-                                    <div class="event-impact">
-                                        <span class="impact-label">Expected:</span>
-                                        <span class="impact-value">+2.6% authorization rate</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="timeline-event future">
-                                <div class="event-marker future">
-                                    <i data-lucide="target" style="width: 16px; height: 16px; color: var(--color-gray-400);"></i>
-                                </div>
-                                <div class="event-content">
-                                    <div class="event-header">
-                                        <h3 class="event-title">Card Network Tokens</h3>
-                                        <span class="event-date">Planned</span>
-                                    </div>
-                                    <p class="event-description">Implement card network tokenization for improved security</p>
-                                    <div class="event-impact">
-                                        <span class="impact-label">Expected:</span>
-                                        <span class="impact-value">+2.3% authorization rate</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- Table will be dynamically populated by updateTimeline function -->
                         </div>
                     </div>
                     
@@ -11510,36 +12329,7 @@
                             </div>
                         </div>
                         
-                        <!-- Performance Insights -->
-                        <div class="performance-insights">
-                            <h3 class="insights-title">Performance insights</h3>
-                            <div class="insight-card">
-                                <div class="insight-header">
-                                    <i data-lucide="trending-up" style="width: 16px; height: 16px; color: var(--color-green-500);"></i>
-                                    <span class="insight-label">Top Performing Area</span>
-                                </div>
-                                <div class="insight-content">
-                                    <span class="insight-value">Elements Integration</span>
-                                    <div class="insight-description-container">
-                                        <span class="insight-description">92% success rate - excellent payment method routing with Elements</span>
-                                        <a href="#" class="learn-more-link">Learn more</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="insight-card">
-                                <div class="insight-header">
-                                    <i data-lucide="alert-triangle" style="width: 16px; height: 16px; color: var(--color-orange-500);"></i>
-                                    <span class="insight-label">Needs Attention</span>
-                                </div>
-                                <div class="insight-content">
-                                    <span class="insight-value">Radar Fraud Detection</span>
-                                    <div class="insight-description-container">
-                                        <span class="insight-description">0.4% dispute rate - consider enabling Radar for fraud prevention</span>
-                                        <a href="#" class="learn-more-link">Learn more</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                         
                         <!-- Quick Actions -->
                         <div class="quick-actions">
@@ -11623,7 +12413,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 24px;
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             min-height: 100vh;
         `;
 
@@ -11650,7 +12440,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 24px;
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             min-height: 100vh;
         `;
 
@@ -11677,7 +12467,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 24px;
-            background: var(--color-gray-50);
+            background: var(--color-gray-100);
             min-height: 100vh;
         `;
 
@@ -11886,12 +12676,51 @@
 
     // Initialize performance stat cards when optimization view is created
     const originalCreateOptimizationView = createOptimizationView;
-    createOptimizationView = function() {
-        const view = originalCreateOptimizationView();
-        setTimeout(() => {
-            initializePerformanceStatCards();
-        }, 100);
-        return view;
+    
+    // Notification Panel Functionality
+    function toggleNotificationPanel() {
+        console.log("Notification panel toggle called");
+        const panel = document.getElementById("notificationPanel");
+        if (panel.style.display === "none" || !panel.style.display) {
+            panel.style.display = "flex";
+            lucide.createIcons();
+        } else {
+            panel.style.display = "none";
+        }
+    }
+    
+    // AI Integration Functions
+    function askAIAboutAcceptanceDrop() {
+        const question = "Why did my acceptance rate drop 2.1% in Germany and what can I do about it?";
+        openAIPanel(question, "medium", "acceptance-drop", 63.27, "Last 90 days", 31);
+        toggleNotificationPanel();
+    }
+    
+    function askAIAboutFraudPattern() {
+        const question = "What should I do about the new fraud pattern detected in Asia?";
+        openAIPanel(question, "medium", "fraud-pattern", 63.27, "Last 90 days", 31);
+        toggleNotificationPanel();
+    }
+    
+    function askAIAboutApplePay() {
+        const question = "How can I expand Apple Pay to other regions given the 15% improvement?";
+        openAIPanel(question, "medium", "apple-pay-expansion", 63.27, "Last 90 days", 31);
+        toggleNotificationPanel();
+    }
+    
+    function viewAcceptanceDetails() {
+        switchTabView("acceptance");
+        toggleNotificationPanel();
+    }
+    
+    function viewFraudDetails() {
+        switchTabView("disputes");
+        toggleNotificationPanel();
+    }
+    
+    function viewOpportunityDetails() {
+        switchTabView("payment methods");
+        toggleNotificationPanel();
     };
 
 
@@ -11961,10 +12790,10 @@
         <div class="metric-modal-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
             <div>
                 <h2 class="metric-modal-title" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 8px 0;">Metric Details</h2>
-                <p class="metric-modal-subtitle" style="font-size: 14px; color: var(--color-gray-600); margin: 0;">Time series data and trends</p>
+                <p class="metric-modal-subtitle" style="font-size: 13px; color: var(--color-gray-600); margin: 0;">Time series data and trends</p>
             </div>
             <div style="display: flex; gap: 12px; align-items: center;">
-                <button class="view-in-studio-btn" style="background: var(--color-purple-500); color: white; border: none; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 8px;">
+                <button class="view-in-studio-btn" style="background: var(--color-purple-500); color: white; border: none; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 8px;">
                     <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
                     View in studio
                 </button>
@@ -11999,15 +12828,15 @@
                     <div class="metric-chart-legend" style="display: flex; gap: 24px; margin-bottom: 16px;">
                         <div class="legend-item" style="display: flex; align-items: center; gap: 8px;">
                             <div class="legend-color current" style="width: 12px; height: 3px; background: #533AFD; border-radius: 2px;"></div>
-                            <span style="font-size: 14px; color: var(--color-gray-700);">Current performance</span>
+                            <span style="font-size: 13px; color: var(--color-gray-700);">Current performance</span>
                         </div>
                         <div class="legend-item" style="display: flex; align-items: center; gap: 8px;">
                             <div class="legend-color previous" style="width: 12px; height: 3px; background: #E4E7EC; border-radius: 2px;"></div>
-                            <span style="font-size: 14px; color: var(--color-gray-700);">Baseline performance</span>
+                            <span style="font-size: 13px; color: var(--color-gray-700);">Baseline performance</span>
                         </div>
                         <div class="legend-item" style="display: flex; align-items: center; gap: 8px;">
                             <div class="legend-color optimized" style="width: 12px; height: 3px; background: #22C55E; border-radius: 2px; border-top: 2px dashed #22C55E;"></div>
-                            <span style="font-size: 14px; color: var(--color-gray-700);">AI-optimized potential</span>
+                            <span style="font-size: 13px; color: var(--color-gray-700);">AI-optimized potential</span>
                         </div>
                     </div>
                     <span class="update-status" style="font-size: 12px; color: var(--color-gray-500);">Updated yesterday</span>
@@ -12020,8 +12849,8 @@
                     <i data-lucide="sparkles" style="width: 16px; height: 16px; color: var(--color-purple-500);"></i>
                     <h3 style="font-size: 18px; font-weight: 600; color: var(--color-gray-900); margin: 0;">AI Insights</h3>
                 </div>
-                <div class="ai-insight-content" style="background: var(--color-gray-50); border-radius: 8px; padding: 16px;">
-                    <p style="font-size: 14px; color: var(--color-gray-700); margin: 0 0 12px 0; line-height: 1.5;">
+                <div class="ai-insight-content" style="background: var(--color-gray-100); border-radius: 8px; padding: 16px;">
+                    <p style="font-size: 13px; color: var(--color-gray-700); margin: 0 0 12px 0; line-height: 1.5;">
                         <strong>Performance Analysis:</strong> Your <span id="insight-metric-name">success rate</span> shows a <span id="insight-trend">positive trend</span> over the last 90 days, with a <span id="insight-improvement">12% improvement</span> compared to baseline performance.
                     </p>
                     <div class="ai-recommendation" style="background: white; border-radius: 6px; padding: 12px; margin-top: 12px;">
@@ -12039,6 +12868,64 @@
     </div>
 </div>
 
-</body>
+<!-- Notification Panel -->
+<div id="notificationPanel" class="notification-panel" style="display:none;">
+    <div class="notification-panel-header">
+        <span>Notifications</span>
+        <button onclick="toggleNotificationPanel()" class="close-btn">
+            <i data-lucide="x"></i>
+        </button>
+    </div>
+    <div class="notification-list" id="notificationList">
+        <div class="notification-item">
+            <div class="notification-dot-indicator"></div>
+            <div class="notification-content">
+                <div class="notification-header">
+                    <span class="notification-type">Acceptance Alert</span>
+                    <span class="notification-timestamp">Jul 17</span>
+                </div>
+                <div class="notification-message">
+                    Acceptance rate dropped 2.1% in Germany over the last 24 hours. This represents a potential revenue loss of $1,200.
+                </div>
+                <div class="notification-actions">
+                    <button class="notification-btn" onclick="askAIAboutAcceptanceDrop()">Ask AI</button>
+                    <button class="notification-btn primary" onclick="viewAcceptanceDetails()">View Details</button>
+                </div>
+            </div>
+        </div>
+        <div class="notification-item">
+            <div class="notification-dot-indicator"></div>
+            <div class="notification-content">
+                <div class="notification-header">
+                    <span class="notification-type">Fraud Alert</span>
+                    <span class="notification-timestamp">Jul 16</span>
+                </div>
+                <div class="notification-message">
+                    New fraud pattern detected in Asia. 15 suspicious transactions flagged in the last hour.
+                </div>
+                <div class="notification-actions">
+                    <button class="notification-btn" onclick="askAIAboutFraudPattern()">Ask AI</button>
+                    <button class="notification-btn primary" onclick="viewFraudDetails()">Review</button>
+                </div>
+            </div>
+        </div>
+        <div class="notification-item">
+            <div class="notification-dot-indicator"></div>
+            <div class="notification-content">
+                <div class="notification-header">
+                    <span class="notification-type">Optimization</span>
+                    <span class="notification-timestamp">Jul 15</span>
+                </div>
+                <div class="notification-message">
+                    Apple Pay conversion rate improved 15% this month. Consider expanding to other regions.
+                </div>
+                <div class="notification-actions">
+                    <button class="notification-btn" onclick="askAIAboutApplePayOptimization()">Ask AI</button>
+                    <button class="notification-btn primary" onclick="expandApplePay()">Expand</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div></body>
 </html> 
 </html> 
