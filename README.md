@@ -26,7 +26,7 @@ The application includes the following sections:
 
 ## Live Demo
 
-🌐 **Access the live application**: [https://rspencer-stripe.github.io/payments-analaytics/](https://rspencer-stripe.github.io/payments-analaytics/)
+🌐 **Access the live application**: [https://rspencer-stripe.github.io/payments-analytics/](https://rspencer-stripe.github.io/payments-analytics/)
 
 ## Getting Started
 
@@ -38,8 +38,8 @@ The application includes the following sections:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/rspencer-stripe/payments-analaytics.git
-cd payments-analaytics
+git clone https://github.com/rspencer-stripe/payments-analytics.git
+cd payments-analytics
 ```
 
 2. Open the application:
@@ -81,7 +81,7 @@ This project is automatically deployed to GitHub Pages using GitHub Actions. The
 
 1. Triggers on pushes to `main` or `master` branch
 2. Builds and deploys to the `gh-pages` branch
-3. Makes the site available at `https://rspencer-stripe.github.io/payments-analaytics/`
+3. Makes the site available at `https://rspencer-stripe.github.io/payments-analytics/`
 
 ### Manual Deployment
 
