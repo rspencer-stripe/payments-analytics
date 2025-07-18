@@ -1,21 +1,22 @@
-# Stripe Payment Analytics Dashboard
+# Payment Assistant AI
 
-A modern web application for Stripe payment analytics with a beautiful and responsive design. This is a standalone HTML application that can be run directly in any web browser.
+An AI-powered payment analytics and optimization dashboard built with modern web technologies. This project provides intelligent insights and tools for payment processing optimization.
 
 ## Features
 
-- **Left Navigation Bar**: Collapsible sidebar with navigation items
-- **Responsive Design**: Works on desktop and mobile devices
+- **AI-Powered Analytics**: Intelligent payment processing insights
+- **Real-time Dashboard**: Live payment metrics and performance indicators
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Modern UI**: Clean, professional interface using Tailwind CSS
 - **Interactive Navigation**: Smooth transitions and active states
 - **No Build Process**: Runs directly in the browser
 
 ## Navigation Structure
 
-The left navigation bar includes the following sections:
+The application includes the following sections:
 
 - **Overview**: Dashboard with key metrics (Total Revenue, Transactions, Customers, Success Rate)
-- **Analytics**: Detailed analytics and charts
+- **Analytics**: Detailed analytics and AI-powered insights
 - **Transactions**: Transaction management and history (with notification badge)
 - **Customers**: Customer data and management
 - **Reports**: Report generation and exports
@@ -23,18 +24,22 @@ The left navigation bar includes the following sections:
 - **Settings**: Application configuration
 - **Help & Support**: Documentation and support
 
+## Live Demo
+
+🌐 **Access the live application**: [https://stripe-demos.github.io/rspencer-assistant/](https://stripe-demos.github.io/rspencer-assistant/)
+
 ## Getting Started
 
 ### Prerequisites
 
 - Any modern web browser (Chrome, Firefox, Safari, Edge)
 
-### Installation
+### Local Development
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd stripe-payment-analytics
+git clone https://github.com/stripe-demos/rspencer-assistant.git
+cd rspencer-assistant
 ```
 
 2. Open the application:
@@ -63,27 +68,46 @@ cd stripe-payment-analytics
 ## Project Structure
 
 ```
-├── index.html          # Main application file
-└── README.md           # Project documentation
+├── index.html              # Main application file
+├── server.py               # Local development server
+├── .github/workflows/      # GitHub Actions deployment
+├── sites/rspencer/         # Site-specific configuration
+└── README.md               # Project documentation
 ```
 
+## Deployment
+
+This project is automatically deployed to GitHub Pages using GitHub Actions. The deployment workflow:
+
+1. Triggers on pushes to `main` or `master` branch
+2. Builds and deploys to the `gh-pages` branch
+3. Makes the site available at `https://stripe-demos.github.io/rspencer-assistant/`
+
+### Manual Deployment
+
+If you need to deploy manually:
+
+1. Enable GitHub Pages in your repository settings
+2. Set the source to "GitHub Actions"
+3. Push changes to trigger automatic deployment
+
 ## Key Features
+
+### AI-Powered Analytics
+- Intelligent payment processing insights
+- Predictive analytics for payment optimization
+- Automated recommendations
+
+### Interactive Dashboard
+- **Key Metrics**: Total Revenue, Transactions, Customers, Success Rate
+- **Trend Indicators**: Shows percentage change from previous period
+- **Responsive Grid**: Adapts to different screen sizes
 
 ### Sidebar Navigation
 - **Collapsible**: Toggle between expanded (256px) and collapsed (64px) states
 - **Icon-based**: Each navigation item has a relevant icon
 - **Active highlighting**: Current page is clearly indicated
 - **Badge notifications**: Shows count of new items (e.g., transactions)
-
-### Overview Dashboard
-- **Key Metrics**: Total Revenue, Transactions, Customers, Success Rate
-- **Trend Indicators**: Shows percentage change from previous period
-- **Responsive Grid**: Adapts to different screen sizes
-
-### Interactive Elements
-- **Hover Effects**: Smooth color transitions on navigation items
-- **Click Feedback**: Visual feedback when clicking navigation items
-- **Smooth Animations**: All state changes are animated
 
 ## Browser Compatibility
 
@@ -92,15 +116,17 @@ cd stripe-payment-analytics
 - Safari 12+
 - Edge 79+
 
-## Customization
+## Contributing
 
-The application is built with vanilla HTML, CSS, and JavaScript, making it easy to customize:
-
-- **Colors**: Modify the CSS variables in the `<style>` section
-- **Icons**: Replace Lucide icons with any icon library
-- **Layout**: Adjust the grid and spacing in the CSS
-- **Content**: Add new pages by following the existing pattern
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
 ## License
 
 MIT License - see LICENSE file for details
+
+## Support
+
+For support and questions, please open an issue in the GitHub repository.
