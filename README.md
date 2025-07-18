@@ -42,10 +42,24 @@ git clone https://github.com/rspencer-stripe/payments-analytics.git
 cd payments-analytics
 ```
 
-2. Open the application:
-   - Double-click on `index.html` to open in your default browser
-   - Or drag and drop `index.html` into your browser window
-   - Or use a local server: `python -m http.server 8000` and visit `http://localhost:8000`
+2. Start the development server:
+```bash
+./dev.sh
+```
+
+3. Open your browser and navigate to `http://localhost:8000`
+
+### Development Workflow
+
+- **Start server**: `./dev.sh`
+- **Edit files**: Make changes to `index.html` or other files
+- **View changes**: Refresh your browser to see live updates
+- **Stop server**: Press `Ctrl+C` in the terminal
+
+### Deploy to GitHub Pages
+
+- **Deploy changes**: `./deploy.sh "Your commit message"`
+- **Auto-deploy**: GitHub Actions will automatically deploy to https://rspencer-stripe.github.io/payments-analytics/
 
 ## Design Features
 
