@@ -5292,11 +5292,11 @@
             
             <!-- Navigation Tabs -->
             <div class="nav-tabs">
-                <button class="nav-tab active" onclick="switchTabView('acceptance')">Acceptance</button>
+                <button class="nav-tab active" onclick="switchTabView('optimization')">Optimization</button>
+                <button class="nav-tab" onclick="switchTabView('acceptance')">Acceptance</button>
                 <button class="nav-tab" onclick="switchTabView('authentication')">Authentication</button>
                 <button class="nav-tab" onclick="switchTabView('disputes')">Disputes</button>
                 <button class="nav-tab" onclick="switchTabView('payment methods')">Payment methods</button>
-                <button class="nav-tab" onclick="switchTabView('optimization')">Optimization</button>
             </div>
             
             <!-- Filter Section Row 1 -->
@@ -5769,14 +5769,14 @@
                             if (typeof updateInsights === 'function') {
                                 setTimeout(() => {
                                     console.log('Calling updateInsights from inline script...');
-                                    updateInsights('acceptance');
+                                    updateInsights('optimization');
                                 }, 10);
                             } else {
                                 console.log('updateInsights function not available yet, will retry...');
                                 setTimeout(() => {
                                     if (typeof updateInsights === 'function') {
                                         console.log('Retrying updateInsights from inline script...');
-                                        updateInsights('acceptance');
+                                        updateInsights('optimization');
                                     }
                                 }, 100);
                             }
@@ -11598,8 +11598,8 @@
                 console.log('Insights section computed visibility:', computedStyle.visibility);
                 console.log('Insights section computed opacity:', computedStyle.opacity);
                 
-                console.log('Calling updateInsights with acceptance...');
-                updateInsights('acceptance');
+                console.log('Calling updateInsights with optimization...');
+                updateInsights('optimization');
                 return true; // Success
             } else {
                 console.error('Insights section not found on page load');
@@ -11690,10 +11690,10 @@
         console.log('Attempting immediate insights initialization...');
         let insightsInitialized = initializeInsights();
         
-        // Direct call to update insights for acceptance tab
+        // Direct call to update insights for optimization tab
         setTimeout(() => {
-            console.log('Direct updateInsights call for acceptance...');
-            updateInsights('acceptance');
+            console.log('Direct updateInsights call for optimization...');
+            updateInsights('optimization');
         }, 50);
         
         // Initialize navigation tabs
@@ -11701,6 +11701,11 @@
         
         // Initialize insights toggle functionality
         initializeInsightsToggle();
+        
+        // Set initial tab to optimization
+        setTimeout(() => {
+            switchTabView('optimization');
+        }, 100);
         
         // Trigger initial graph animations after a short delay
         setTimeout(() => resetGraphAnimations(), 200);
@@ -11725,6 +11730,11 @@
                 }
             }, delay);
         });
+        
+        // Additional call to ensure optimization tab is loaded
+        setTimeout(() => {
+            updateInsights('optimization');
+        }, 2000);
         
         // Also try to initialize insights when the window is fully loaded
         window.addEventListener('load', function() {
