@@ -867,6 +867,11 @@
             display: block;
             box-sizing: border-box;
         }
+        
+        .right-column {
+            position: relative;
+            min-height: 400px;
+        }
 
         .metrics-header {
             display: flex;
@@ -1216,6 +1221,68 @@
             opacity: 1 !important;
             position: relative !important;
             z-index: 1 !important;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            transform: translateX(0);
+            overflow: visible;
+            min-height: 120px;
+        }
+        
+        .insights-section.hidden {
+            transform: translateX(100%) !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        
+        .insights-section.hidden + .insights-toggle-btn {
+            background: var(--color-gray-600);
+        }
+        
+        .insights-section.hidden + .insights-toggle-btn:hover {
+            background: var(--color-gray-700);
+        }
+        
+        .insights-toggle-btn {
+            position: absolute;
+            top: 8px;
+            right: -40px;
+            width: 32px;
+            height: 32px;
+            background: var(--color-purple-500);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(83, 58, 253, 0.2);
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .insights-toggle-btn:hover {
+            background: var(--color-purple-600);
+            transform: scale(1.05);
+        }
+        
+        .insights-toggle-btn.hidden {
+            right: -40px;
+        }
+        
+        .insights-toggle-btn.visible {
+            right: -40px;
+        }
+        
+        .insights-toggle-icon {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .insights-section.hidden + .insights-toggle-btn .insights-toggle-icon {
+            transform: rotate(180deg);
         }
         
         .insights-header {
@@ -1339,6 +1406,18 @@
             padding: 0;
             background: transparent;
             width: 100%;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            top: 0;
+        }
+        
+        .assistant-section.slide-up {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            margin-bottom: 0;
+            z-index: 10;
         }
 
         .assistant-header {
@@ -5679,6 +5758,10 @@
                             <!-- Insights will be dynamically populated based on current tab -->
                         </div>
                     </div>
+                    <!-- Insights Toggle Button -->
+                    <button class="insights-toggle-btn" id="insightsToggleBtn" title="Toggle Insights">
+                        <i data-lucide="chevron-left" class="insights-toggle-icon"></i>
+                    </button>
                     <script>
                         // Immediate insights initialization when section is available
                         (function() {
@@ -9320,7 +9403,7 @@
                                 const statusCell = event.status === 'completed' ? 
                                     '<div class="status-cell completed"><span class="status-dot"></span><span class="status-text">Completed</span></div>' : 
                                     event.status === 'active' ? 
-                                    '<div class="status-cell active"><span class="status-dot"></span><span class="status-text">Active</span></div>' : 
+                                    '<div class="status-cell active"><span class="status-dot"></span><span class="status-text">Active</span></div>' :
                                     '<div class="status-cell future"><span class="status-dot"></span><span class="status-text">Planned</span></div>';
                                 
                                 const actionButton = event.status === 'completed' ? 
@@ -9822,6 +9905,10 @@
     function updateAssistantPrompts(businessType, dateRange) {
         console.log('updateAssistantPrompts called with:', businessType, dateRange);
         
+        // Add default values if parameters are missing
+        businessType = businessType || 'medium';
+        dateRange = dateRange || 'Last 90 days';
+        
         const prompt1 = document.getElementById('prompt-1');
         const prompt2 = document.getElementById('prompt-2');
         const prompt3 = document.getElementById('prompt-3');
@@ -9867,19 +9954,19 @@
         // Business-specific prompt templates with professional tone
         const promptTemplates = {
             small: {
-                prompt1: `How can I improve my ${successRate.toFixed(1)}% authorization rate for the ${dateRange.toLowerCase()}?`,
-                prompt2: `What's causing my $${Math.round(failedVolume)} in failed payments for the ${dateRange.toLowerCase()} and how can I reduce this?`,
-                prompt3: `Are my current payment methods limiting my $${volume.toFixed(0)} volume for the ${dateRange.toLowerCase()}?`
+                prompt1: `How can I improve my ${successRate.toFixed(1)}% authorization rate for the ${(dateRange || '').toLowerCase()}?`,
+                prompt2: `What's causing my $${Math.round(failedVolume)} in failed payments for the ${(dateRange || '').toLowerCase()} and how can I reduce this?`,
+                prompt3: `Are my current payment methods limiting my $${volume.toFixed(0)} volume for the ${(dateRange || '').toLowerCase()}?`
             },
             medium: {
-                prompt1: `My authorization rate is ${successRate.toFixed(1)}% for the ${dateRange.toLowerCase()}. What should I investigate?`,
-                prompt2: `How can I recover the $${failedVolume.toFixed(0)} lost to failed payments this ${dateRange.toLowerCase().replace('last ', '')}?`,
-                prompt3: `What fraud prevention measures should I implement for ${payments} transactions in the ${dateRange.toLowerCase()}?`
+                prompt1: `My authorization rate is ${successRate.toFixed(1)}% for the ${(dateRange || '').toLowerCase()}. What should I investigate?`,
+                prompt2: `How can I recover the $${failedVolume.toFixed(0)} lost to failed payments this ${(dateRange || '').toLowerCase().replace('last ', '')}?`,
+                prompt3: `What fraud prevention measures should I implement for ${payments} transactions in the ${(dateRange || '').toLowerCase()}?`
             },
             large: {
-                prompt1: `How can I optimize my ${successRate.toFixed(1)}% authorization rate for $${(volume/1000).toFixed(1)}k volume in the ${dateRange.toLowerCase()}?`,
-                prompt2: `Which payment methods are contributing to my $${failedVolume.toFixed(0)} in failed payments for the ${dateRange.toLowerCase()}?`,
-                prompt3: `What enterprise solutions can maximize conversion for ${payments.toLocaleString()} payments in the ${dateRange.toLowerCase()}?`
+                prompt1: `How can I optimize my ${successRate.toFixed(1)}% authorization rate for $${(volume/1000).toFixed(1)}k volume in the ${(dateRange || '').toLowerCase()}?`,
+                prompt2: `Which payment methods are contributing to my $${failedVolume.toFixed(0)} in failed payments for the ${(dateRange || '').toLowerCase()}?`,
+                prompt3: `What enterprise solutions can maximize conversion for ${payments.toLocaleString()} payments in the ${(dateRange || '').toLowerCase()}?`
             }
         };
         
@@ -11485,7 +11572,7 @@
         // initializeFailedPaymentsFilterInteractions();
         
         // Initialize assistant prompts
-        updateAssistantPrompts();
+        updateAssistantPrompts('medium', 'Last 90 days');
         
         // Initialize insights for the default tab (acceptance)
         function initializeInsights() {
@@ -11520,6 +11607,85 @@
             }
         }
         
+        // Initialize insights toggle functionality
+        function initializeInsightsToggle() {
+            const insightsSection = document.getElementById('insightsSection');
+            const toggleBtn = document.getElementById('insightsToggleBtn');
+            const assistantSection = document.querySelector('.assistant-section');
+            
+            console.log('Initializing insights toggle...');
+            console.log('Insights section found:', !!insightsSection);
+            console.log('Toggle button found:', !!toggleBtn);
+            console.log('Assistant section found:', !!assistantSection);
+            
+            if (insightsSection && toggleBtn) {
+                // Set initial state (visible)
+                insightsSection.classList.remove('hidden');
+                if (assistantSection) {
+                    assistantSection.classList.remove('slide-up');
+                }
+                
+                // Make sure the button is visible
+                toggleBtn.style.display = 'flex';
+                toggleBtn.style.visibility = 'visible';
+                toggleBtn.style.opacity = '1';
+                
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Toggle button clicked');
+                    const isHidden = insightsSection.classList.contains('hidden');
+                    console.log('Is hidden:', isHidden);
+                    
+                    if (isHidden) {
+                        // Show insights
+                        insightsSection.classList.remove('hidden');
+                        if (assistantSection) {
+                            assistantSection.classList.remove('slide-up');
+                        }
+                        console.log('Insights shown, assistant section moved down');
+                    } else {
+                        // Hide insights
+                        insightsSection.classList.add('hidden');
+                        if (assistantSection) {
+                            assistantSection.classList.add('slide-up');
+                        }
+                        console.log('Insights hidden, assistant section moved up');
+                    }
+                });
+                
+                console.log('Insights toggle functionality initialized successfully');
+                
+                // Test the toggle functionality
+                console.log('Testing toggle functionality...');
+                console.log('Initial state - hidden:', insightsSection.classList.contains('hidden'));
+                
+                // Add a test function to the window object for debugging
+                window.testInsightsToggle = function() {
+                    const isHidden = insightsSection.classList.contains('hidden');
+                    console.log('Current hidden state:', isHidden);
+                    if (isHidden) {
+                        insightsSection.classList.remove('hidden');
+                        if (assistantSection) {
+                            assistantSection.classList.remove('slide-up');
+                        }
+                        console.log('Insights shown via test function');
+                    } else {
+                        insightsSection.classList.add('hidden');
+                        if (assistantSection) {
+                            assistantSection.classList.add('slide-up');
+                        }
+                        console.log('Insights hidden via test function');
+                    }
+                };
+                
+            } else {
+                console.error('Insights section or toggle button not found');
+                console.error('Insights section:', insightsSection);
+                console.error('Toggle button:', toggleBtn);
+            }
+        }
+        
         // Immediate insights initialization attempt
         console.log('Attempting immediate insights initialization...');
         let insightsInitialized = initializeInsights();
@@ -11532,6 +11698,9 @@
         
         // Initialize navigation tabs
         initializeNavigationTabs();
+        
+        // Initialize insights toggle functionality
+        initializeInsightsToggle();
         
         // Trigger initial graph animations after a short delay
         setTimeout(() => resetGraphAnimations(), 200);
