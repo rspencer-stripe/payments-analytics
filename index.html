@@ -2915,6 +2915,146 @@
             background: var(--color-gray-200);
         }
 
+        /* Toast Notification Styles */
+        .experiment-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            background: white;
+            border: 1px solid var(--color-gray-200);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            transition: transform 0.3s ease-out;
+            font-size: 14px;
+            color: var(--color-gray-900);
+            white-space: nowrap;
+        }
+        
+        /* Experiment Selection Modal Styles */
+        .experiment-selection-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .experiment-selection-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .experiment-selection-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        
+        .experiment-selection-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-gray-900);
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--color-gray-500);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        
+        .close-btn:hover {
+            background: var(--color-gray-100);
+            color: var(--color-gray-700);
+        }
+        
+        .experiment-selection-body {
+            padding: 32px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .selection-description {
+            margin: 0 0 24px 0;
+            color: var(--color-gray-600);
+            font-size: 14px;
+        }
+        
+        .experiment-options {
+            display: grid;
+            gap: 16px;
+        }
+        
+        .experiment-option {
+            border: 1px solid var(--color-gray-200);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .experiment-option:hover {
+            border-color: var(--color-purple-500);
+            box-shadow: 0 2px 8px rgba(83, 58, 253, 0.1);
+        }
+        
+        .experiment-option-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .experiment-option-header h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-gray-900);
+        }
+        
+        .experiment-option-description {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: var(--color-gray-600);
+            line-height: 1.5;
+        }
+        
+        .experiment-option-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--color-gray-500);
+        }
+        
+        .experiment-option-meta .revenue {
+            color: var(--color-green-600);
+            font-weight: 500;
+        }
+        
+        .experiment-option-meta .effort {
+            color: var(--color-orange-600);
+            font-weight: 500;
+        }
+
         .ai-assistant-panel.open {
             transform: translateX(0);
         }
@@ -9463,7 +9603,14 @@
                         </td>
                         <td>
                             <div class="table-actions">
-                                <button class="table-btn secondary" onclick="openAIPanel('How do I implement ${opp.title.toLowerCase()}?', '${businessType}', '${opp.title.toLowerCase().replace(/\s+/g, '-')}', ${data.successRate}, '${dateRange}', ${data.totalTransactions})">
+                                <button class="table-btn secondary" onclick="openExperimentDrawer({
+                                    id: '${opp.title.toLowerCase().replace(/\s+/g, '-')}',
+                                    title: '${opp.title}',
+                                    description: '${opp.description}',
+                                    uplift: ${parseInt(opp.impact.replace(/[^0-9]/g, '')) || 0},
+                                    revenue: '${opp.revenue}',
+                                    effort: '${opp.effort}'
+                                })">
                                     ${opp.cta || 'Get started'}
                                 </button>
                             </div>
@@ -11969,7 +12116,7 @@
             
             // Force update insights regardless of initialization status
             console.log('Forcing insights update on window load...');
-            updateInsights('acceptance');
+            updateInsights('overview');
         });
         
         // Fallback: try to initialize insights on first user interaction
@@ -12862,7 +13009,7 @@
                                         </td>
                                         <td>
                                             <div class="table-actions">
-                                                <button class="table-btn secondary" onclick="openExperimentDrawer({
+                                                <button class="table-btn secondary" onclick="console.log('Payment Intents button clicked'); openExperimentDrawer({
                                                     id: 'payment-intents',
                                                     title: 'Payment Intents',
                                                     description: 'Implement Payment Intents for better authorization rates and improved payment success.',
@@ -12893,7 +13040,7 @@
                                         </td>
                                         <td>
                                             <div class="table-actions">
-                                                <button class="table-btn secondary" onclick="openExperimentDrawer({
+                                                <button class="table-btn secondary" onclick="console.log('Smart Retries button clicked'); openExperimentDrawer({
                                                     id: 'smart-retries',
                                                     title: 'Smart Retries',
                                                     description: 'Enable intelligent retry logic for declined payments to recover lost revenue.',
@@ -12924,7 +13071,7 @@
                                         </td>
                                         <td>
                                             <div class="table-actions">
-                                                <button class="table-btn secondary" onclick="openExperimentDrawer({
+                                                <button class="table-btn secondary" onclick="console.log('Connect Marketplace button clicked'); openExperimentDrawer({
                                                     id: 'connect-marketplace',
                                                     title: 'Connect Marketplace',
                                                     description: 'Set up Connect for multi-party payment flows to enable marketplace functionality.',
@@ -12946,7 +13093,7 @@
                     <div class="ab-testing-section">
                         <div class="ab-header">
                             <h2 class="ab-title">Experiments</h2>
-                            <button class="new-test-btn" onclick="openAIPanel('How do I set up experiments for payment optimization?', '${currentBusinessType}', 'ab-testing', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                            <button class="new-test-btn" onclick="openNewExperimentDrawer()">
                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                 New experiment
                             </button>
@@ -13061,7 +13208,6 @@
                     <div class="ab-testing-section">
                         <div class="ab-header">
                             <h2 class="ab-title">Past optimizations</h2>
-                            <p class="timeline-subtitle">Review your implemented optimizations and their outcomes</p>
                         </div>
                         
                         <div class="timeline-container">
@@ -13488,25 +13634,260 @@
     // Experiment Drawer Functions
     let currentRecommendation = null;
     
+    // Test function to verify JavaScript is working
+    function testExperimentButton() {
+        console.log('Test function called - JavaScript is working!');
+        alert('JavaScript is working!');
+    }
+    
+    // Test function for experiment drawer
+    function testExperimentDrawer() {
+        console.log('Testing experiment drawer...');
+        const testRecommendation = {
+            id: 'test-experiment',
+            title: 'Test Payment Optimization',
+            description: 'This is a test recommendation to verify the drawer is working correctly.',
+            uplift: 15,
+            revenue: '+$50,000/year',
+            effort: 'Test (1 day)'
+        };
+        
+        console.log('Calling openExperimentDrawer with test data:', testRecommendation);
+        openExperimentDrawer(testRecommendation);
+    }
+    
+    // Function to open new experiment drawer with dropdown selection
+    function openNewExperimentDrawer() {
+        console.log('Opening new experiment drawer...');
+        console.log('Function called successfully');
+        
+        // Get available recommendations from the opportunities data
+        const availableExperiments = [
+            {
+                id: 'payment-intents',
+                title: 'Payment Intents',
+                description: 'Implement Payment Intents for better authorization rates and improved payment success.',
+                uplift: 12,
+                revenue: '+$45,000/year',
+                effort: 'Medium (1-2 dev days)'
+            },
+            {
+                id: 'smart-retries',
+                title: 'Smart Retries',
+                description: 'Enable intelligent retry logic for declined payments to recover lost revenue.',
+                uplift: 8,
+                revenue: '+$38,000/year',
+                effort: 'Easy (30 minute setup)'
+            },
+            {
+                id: 'connect-marketplace',
+                title: 'Connect Marketplace',
+                description: 'Set up Connect for multi-party payment flows to enable marketplace functionality.',
+                uplift: 15,
+                revenue: '+$32,000/year',
+                effort: 'Medium (3-5 dev days)'
+            },
+            {
+                id: 'digital-wallets',
+                title: 'Digital Wallets',
+                description: 'Integrate Apple Pay and Google Pay for improved mobile conversion rates.',
+                uplift: 6,
+                revenue: '+$28,000/year',
+                effort: 'Easy (1 day setup)'
+            },
+            {
+                id: '3d-secure-optimization',
+                title: '3D Secure Optimization',
+                description: 'Optimize 3D Secure authentication flow to reduce abandonment rates.',
+                uplift: 10,
+                revenue: '+$35,000/year',
+                effort: 'Medium (2-3 dev days)'
+            },
+            {
+                id: 'custom-experiment',
+                title: 'Custom Experiment',
+                description: 'Create a custom experiment with your own parameters.',
+                uplift: 0,
+                revenue: 'Variable',
+                effort: 'Variable'
+            }
+        ];
+        
+        // Create and show experiment selection modal
+        const modal = document.createElement('div');
+        modal.className = 'experiment-selection-modal';
+        modal.innerHTML = `
+            <div class="experiment-selection-content">
+                <div class="experiment-selection-header">
+                    <h3>Select Experiment</h3>
+                    <button class="close-btn" onclick="closeExperimentSelection()">
+                        <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+                    </button>
+                </div>
+                <div class="experiment-selection-body">
+                    <p class="selection-description">Choose from available recommendations or create a custom experiment:</p>
+                    <div class="experiment-options">
+                        ${availableExperiments.map(exp => `
+                            <div class="experiment-option" onclick="selectExperiment('${exp.id}')">
+                                <div class="experiment-option-header">
+                                    <h4>${exp.title}</h4>
+                                    <span class="uplift-badge">+${exp.uplift}%</span>
+                                </div>
+                                <p class="experiment-option-description">${exp.description}</p>
+                                <div class="experiment-option-meta">
+                                    <span class="revenue">${exp.revenue}</span>
+                                    <span class="effort">${exp.effort}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Store available experiments for selection
+        window.availableExperiments = availableExperiments;
+    }
+    
+    // Function to select an experiment from the dropdown
+    function selectExperiment(experimentId) {
+        console.log('selectExperiment called with:', experimentId);
+        // Define available experiments locally to avoid dependency on window.availableExperiments
+        const availableExperiments = [
+            {
+                id: 'payment-intents',
+                title: 'Payment Intents',
+                description: 'Implement Payment Intents for better authorization rates and improved payment success.',
+                uplift: 12,
+                revenue: '+$45,000/year',
+                effort: 'Medium (1-2 dev days)'
+            },
+            {
+                id: 'smart-retries',
+                title: 'Smart Retries',
+                description: 'Enable intelligent retry logic for declined payments to recover lost revenue.',
+                uplift: 8,
+                revenue: '+$38,000/year',
+                effort: 'Easy (30 minute setup)'
+            },
+            {
+                id: 'connect-marketplace',
+                title: 'Connect Marketplace',
+                description: 'Set up Connect for multi-party payment flows to enable marketplace functionality.',
+                uplift: 15,
+                revenue: '+$32,000/year',
+                effort: 'Medium (3-5 dev days)'
+            },
+            {
+                id: 'digital-wallets',
+                title: 'Digital Wallets',
+                description: 'Integrate Apple Pay and Google Pay for improved mobile conversion rates.',
+                uplift: 6,
+                revenue: '+$28,000/year',
+                effort: 'Easy (1 day setup)'
+            },
+            {
+                id: '3d-secure-optimization',
+                title: '3D Secure Optimization',
+                description: 'Optimize 3D Secure authentication flow to reduce abandonment rates.',
+                uplift: 10,
+                revenue: '+$35,000/year',
+                effort: 'Medium (2-3 dev days)'
+            },
+            {
+                id: 'custom-experiment',
+                title: 'Custom Experiment',
+                description: 'Create a custom experiment with your own parameters.',
+                uplift: 0,
+                revenue: 'Variable',
+                effort: 'Variable'
+            }
+        ];
+        
+        const selectedExperiment = availableExperiments.find(exp => exp.id === experimentId);
+        
+        if (selectedExperiment) {
+            // Close the selection modal
+            closeExperimentSelection();
+            
+            // Open the experiment drawer with the selected experiment
+            openExperimentDrawer(selectedExperiment);
+        } else {
+            console.error('Experiment not found:', experimentId);
+        }
+    }
+    
+    // Function to close experiment selection modal
+    function closeExperimentSelection() {
+        const modal = document.querySelector('.experiment-selection-modal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+    
     function openExperimentDrawer(recommendation) {
+        console.log('openExperimentDrawer called with:', recommendation);
+        console.log('Type of recommendation:', typeof recommendation);
+        console.log('Recommendation stringified:', JSON.stringify(recommendation));
+        
+        // Handle both string and object parameters for backward compatibility
+        if (typeof recommendation === 'string') {
+            console.log('Converting string to object for:', recommendation);
+            recommendation = {
+                id: recommendation.toLowerCase().replace(/\s+/g, '-'),
+                title: recommendation,
+                description: 'No description available',
+                uplift: 0,
+                revenue: 'Variable',
+                effort: 'Variable'
+            };
+        }
+        
+        // Validate recommendation object
+        if (!recommendation || typeof recommendation !== 'object') {
+            console.error('Invalid recommendation object:', recommendation);
+            console.error('Expected object but got:', typeof recommendation);
+            return;
+        }
+        
         currentRecommendation = recommendation;
         const drawer = document.getElementById('experimentDrawer');
         const recommendationDiv = document.getElementById('experimentRecommendation');
         
+        console.log('Drawer element found:', !!drawer);
+        console.log('Recommendation div found:', !!recommendationDiv);
+        
+        if (!drawer || !recommendationDiv) {
+            console.error('Required elements not found');
+            return;
+        }
+        
         // Populate recommendation content
+        console.log('Recommendation data:', {
+            title: recommendation.title,
+            description: recommendation.description,
+            uplift: recommendation.uplift
+        });
+        
         recommendationDiv.innerHTML = `
-            <div class="recommendation-title">${recommendation.title}</div>
-            <div class="recommendation-description">${recommendation.description}</div>
+            <div class="recommendation-title">${recommendation.title || 'Recommendation'}</div>
+            <div class="recommendation-description">${recommendation.description || 'No description available'}</div>
             <div class="recommendation-uplift">
-                <span class="uplift-badge">+${recommendation.uplift}%</span>
+                <span class="uplift-badge">+${recommendation.uplift || 0}%</span>
                 <span class="uplift-text">Expected uplift in success rate</span>
             </div>
         `;
         
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('endDate').min = today;
-        document.getElementById('endDate').value = '';
+        console.log('Updated recommendation div HTML:', recommendationDiv.innerHTML);
+        
+        // Set minimum date to today and pre-select 30 days from now
+        const today = new Date();
+        const thirtyDaysFromNow = new Date(today.getTime() + (30 * 24 * 60 * 60 * 1000));
+        
+        document.getElementById('endDate').min = today.toISOString().split('T')[0];
+        document.getElementById('endDate').value = thirtyDaysFromNow.toISOString().split('T')[0];
         
         // Reset form
         document.getElementById('rolloutSlider').value = 10;
@@ -13530,9 +13911,15 @@
         const slider = document.getElementById('rolloutSlider');
         const value = document.getElementById('rolloutValue');
         
-        slider.addEventListener('input', function() {
+        // Remove existing event listeners to prevent duplicates
+        slider.removeEventListener('input', slider._inputHandler);
+        
+        // Create new handler and store reference
+        slider._inputHandler = function() {
             value.textContent = this.value + '%';
-        });
+        };
+        
+        slider.addEventListener('input', slider._inputHandler);
     }
     
     function startExperiment() {
@@ -13572,28 +13959,203 @@
         showExperimentStartedMessage(experiment);
     }
     
+    // Global storage for experiments
+    window.activeExperiments = [];
+    window.recommendations = [
+        {
+            id: 'payment-intents',
+            title: 'Payment Intents',
+            description: 'Implement Payment Intents for better authorization rates',
+            revenue: '+$45,000/year',
+            effort: 'Medium',
+            effortDetail: '1-2 dev days',
+            priority: 'high'
+        },
+        {
+            id: 'smart-retries',
+            title: 'Smart Retries',
+            description: 'Enable intelligent retry logic for declined payments',
+            revenue: '+$38,000/year',
+            effort: 'Easy',
+            effortDetail: '30 minute setup',
+            priority: 'high'
+        },
+        {
+            id: 'connect-marketplace',
+            title: 'Connect marketplace',
+            description: 'Set up Connect for multi-party payment flows',
+            revenue: '+$32,000/year',
+            effort: 'Medium',
+            effortDetail: '3-5 dev days',
+            priority: 'medium'
+        }
+    ];
+
     function addExperimentToList(experiment) {
-        // This would typically update a backend or localStorage
-        console.log('Experiment started:', experiment);
+        // Add to global experiments array
+        window.activeExperiments.push(experiment);
         
-        // For now, we'll just log it and could update a UI element
-        // In a real implementation, this would update an experiments table
+        // Update the experiments table
+        updateExperimentsTable();
+        
+        console.log('Experiment added to list:', experiment);
     }
     
     function removeRecommendationFromList(recommendationId) {
-        // This would remove the recommendation from the opportunities list
-        console.log('Removing recommendation:', recommendationId);
+        // Remove from global recommendations array
+        window.recommendations = window.recommendations.filter(rec => rec.id !== recommendationId);
         
-        // In a real implementation, this would update the UI
-        // For now, we'll just log it
+        // Update the recommendations table
+        updateRecommendationsTable();
+        
+        console.log('Recommendation removed from list:', recommendationId);
     }
     
-    function showExperimentStartedMessage(experiment) {
-        // Show a success notification
-        console.log(`Experiment "${experiment.name}" started successfully!`);
+    function updateExperimentsTable() {
+        const tableBody = document.querySelector('.ab-tests-table tbody');
+        if (!tableBody) return;
         
-        // You could show a toast notification here
-        // For now, we'll just log it
+        // Clear existing rows except the first two (which are static examples)
+        const existingRows = tableBody.querySelectorAll('tr');
+        for (let i = 2; i < existingRows.length; i++) {
+            existingRows[i].remove();
+        }
+        
+        // Add new experiments
+        window.activeExperiments.forEach(experiment => {
+            const row = document.createElement('tr');
+            row.className = 'active';
+            row.innerHTML = `
+                <td>
+                    <div class="test-cell">
+                        <div class="test-title">${experiment.name}</div>
+                        <div class="test-description">${experiment.recommendation.description}</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="status-cell active">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Active</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="progress-cell">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 10%"></div>
+                        </div>
+                        <span class="progress-text">10% Complete</span>
+                    </div>
+                </td>
+                <td>
+                    <span class="rate-value">--</span>
+                </td>
+                <td>
+                    <span class="rate-value">--</span>
+                </td>
+                <td>
+                    <span class="improvement">--</span>
+                </td>
+                <td>
+                    <div class="table-actions">
+                        <button class="table-btn secondary">
+                            <i data-lucide="bar-chart" style="width: 14px; height: 14px;"></i>
+                            Details
+                        </button>
+                        <button class="table-btn secondary">
+                            <i data-lucide="pause" style="width: 14px; height: 14px;"></i>
+                            Pause
+                        </button>
+                    </div>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+        
+        // Reinitialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+    
+    function updateRecommendationsTable() {
+        const tableBody = document.querySelector('.opportunities-table tbody');
+        if (!tableBody) return;
+        
+        // Clear existing rows
+        tableBody.innerHTML = '';
+        
+        // Add remaining recommendations
+        window.recommendations.forEach(rec => {
+            const row = document.createElement('tr');
+            row.className = rec.priority + '-priority';
+            row.innerHTML = `
+                <td>
+                    <div class="opportunity-cell">
+                        <div class="opportunity-info">
+                            <div class="opportunity-title">${rec.title}</div>
+                            <div class="opportunity-description">${rec.description}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="revenue-impact">${rec.revenue}</span>
+                </td>
+                <td>
+                    <span class="effort-badge ${rec.effort.toLowerCase()}">${rec.effort}</span>
+                    <div class="effort-detail">${rec.effortDetail}</div>
+                </td>
+                <td>
+                    <div class="table-actions">
+                        <button class="table-btn secondary" onclick="openExperimentDrawer({
+                            id: '${rec.id}',
+                            title: '${rec.title}',
+                            description: '${rec.description}',
+                            uplift: ${rec.id === 'payment-intents' ? 12 : rec.id === 'smart-retries' ? 8 : 15},
+                            revenue: '${rec.revenue}',
+                            effort: '${rec.effort} (${rec.effortDetail})'
+                        })">
+                            Experiment
+                        </button>
+                    </div>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+    
+    // Initialize tables when page loads
+    function initializeTables() {
+        updateRecommendationsTable();
+        updateExperimentsTable();
+    }
+    
+    // Call initialization when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTables();
+    });
+    
+    function showExperimentStartedMessage(experiment) {
+        // Create and show toast notification
+        const toast = document.createElement('div');
+        toast.className = 'experiment-toast';
+        toast.textContent = `${experiment.name} enabled`;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in from bottom
+        setTimeout(() => {
+            toast.style.transform = 'translateX(-50%) translateY(0)';
+        }, 100);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            toast.style.transform = 'translateX(-50%) translateY(100%)';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, 5000);
     }
 
 
