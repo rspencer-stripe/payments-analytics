@@ -3694,6 +3694,18 @@
             filter: drop-shadow(0 4px 8px rgba(83, 58, 253, 0.4));
         }
 
+        /* Acceptance Alert Indicator Styles */
+        .acceptance-alert-indicator {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: none !important;
+        }
+
+        .acceptance-alert-indicator:hover {
+            filter: drop-shadow(0 4px 8px rgba(239, 68, 68, 0.4));
+            transform: scale(1.1);
+        }
+
 
 
         @keyframes aiInsightGlow {
@@ -5660,7 +5672,9 @@
                 <button class="nav-tab" onclick="switchTabView('acceptance')">Acceptance</button>
                 <button class="nav-tab" onclick="switchTabView('authentication')">Authentication</button>
                 <button class="nav-tab" onclick="switchTabView('disputes')">Disputes</button>
+                <button class="nav-tab" onclick="switchTabView('cost')">Cost</button>
                 <button class="nav-tab" onclick="switchTabView('payment methods')">Payment methods</button>
+                <button class="nav-tab" onclick="switchTabView('optimization')">Optimization</button>
             </div>
             
             <!-- Filter Section Row 1 -->
@@ -6208,6 +6222,28 @@
         </button>
         <button class="tooltip-ask-btn" id="tooltipAskBtn">
             <i data-lucide="sparkles" style="width: 10px; height: 10px;"></i>
+            Ask Assistant
+        </button>
+    </div>
+</div>
+
+<!-- Acceptance Alert Tooltip -->
+<div class="acceptance-alert-tooltip" id="acceptanceAlertTooltip" style="display: none; position: absolute; background: white; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); z-index: 1000; max-width: 280px; font-size: 13px;">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <div style="width: 8px; height: 8px; background: #EF4444; border-radius: 50%;"></div>
+        <span style="font-weight: 600; color: var(--color-gray-900);">Acceptance Alert</span>
+    </div>
+    <p style="margin: 0 0 12px 0; color: var(--color-gray-700); line-height: 1.4;">
+        <strong>AI Insight:</strong> Your acceptance rate dropped significantly on the most recent date, primarily due to increased declines from German banks implementing new fraud detection rules. This represents a potential revenue loss of $1,200.
+    </p>
+    <p style="margin: 0 0 12px 0; color: var(--color-gray-700); line-height: 1.4;">
+        <strong>Recommended Action:</strong> Enable Smart Retries to automatically retry declined transactions with optimized timing and bank-specific strategies, potentially recovering up to 40% of lost revenue.
+    </p>
+    <div style="display: flex; gap: 8px;">
+        <button onclick="showAcceptanceAlertDetails()" style="background: var(--color-gray-100); border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; color: var(--color-gray-700); cursor: pointer; transition: background 0.15s;">
+            What happened?
+        </button>
+        <button onclick="askAIAboutAcceptanceDrop()" style="background: var(--color-purple-500); border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; color: white; cursor: pointer; transition: background 0.15s;">
             Ask Assistant
         </button>
     </div>
@@ -7390,7 +7426,7 @@
     // Function to add invisible data points for hover detection
     function addDataPoints(svg, xPoints, chartData) {
         // Remove existing data points and AI indicators
-        const existingPoints = svg.querySelectorAll('.data-point, .ai-insight-indicator');
+        const existingPoints = svg.querySelectorAll('.data-point, .ai-insight-indicator, .acceptance-alert-indicator');
         existingPoints.forEach(point => point.remove());
         
         // Calculate dynamic hover area positions based on chart width
@@ -7417,9 +7453,35 @@
             rect.dataset.index = i;
             svg.appendChild(rect);
             
-            // Add AI insight indicator for the point with highest change
-            if (i === insightIndex) {
-                addAIInsightIndicator(svg, dataPointX, chartData, i);
+            // Determine chart type and conditions
+            const isAcceptanceTab = document.querySelector('.tab-btn[data-tab="acceptance"].active');
+            const selectedMetricCard = document.querySelector('.metric-card.selected .metric-label');
+            const isAcceptedVolume = selectedMetricCard && selectedMetricCard.textContent === 'Accepted volume';
+            const isAcceptedVolumeChart = isAcceptanceTab && isAcceptedVolume;
+            
+            console.log('Chart indicator conditions:', {
+                i,
+                insightIndex,
+                isAcceptanceTab: !!isAcceptanceTab,
+                selectedMetricCard: selectedMetricCard ? selectedMetricCard.textContent : 'none',
+                isAcceptedVolume,
+                isAcceptedVolumeChart,
+                isLastPoint: i === numDataPoints - 1,
+                isInsightPoint: i === insightIndex
+            });
+            
+            // For Accepted volume chart: ONLY show red dot on last point, NEVER show purple star
+            if (isAcceptedVolumeChart) {
+                if (i === numDataPoints - 1) {
+                    console.log('Adding acceptance alert indicator (red dot) for Accepted volume chart');
+                    addAcceptanceAlertIndicator(svg, dataPointX, chartData, i);
+                }
+            } else {
+                // For all other charts: show purple star on insight point
+                if (i === insightIndex) {
+                    console.log('Adding AI insight indicator (purple star) for other chart');
+                    addAIInsightIndicator(svg, dataPointX, chartData, i);
+                }
             }
         }
     }
@@ -7457,6 +7519,60 @@
         // No animation - keep the circle fixed in position
     }
     
+    // Function to add acceptance alert indicator for July 17th
+    function addAcceptanceAlertIndicator(svg, x, chartData, index) {
+        // Get the actual y-coordinate for this data point
+        const y = chartData.current[index];
+        
+        // Create the red circle indicator
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', '8');
+        circle.setAttribute('fill', '#EF4444');
+        circle.setAttribute('stroke', '#ffffff');
+        circle.setAttribute('stroke-width', '2');
+        circle.setAttribute('filter', 'drop-shadow(0 2px 4px rgba(239, 68, 68, 0.3))');
+        circle.classList.add('acceptance-alert-indicator');
+        circle.dataset.index = index;
+        circle.dataset.type = 'acceptance-alert';
+        
+        // Add hover functionality
+        circle.addEventListener('mouseenter', function() {
+            showAcceptanceAlertTooltip(x, y);
+        });
+        
+        circle.addEventListener('mouseleave', function() {
+            hideAcceptanceAlertTooltip();
+        });
+        
+        svg.appendChild(circle);
+    }
+    
+    // Function to show acceptance alert tooltip
+    function showAcceptanceAlertTooltip(x, y) {
+        const tooltip = document.getElementById('acceptanceAlertTooltip');
+        if (tooltip) {
+            // Position tooltip relative to the chart container
+            const chartContainer = document.querySelector('.chart-container');
+            if (chartContainer) {
+                const rect = chartContainer.getBoundingClientRect();
+                tooltip.style.position = 'fixed';
+                tooltip.style.display = 'block';
+                tooltip.style.left = (rect.left + 50) + 'px';
+                tooltip.style.top = (rect.top + 100) + 'px';
+            }
+        }
+    }
+    
+    // Function to hide acceptance alert tooltip
+    function hideAcceptanceAlertTooltip() {
+        const tooltip = document.getElementById('acceptanceAlertTooltip');
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    }
+    
     // Metric card interaction functionality
     document.addEventListener('DOMContentLoaded', function() {
         const metricCards = document.querySelectorAll('.metric-card');
@@ -7488,19 +7604,56 @@
                     const dateLabels = getDateLabels(currentDateRange);
                     console.log('Creating Accepted volume chart with dates:', dateLabels);
                     
-                    // PERFECT ALIGNMENT: Use exact x-coordinates that match the x-axis label positions
-                    const xPoints = [80, 200, 320, 440, 560, 680, 720];
-                    
-                    // Generate realistic volume data
+                    // Generate realistic volume data first to get the correct number of data points
                     const generator = new RealisticDataGenerator(currentBusinessType, currentDateRange);
                     const volumeData = generator.generateTimeSeriesData(50, 0.2, 0.05);
                     const previousVolumeData = volumeData.map(v => v * 0.8);
                     const optimizedVolumeData = volumeData.map(v => v * 1.25); // AI-optimized potential
                     
-                    // Convert to Y coordinates
-                    const currentY = volumeData.map(v => 200 - (v * 2));
-                    const previousY = previousVolumeData.map(v => 200 - (v * 2));
-                    const optimizedY = optimizedVolumeData.map(v => 200 - (v * 2));
+                    // Ensure we have valid data
+                    console.log('Raw volume data:', volumeData);
+                    if (!volumeData || volumeData.length === 0 || volumeData.some(v => isNaN(v) || v < 0)) {
+                        console.error('Invalid volume data generated, using fallback');
+                        // Fallback data
+                        const fallbackData = [45, 48, 52, 49, 55, 51, 47, 43];
+                        volumeData.splice(0, volumeData.length, ...fallbackData);
+                        previousVolumeData.splice(0, previousVolumeData.length, ...fallbackData.map(v => v * 0.8));
+                        optimizedVolumeData.splice(0, optimizedVolumeData.length, ...fallbackData.map(v => v * 1.25));
+                    }
+                    
+                    // Calculate x-coordinates based on the number of data points
+                    const numDataPoints = volumeData.length;
+                    const svgWidth = 800;
+                    const xPoints = [];
+                    for (let i = 0; i < numDataPoints; i++) {
+                        if (numDataPoints === 1) {
+                            xPoints.push(400); // Center point if only one data point
+                        } else {
+                            xPoints.push(80 + (i * (svgWidth - 160) / (numDataPoints - 1)));
+                        }
+                    }
+                    
+                    // Convert to Y coordinates (scale to fit the 200px height)
+                    const maxValue = Math.max(...volumeData, ...previousVolumeData, ...optimizedVolumeData);
+                    const scale = 180 / maxValue; // Leave 20px margin
+                    const currentY = volumeData.map(v => 200 - (v * scale));
+                    const previousY = previousVolumeData.map(v => 200 - (v * scale));
+                    const optimizedY = optimizedVolumeData.map(v => 200 - (v * scale));
+                    
+                    // Introduce a visible drop on the last data point for the acceptance alert demo
+                    if (currentY.length > 0) {
+                        const previousValue = currentY[currentY.length - 2] || currentY[currentY.length - 1];
+                        // Create a more visible drop (about 15-20% to make it obvious)
+                        const dropAmount = previousValue * 0.18;
+                        currentY[currentY.length - 1] = previousValue - dropAmount;
+                    }
+                    
+                    // Debug logging
+                    console.log('Volume data:', volumeData);
+                    console.log('X points:', xPoints);
+                    console.log('Current Y:', currentY);
+                    console.log('Previous Y:', previousY);
+                    console.log('Optimized Y:', optimizedY);
                     
                     // Build SVG paths
                     let currentLine = '';
@@ -7518,6 +7671,10 @@
                         }
                     }
                     
+                    console.log('Current line path:', currentLine);
+                    console.log('Previous line path:', previousLine);
+                    console.log('Optimized line path:', optimizedLine);
+                    
                     chartContainer.innerHTML = `
                         <div class="chart-content">
                             <div class="chart-y-axis">
@@ -7532,7 +7689,7 @@
                             <div class="chart-area">
                                 <div class="chart-grid"></div>
                                 <div class="chart-lines">
-                                    <svg class="chart-svg" viewBox="0 0 800 200">
+                                    <svg class="chart-svg" viewBox="0 0 800 200" style="width: 100%; height: 100%;">
                                         <!-- Baseline performance line (gray) -->
                                         <path d="${previousLine}" stroke="#E4E7EC" stroke-width="2" fill="none"/>
                                         <!-- Current performance line (purple) -->
@@ -7564,6 +7721,19 @@
                             <span class="update-status">Updated yesterday</span>
                         </div>
                     `;
+                    
+                    // Add data points and acceptance alert indicator for Accepted volume chart
+                    setTimeout(() => {
+                        const svg = chartContainer.querySelector('.chart-svg');
+                        if (svg) {
+                            const chartData = {
+                                current: currentY,
+                                baseline: previousY,
+                                optimized: optimizedY
+                            };
+                            addDataPoints(svg, xPoints, chartData);
+                        }
+                    }, 100);
                 } else if (metricLabel === 'Accepted payments') {
                     // Use the same date range as the main filter
                     const currentDateRange = document.getElementById('dateRangeDropdown').textContent.trim();
@@ -7972,10 +8142,28 @@
             }
             const optimizedData = this.generateTimeSeriesData(optimizedSuccessRate, 0.06, 0.15);
             
+            // Convert to Y coordinates
+            let currentY = currentData.map(rate => 200 - (rate * 2));
+            const baselineY = baselineData.map(rate => 200 - (rate * 2));
+            const optimizedY = optimizedData.map(rate => 200 - (rate * 2));
+            
+            // Introduce a visible drop on the last data point for the acceptance alert demo
+            if (currentY.length > 0) {
+                const previousValue = currentY[currentY.length - 2] || currentY[currentY.length - 1];
+                // Create a more pronounced drop for "Last 30 days" (Germany alert scenario)
+                let dropAmount;
+                if (this.dateRange === 'Last 30 days') {
+                    dropAmount = previousValue * 0.25; // 25% drop for Germany scenario
+                } else {
+                    dropAmount = previousValue * 0.18; // 18% drop for other scenarios
+                }
+                currentY[currentY.length - 1] = previousValue - dropAmount;
+            }
+            
             return {
-                current: currentData.map(rate => 200 - (rate * 2)), // Convert to Y coordinates
-                baseline: baselineData.map(rate => 200 - (rate * 2)),
-                optimized: optimizedData.map(rate => 200 - (rate * 2))
+                current: currentY,
+                baseline: baselineY,
+                optimized: optimizedY
             };
         }
 
@@ -10471,6 +10659,8 @@
 
     // AI Assistant Panel Functions
     function openAIPanel(question, businessType, topic, metric, dateRange, payments = null) {
+        console.log('openAIPanel function called with:', { question, businessType, topic, metric, dateRange, payments });
+        
         // Convert metric to number if it's a string (e.g., "80.3%" -> 80.3)
         let numericMetric = metric;
         if (typeof metric === 'string') {
@@ -10480,10 +10670,19 @@
                 numericMetric = 0; // Fallback if conversion fails
             }
         }
+        
+        console.log('Looking for required elements...');
         const panel = document.getElementById('aiAssistantPanel');
         const mainContent = document.querySelector('.main-content');
         const topBar = document.querySelector('.top-bar');
         const businessTabs = document.querySelector('.business-type-tabs');
+        
+        console.log('Elements found:', {
+            panel: !!panel,
+            mainContent: !!mainContent,
+            topBar: !!topBar,
+            businessTabs: !!businessTabs
+        });
         
         if (!panel || !mainContent || !topBar || !businessTabs) {
             console.error('Required elements not found for AI panel');
@@ -10633,6 +10832,32 @@
                         { text: "Enterprise analytics", icon: "bar-chart", type: "secondary", action: "enterprise-analytics" }
                     ]
                 }
+            },
+            'acceptance-drop': {
+                small: {
+                    message: `**Current Situation:** Your acceptance rate dropped significantly in Germany over the last 24 hours, representing a potential revenue loss of $1,200.\n\n**Analysis:** This drop is likely due to German banks implementing new fraud detection rules that are more conservative than your current settings.\n\n**Recommended Actions:**\n• **Enable Smart Retries** for declined transactions to recover lost revenue\n• Review and adjust fraud detection thresholds for German transactions\n• Implement regional payment methods popular in Germany (Sofort, Giropay)\n• Enable 3D Secure for transactions over €50\n• Monitor German transaction patterns more closely`,
+                    pills: [
+                        { text: "Enable Smart Retries", icon: "refresh-cw", type: "primary", action: "enable-smart-retries" },
+                        { text: "Review fraud settings", icon: "shield", type: "secondary", action: "review-fraud-settings" },
+                        { text: "Add German payment methods", icon: "globe", type: "secondary", action: "add-german-payments" }
+                    ]
+                },
+                medium: {
+                    message: `**Current Situation:** Your acceptance rate dropped significantly in Germany over the last 24 hours, representing a potential revenue loss of $1,200.\n\n**Analysis:** German banks have implemented stricter fraud detection rules. Your current fraud settings may be too aggressive for the German market, causing legitimate transactions to be declined.\n\n**Recommended Actions:**\n• **Enable Smart Retries** for declined transactions to recover lost revenue\n• Adjust fraud detection thresholds specifically for German transactions\n• Implement regional payment methods (Sofort, Giropay, SEPA Direct Debit)\n• Enable 3D Secure with optimized rules for German banks\n• Set up automated monitoring for German transaction patterns`,
+                    pills: [
+                        { text: "Enable Smart Retries", icon: "refresh-cw", type: "primary", action: "enable-smart-retries" },
+                        { text: "Optimize fraud settings", icon: "shield", type: "secondary", action: "optimize-fraud-settings" },
+                        { text: "Regional payment methods", icon: "globe", type: "secondary", action: "regional-payment-methods" }
+                    ]
+                },
+                large: {
+                    message: `**Current Situation:** Your acceptance rate dropped significantly in Germany over the last 24 hours, representing a potential revenue loss of $1,200.\n\n**Enterprise Analysis:** German banks have implemented new fraud detection protocols. At your scale, this requires a data-driven approach to optimize acceptance rates while maintaining security.\n\n**Enterprise Solutions:**\n• **Enable Smart Retries** with intelligent timing and bank-specific strategies\n• Implement machine learning fraud detection optimized for German market patterns\n• Deploy regional payment methods across all German customer touchpoints\n• Set up advanced 3D Secure rules with bank-specific optimizations\n• Establish dedicated monitoring and alerting for German transactions\n• Consider establishing local payment partnerships`,
+                    pills: [
+                        { text: "Enable Smart Retries", icon: "refresh-cw", type: "primary", action: "enable-smart-retries" },
+                        { text: "ML fraud detection", icon: "brain", type: "secondary", action: "ml-fraud-detection" },
+                        { text: "Enterprise regional payments", icon: "globe", type: "secondary", action: "enterprise-regional-payments" }
+                    ]
+                }
             }
         };
         
@@ -10675,12 +10900,15 @@
         
         // Open panel and adjust layout
         console.log('About to add "open" class to panel...');
+        console.log('Panel before opening:', panel.classList.toString());
         panel.classList.add('open');
         mainContent.classList.add('ai-panel-open');
         topBar.classList.add('ai-panel-open');
         
         console.log('Panel after opening:', panel.classList.toString());
         console.log('Panel computed style transform:', window.getComputedStyle(panel).transform);
+        console.log('Panel computed style display:', window.getComputedStyle(panel).display);
+        console.log('Panel computed style visibility:', window.getComputedStyle(panel).visibility);
         
         // Focus on input
         setTimeout(() => {
@@ -12257,7 +12485,28 @@
                         insightsSection.style.visibility = 'visible';
                         insightsSection.style.opacity = '1';
                     }
+                    
+                    // Automatically select the "Accepted volume" metric card for acceptance tab
+                    const allCards = document.querySelectorAll('.metric-card');
+                    let acceptedVolumeCard = null;
+                    
+                    // Find the Accepted volume card
+                    allCards.forEach(card => {
+                        const label = card.querySelector('.metric-label');
+                        if (label && label.textContent === 'Accepted volume') {
+                            acceptedVolumeCard = card;
+                        }
+                    });
+                    
+                    if (acceptedVolumeCard) {
+                        // Trigger the metric card click event to create the proper Accepted volume chart
+                        acceptedVolumeCard.click();
+                    }
                 }, 100);
+                break;
+            case 'cost':
+                console.log('Showing cost view');
+                showCostView();
                 break;
             case 'authentication':
                 console.log('Showing authentication view');
@@ -12271,9 +12520,13 @@
                 console.log('Showing payment methods view');
                 showPaymentMethodsView();
                 break;
+            case 'optimization':
+                console.log('Showing optimization view');
+                showOptimizationView();
+                break;
             case 'overview':
                 console.log('Showing overview view');
-                showOptimizationView();
+                showOverviewView();
                 break;
             default:
                 console.log('Showing default acceptance view');
@@ -12291,76 +12544,19 @@
         acceptance: [
             {
                 type: 'Acceptance Alert',
-                message: 'Acceptance rate dropped 2.1% in Germany over the last 24 hours. This represents a potential revenue loss of $1,200.',
-                timestamp: 'Jul 17',
+                message: 'Acceptance rate dropped significantly in Germany over the last 24 hours. This represents a potential revenue loss of $1,200.',
+                timestamp: 'Jul 26',
                 actions: [
-                    { text: 'Ask AI', onclick: 'askAIAboutAcceptanceDrop()' },
+                    { text: 'Ask Assistant', onclick: 'testAskAssistant()' },
                     { text: 'View Details', onclick: 'viewAcceptanceDetails()', primary: true }
                 ]
-            },
-            {
-                type: 'Fraud Alert',
-                message: 'Unusual fraud pattern detected in card payments. 15% increase in declined transactions.',
-                timestamp: 'Jul 16',
-                actions: [
-                    { text: 'Ask AI', onclick: 'askAIAboutFraudPattern()' },
-                    { text: 'Review', onclick: 'reviewFraudDetails()', primary: true }
-                ]
             }
         ],
-        authentication: [
-            {
-                type: '3D Secure Alert',
-                message: '3D Secure authentication rate dropped 8% in the last week. This may impact your liability protection.',
-                timestamp: 'Jul 17',
-                actions: [
-                    { text: 'Ask AI', onclick: 'askAIAbout3DSDrop()' },
-                    { text: 'Configure', onclick: 'configure3DSettings()', primary: true }
-                ]
-            }
-        ],
-        disputes: [
-            {
-                type: 'Dispute Alert',
-                message: 'Dispute rate increased 12% this month. High volume of "fraudulent" chargebacks detected.',
-                timestamp: 'Jul 17',
-                actions: [
-                    { text: 'Ask AI', onclick: 'askAIAboutDisputes()' },
-                    { text: 'Review', onclick: 'reviewDisputes()', primary: true }
-                ]
-            }
-        ],
-        'payment methods': [
-            {
-                type: 'Apple Pay Alert',
-                message: 'Apple Pay acceptance rate is 15% below industry average. Opportunity to increase revenue by $2,400/month.',
-                timestamp: 'Jul 16',
-                actions: [
-                    { text: 'Ask AI', onclick: 'askAIAboutApplePay()' },
-                    { text: 'Enable', onclick: 'enableApplePay()', primary: true }
-                ]
-            }
-        ],
-        optimization: [
-            {
-                type: 'Optimization',
-                message: 'Apple Pay conversion rate improved 15% this month. Consider expanding to other regions.',
-                timestamp: 'Jul 17',
-                actions: [
-                    { text: 'Ask AI', onclick: 'askAIAboutApplePayOptimization()' },
-                    { text: 'Expand', onclick: 'expandApplePay()', primary: true }
-                ]
-            },
-            {
-                type: 'Optimization Alert',
-                message: 'New optimization opportunity detected. Potential 3.2% increase in acceptance rate with Link authentication.',
-                timestamp: 'Jul 16',
-                actions: [
-                    { text: 'Ask AI', onclick: 'askAIAboutOptimization()' },
-                    { text: 'Implement', onclick: 'implementOptimization()', primary: true }
-                ]
-            }
-        ]
+        cost: [],
+        authentication: [],
+        disputes: [],
+        'payment methods': [],
+        optimization: []
     };
     
     function updateInsights(tabName) {
@@ -12482,6 +12678,44 @@
         setTimeout(() => {
             updateInsights('acceptance');
         }, 100);
+    }
+
+    function showCostView() {
+        const mainContent = document.querySelector('.two-column-layout');
+        if (mainContent) {
+            mainContent.style.display = 'none';
+        }
+        
+        // Hide insights section for other tabs
+        const insightsSection = document.getElementById('insightsSection');
+        if (insightsSection) {
+            insightsSection.style.display = 'none';
+        }
+        
+        // Hide the optimization view if it exists
+        const optimizationView = document.getElementById('optimization-view');
+        if (optimizationView) {
+            optimizationView.style.display = 'none';
+        }
+        
+        // Show the filter sections when switching back from optimization
+        const filterRows = document.querySelectorAll('.filter-row');
+        filterRows.forEach(row => {
+            row.style.display = 'flex';
+        });
+        
+        // Show the separator line after filters
+        const separator = document.querySelector('.separator');
+        if (separator) {
+            separator.style.display = 'block';
+        }
+        
+        // Create or show cost view
+        let costView = document.getElementById('cost-view');
+        if (!costView) {
+            costView = createCostView();
+        }
+        costView.style.display = 'block';
     }
 
     function showAuthenticationView() {
@@ -12619,6 +12853,12 @@
             twoColumnLayout.style.display = 'none';
         }
         
+        // Hide the overview view if it exists
+        const overviewView = document.getElementById('overview-view');
+        if (overviewView) {
+            overviewView.style.display = 'none';
+        }
+        
         // Hide insights section for optimization tab
         const insightsSection = document.getElementById('insightsSection');
         if (insightsSection) {
@@ -12630,7 +12870,7 @@
         console.log('Existing optimization view:', !!optimizationView);
         if (!optimizationView) {
             console.log('Creating new optimization view');
-            optimizationView = createOptimizationView();
+            optimizationView = createOptimizationViewNew();
         }
         
         // Make sure the optimization view is visible and properly positioned
@@ -12657,6 +12897,47 @@
         }
         
         console.log('Optimization view should now be visible and updated');
+    }
+
+    function showOverviewView() {
+        console.log('showOverviewView called');
+        
+        // Hide the filter sections for overview tab (showing the full dashboard)
+        const filterRows = document.querySelectorAll('.filter-row');
+        filterRows.forEach(row => {
+            row.style.display = 'none';
+        });
+        
+        // Hide the separator line after filters
+        const separator = document.querySelector('.separator');
+        if (separator) {
+            separator.style.display = 'none';
+        }
+        
+        // Hide the two-column layout (we'll show the overview view instead)
+        const twoColumnLayout = document.querySelector('.two-column-layout');
+        if (twoColumnLayout) {
+            twoColumnLayout.style.display = 'none';
+        }
+        
+        // Hide insights section for overview tab
+        const insightsSection = document.getElementById('insightsSection');
+        if (insightsSection) {
+            insightsSection.style.display = 'none';
+        }
+        
+        // Hide the optimization view if it exists
+        const optimizationView = document.getElementById('optimization-view');
+        if (optimizationView) {
+            optimizationView.style.display = 'none';
+        }
+        
+        // Create or show overview view (this contains the Performance, Payment lifecycle, Key metrics)
+        let overviewView = document.getElementById('overview-view');
+        if (!overviewView) {
+            overviewView = createOverviewView();
+        }
+        overviewView.style.display = 'block';
     }
 
     function createOptimizationView() {
@@ -13312,6 +13593,660 @@
         return optimizationView;
     }
 
+    function createOptimizationViewNew() {
+        const optimizationView = document.createElement('div');
+        optimizationView.id = 'optimization-view';
+        optimizationView.className = 'tab-content optimization-tab-content';
+        optimizationView.style.cssText = `
+            width: 100%;
+            background: white;
+            min-height: 100vh;
+            display: block;
+            padding: 24px;
+        `;
+
+        const dateRange = document.getElementById('dateRangeDropdown').textContent.trim();
+        const generator = new RealisticDataGenerator(currentBusinessType, dateRange);
+        const metrics = generator.getBusinessMetrics();
+
+        optimizationView.innerHTML = `
+            <!-- Optimization Content -->
+            <div style="margin-top: 24px; width: 100%;">
+
+
+                <!-- Recommendations Section -->
+                <div class="optimization-opportunities" style="margin-bottom: 48px;">
+                    <div class="opportunities-header">
+                        <div class="opportunities-title-section">
+                            <h2 class="opportunities-title">Recommendations</h2>
+                            <p class="opportunities-subtitle">Synthesized user card recommendations to optimize your payment performance</p>
+                        </div>
+                        <a href="#" class="view-all-link" onclick="openAIPanel('Show me all optimization opportunities and their detailed analysis', '${currentBusinessType}', 'all-optimizations', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                            View all
+                            <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="opportunities-table-container">
+                        <table class="opportunities-table">
+                            <thead>
+                                <tr>
+                                    <th>Recommendation</th>
+                                    <th>Revenue</th>
+                                    <th>Implementation</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="high-priority">
+                                    <td>
+                                        <div class="opportunity-cell">
+                                            <div class="opportunity-info">
+                                                <div class="opportunity-title">Payment Intents</div>
+                                                <div class="opportunity-description">Implement Payment Intents for better authorization rates</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="revenue-impact">+$45,000/year</span>
+                                    </td>
+                                    <td>
+                                        <span class="effort-badge medium">Medium</span>
+                                        <div class="effort-detail">1-2 dev days</div>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="table-btn secondary" onclick="console.log('Payment Intents button clicked'); openExperimentDrawer({
+                                                id: 'payment-intents',
+                                                title: 'Payment Intents',
+                                                description: 'Implement Payment Intents for better authorization rates and improved payment success.',
+                                                uplift: 12,
+                                                revenue: '+$45,000/year',
+                                                effort: 'Medium (1-2 dev days)'
+                                            })">
+                                                Experiment
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="high-priority">
+                                    <td>
+                                        <div class="opportunity-cell">
+                                            <div class="opportunity-info">
+                                                <div class="opportunity-title">Smart Retries</div>
+                                                <div class="opportunity-description">Enable intelligent retry logic for declined payments</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="revenue-impact">+$38,000/year</span>
+                                    </td>
+                                    <td>
+                                        <span class="effort-badge easy">Easy</span>
+                                        <div class="effort-detail">30 minute setup</div>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="table-btn secondary" onclick="console.log('Smart Retries button clicked'); openExperimentDrawer({
+                                                id: 'smart-retries',
+                                                title: 'Smart Retries',
+                                                description: 'Enable intelligent retry logic for declined payments to recover lost revenue.',
+                                                uplift: 8,
+                                                revenue: '+$38,000/year',
+                                                effort: 'Easy (30 minute setup)'
+                                            })">
+                                                Experiment
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="medium-priority">
+                                    <td>
+                                        <div class="opportunity-cell">
+                                            <div class="opportunity-info">
+                                                <div class="opportunity-title">Connect marketplace</div>
+                                                <div class="opportunity-description">Set up Connect for multi-party payment flows</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="revenue-impact">+$32,000/year</span>
+                                    </td>
+                                    <td>
+                                        <span class="effort-badge hard">Hard</span>
+                                        <div class="effort-detail">1-2 weeks</div>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="table-btn secondary" onclick="console.log('Connect marketplace button clicked'); openExperimentDrawer({
+                                                id: 'connect-marketplace',
+                                                title: 'Connect Marketplace',
+                                                description: 'Set up Connect for multi-party payment flows to enable marketplace functionality.',
+                                                uplift: 15,
+                                                revenue: '+$32,000/year',
+                                                effort: 'Hard (1-2 weeks)'
+                                            })">
+                                                Experiment
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Experiments Section -->
+                <div class="ab-testing-section" style="margin-bottom: 48px;">
+                    <div class="ab-header">
+                        <h2 class="ab-title">Experiments</h2>
+                        <button class="new-test-btn" onclick="openNewExperimentDrawer()">
+                            <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                            New experiment
+                        </button>
+                    </div>
+                    
+                    <div class="ab-tests-table-container">
+                        <table class="ab-tests-table">
+                            <thead>
+                                <tr>
+                                    <th>Test name</th>
+                                    <th>Status</th>
+                                    <th>Progress</th>
+                                    <th>Control</th>
+                                    <th>Variant</th>
+                                    <th>Improvement</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="active">
+                                    <td>
+                                        <div class="test-cell">
+                                            <div class="test-title">3D Secure optimization</div>
+                                            <div class="test-description">Testing automatic vs. challenge-based 3D Secure authentication</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="status-cell active">
+                                            <span class="status-dot"></span>
+                                            <span class="status-text">Active</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="progress-cell">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 67%"></div>
+                                            </div>
+                                            <span class="progress-text">67% Complete</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="rate-value">89.2%</span>
+                                    </td>
+                                    <td>
+                                        <span class="rate-value">91.8%</span>
+                                    </td>
+                                    <td>
+                                        <span class="improvement">+2.6%</span>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="table-btn secondary">
+                                                <i data-lucide="bar-chart" style="width: 14px; height: 14px;"></i>
+                                                Details
+                                            </button>
+                                            <button class="table-btn secondary">
+                                                <i data-lucide="pause" style="width: 14px; height: 14px;"></i>
+                                                Pause
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="completed">
+                                    <td>
+                                        <div class="test-cell">
+                                            <div class="test-title">Smart Retries configuration</div>
+                                            <div class="test-description">Testing different retry strategies for declined payments</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="status-cell completed">
+                                            <span class="status-dot"></span>
+                                            <span class="status-text">Completed</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="progress-cell">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 100%"></div>
+                                            </div>
+                                            <span class="progress-text">100% Complete</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="rate-value">85.1%</span>
+                                    </td>
+                                    <td>
+                                        <span class="rate-value winner">87.3%</span>
+                                    </td>
+                                    <td>
+                                        <span class="improvement">+2.2%</span>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="table-btn secondary">
+                                                <i data-lucide="bar-chart" style="width: 14px; height: 14px;"></i>
+                                                Details
+                                            </button>
+                                            <button class="table-btn primary">
+                                                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+                                                Deploy
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Past Optimizations Section -->
+                <div class="ab-testing-section">
+                    <div class="ab-header">
+                        <h2 class="ab-title">Past optimizations</h2>
+                    </div>
+                    
+                    <div class="timeline-container">
+                        <!-- Table will be dynamically populated by updateTimeline function -->
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Add the view to the main content area
+        const mainContentInner = document.querySelector('.main-content-inner');
+        if (mainContentInner) {
+            // Check if optimization view already exists in the main content
+            let existingView = mainContentInner.querySelector('#optimization-view');
+            if (existingView) {
+                existingView.remove();
+            }
+            mainContentInner.appendChild(optimizationView);
+        } else {
+            document.body.appendChild(optimizationView);
+        }
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        return optimizationView;
+    }
+
+    function createOverviewView() {
+        const overviewView = document.createElement('div');
+        overviewView.id = 'overview-view';
+        overviewView.className = 'tab-content optimization-tab-content';
+        overviewView.style.cssText = `
+            width: 100%;
+            background: white;
+            min-height: 100vh;
+            display: block;
+        `;
+
+        const dateRange = document.getElementById('dateRangeDropdown').textContent.trim();
+        const generator = new RealisticDataGenerator(currentBusinessType, dateRange);
+        const metrics = generator.getBusinessMetrics();
+
+        overviewView.innerHTML = `
+                <!-- Simple Two Column Layout -->
+                <div style="display: flex; gap: 24px; margin-top: 48px; width: 100%;">
+                    <!-- Left Column -->
+                    <div style="flex: 0 0 70%;">
+                    <!-- Performance Header and Time Filter -->
+                    <div class="performance-header-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 style="margin: 0; font-size: 20px; font-weight: 600; color: var(--color-gray-900); line-height: 28px;">Performance</h2>
+                        
+                        <!-- Time Filter for Overview Page -->
+                        <div class="date-range-dropdown">
+                            <button class="filter-btn dropdown-trigger" id="overviewDateRangeDropdown">
+                                Last 90 days
+                                <i data-lucide="chevron-down" class="filter-icon"></i>
+                            </button>
+                            <div class="dropdown-menu" id="overviewDateRangeMenu">
+                                <div class="dropdown-item" data-range="7">Last 7 days</div>
+                                <div class="dropdown-item" data-range="30">Last 30 days</div>
+                                <div class="dropdown-item" data-range="60">Last 60 days</div>
+                                <div class="dropdown-item active" data-range="90">Last 90 days</div>
+                                <div class="dropdown-item" data-range="180">Last 6 months</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Stats -->
+                    <div class="performance-stats" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 72px;">
+                        <div class="performance-stat-card" data-metric="total-revenue" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Total revenue</div>
+                        </div>
+                        <div class="performance-stat-card" data-metric="revenue-recovered" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Total revenue recovered</div>
+                        </div>
+                        <div class="performance-stat-card" data-metric="recovered-payments" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">134</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Recovered payments</div>
+                        </div>
+                        <div class="performance-stat-card" data-metric="success-rate" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">0%</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Success rate</div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Lifecycle Header -->
+                    <div class="lifecycle-header">
+                        <h1 class="lifecycle-title">Payment lifecycle</h1>
+                        <p class="lifecycle-subtitle">Optimize every stage of your payment journey for maximum revenue capture</p>
+                    </div>
+
+                    <!-- Payment Lifecycle Waterfall Chart -->
+                    <div class="waterfall-chart">
+                        <div class="waterfall-container">
+                            <!-- Acceptance -->
+                            <div class="waterfall-item starting">
+                                <div class="waterfall-bar" style="height: 100px; background: #3B82F6;"></div>
+                                <div class="waterfall-label">Acceptance</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$0</span>
+                                    <span class="detail-rate">0 transactions</span>
+                                </div>
+                            </div>
+
+                            <!-- Authorization Losses -->
+                            <div class="waterfall-item negative">
+                                <div class="waterfall-bar" style="height: 20px; background: #EF4444;"></div>
+                                <div class="waterfall-label">Declines</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$0</span>
+                                    <span class="detail-rate">0 declined</span>
+                                </div>
+                            </div>
+
+                            <!-- Dispute Losses -->
+                            <div class="waterfall-item negative">
+                                <div class="waterfall-bar" style="height: 10px; background: #F97316;"></div>
+                                <div class="waterfall-label">Disputes</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$0</span>
+                                    <span class="detail-rate">0 disputes</span>
+                                </div>
+                            </div>
+
+                            <!-- Fraud -->
+                            <div class="waterfall-item positive">
+                                <div class="waterfall-bar" style="height: 50px; background: #10B981;"></div>
+                                <div class="waterfall-label">Fraud</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$0</span>
+                                    <span class="detail-rate">-$0 fraud losses</span>
+                                </div>
+                            </div>
+
+                            <!-- Costs -->
+                            <div class="waterfall-item negative">
+                                <div class="waterfall-bar" style="height: 15px; background: #8B5CF6;"></div>
+                                <div class="waterfall-label">Costs</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$0</span>
+                                    <span class="detail-rate">Processing fees</span>
+                                </div>
+                            </div>
+
+                            <!-- Final Total -->
+                            <div class="waterfall-item total">
+                                <div class="waterfall-bar" style="height: 65px; background: #533AFD;"></div>
+                                <div class="waterfall-label">Total revenue</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$0</span>
+                                    <span class="detail-rate">0% success rate</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Key Metrics -->
+                    <div class="performance-snapshot">
+                        <h2 class="snapshot-title">Key metrics</h2>
+                        <div class="snapshot-grid">
+                            <div class="snapshot-card">
+                                <div class="snapshot-card-header">
+                                    <h3 class="snapshot-card-title">Checkout conversion</h3>
+                                    <div class="snapshot-card-value">0%</div>
+                                </div>
+                                <div class="snapshot-chart-container">
+                                    <div class="snapshot-chart-content">
+                                        <div class="snapshot-chart-y-axis">
+                                            <span>100%</span>
+                                            <span>75%</span>
+                                            <span>50%</span>
+                                            <span>25%</span>
+                                            <span>0%</span>
+                                        </div>
+                                        <div class="snapshot-chart-area">
+                                            <div class="snapshot-chart-grid"></div>
+                                            <div class="snapshot-chart-bars">
+                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200">
+                                                    <path d="M0,34 L100,16 L200,4" stroke="#E4E7EC" stroke-width="2" fill="none"/>
+                                                    <path d="M0,38 L100,22 L200,10" stroke="#533AFD" stroke-width="3" fill="none"/>
+                                                    <path d="M0,84 L100,66 L200,44" stroke="#22C55E" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
+                                                </svg>
+                                            </div>
+                                            <div class="snapshot-chart-x-axis">
+                                            </div>
+                                        </div>
+                                        <div class="snapshot-chart-legend">
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #533AFD; border-radius: 2px;"></div>
+                                                <span>Current</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #E4E7EC; border-radius: 2px;"></div>
+                                                <span>Baseline</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #22C55E; border-radius: 2px; background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #22C55E 2px, #22C55E 4px);"></div>
+                                                <span>AI-optimized</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="snapshot-card">
+                                <div class="snapshot-card-header">
+                                    <h3 class="snapshot-card-title">Authorization rate</h3>
+                                    <div class="snapshot-card-value">89%</div>
+                                </div>
+                                <div class="snapshot-chart-container">
+                                    <div class="snapshot-chart-content">
+                                        <div class="snapshot-chart-y-axis">
+                                            <span>100%</span>
+                                            <span>75%</span>
+                                            <span>50%</span>
+                                            <span>25%</span>
+                                            <span>0%</span>
+                                        </div>
+                                        <div class="snapshot-chart-area">
+                                            <div class="snapshot-chart-grid"></div>
+                                            <div class="snapshot-chart-bars">
+                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200">
+                                                    <path d="M0,38 L100,22 L200,10" stroke="#E4E7EC" stroke-width="2" fill="none"/>
+                                                    <path d="M0,38 L100,22 L200,10" stroke="#533AFD" stroke-width="3" fill="none"/>
+                                                    <path d="M0,84 L100,66 L200,44" stroke="#22C55E" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
+                                                </svg>
+                                            </div>
+                                            <div class="snapshot-chart-x-axis">
+                                            </div>
+                                        </div>
+                                        <div class="snapshot-chart-legend">
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #533AFD; border-radius: 2px;"></div>
+                                                <span>Current</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #E4E7EC; border-radius: 2px;"></div>
+                                                <span>Baseline</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #22C55E; border-radius: 2px; background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #22C55E 2px, #22C55E 4px);"></div>
+                                                <span>AI-optimized</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="snapshot-card">
+                                <div class="snapshot-card-header">
+                                    <h3 class="snapshot-card-title">Dispute rate</h3>
+                                    <div class="snapshot-card-value">0.4%</div>
+                                </div>
+                                <div class="snapshot-chart-container">
+                                    <div class="snapshot-chart-content">
+                                        <div class="snapshot-chart-y-axis">
+                                            <span>1.0%</span>
+                                            <span>0.75%</span>
+                                            <span>0.5%</span>
+                                            <span>0.25%</span>
+                                            <span>0%</span>
+                                        </div>
+                                        <div class="snapshot-chart-area">
+                                            <div class="snapshot-chart-grid"></div>
+                                            <div class="snapshot-chart-bars">
+                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200">
+                                                    <path d="M0,184 L100,192 L200,196" stroke="#E4E7EC" stroke-width="2" fill="none"/>
+                                                    <path d="M0,184 L100,192 L200,196" stroke="#533AFD" stroke-width="3" fill="none"/>
+                                                    <path d="M0,184 L100,192 L200,196" stroke="#22C55E" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
+                                                </svg>
+                                            </div>
+                                            <div class="snapshot-chart-x-axis">
+                                            </div>
+                                        </div>
+                                        <div class="snapshot-chart-legend">
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #533AFD; border-radius: 2px;"></div>
+                                                <span>Current</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #E4E7EC; border-radius: 2px;"></div>
+                                                <span>Baseline</span>
+                                            </div>
+                                            <div class="legend-item" style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-gray-600);">
+                                                <div class="legend-color" style="width: 12px; height: 12px; background: #22C55E; border-radius: 2px; background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #22C55E 2px, #22C55E 4px);"></div>
+                                                <span>AI-optimized</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div style="flex: 0 0 30%; background: white; padding: 20px; border-radius: 8px;">
+                        <!-- Ask Assistant Section -->
+                        <div class="assistant-section">
+                            <div class="assistant-header">
+                                <i data-lucide="sparkles" class="sparkles-icon"></i>
+                                <h3 class="assistant-title">Optimization assistant</h3>
+                            </div>
+                            <div class="suggested-prompts">
+                                <button class="prompt-btn" onclick="openAIPanel('What are the highest-impact optimization opportunities for my business?', '${currentBusinessType}', 'optimization-priorities', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                                    What are my highest-impact optimization opportunities?
+                                </button>
+                                <button class="prompt-btn" onclick="openAIPanel('How do I calculate the ROI of payment optimizations?', '${currentBusinessType}', 'optimization-roi', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                                    How do I calculate optimization ROI?
+                                </button>
+                                <button class="prompt-btn" onclick="openAIPanel('What experiments should I run for payment optimization?', '${currentBusinessType}', 'ab-testing-strategy', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                                    What experiments should I run?
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="quick-actions">
+                            <h3 class="actions-title">Quick actions</h3>
+                            <button class="quick-action-btn" onclick="openAIPanel('How do I set up a new experiment?', '${currentBusinessType}', 'setup-ab-test', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                                <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                                Create experiment
+                            </button>
+                            <button class="quick-action-btn" onclick="openAIPanel('How do I implement Payment Intents?', '${currentBusinessType}', 'implement-payment-intents', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                                <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i>
+                                Implement Payment Intents
+                            </button>
+                            <button class="quick-action-btn" onclick="openAIPanel('How do I configure Smart Retries?', '${currentBusinessType}', 'configure-retries', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
+                                <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
+                                Configure Smart Retries
+                            </button>
+                        </div>
+                        
+                        <!-- Resources Section -->
+                        <div class="resources-section">
+                            <h3 class="resources-title">Resources</h3>
+                            <div class="resource-item">
+                                <i data-lucide="file-text" class="resource-icon"></i>
+                                <div class="resource-content">
+                                    <span class="resource-name">Payment optimization guide</span>
+                                    <span class="resource-description">Learn how to optimize your payment performance and increase revenue.</span>
+                                </div>
+                            </div>
+                            <div class="resource-item">
+                                <i data-lucide="bar-chart" class="resource-icon"></i>
+                                <div class="resource-content">
+                                    <span class="resource-name">Experiments best practices</span>
+                                    <span class="resource-description">Learn how to design and run effective payment optimization tests.</span>
+                                </div>
+                            </div>
+                            <div class="resource-subsection">
+                                <span class="subsection-title">View other optimization tools</span>
+                                <div class="resource-link">
+                                    <i data-lucide="arrow-right" class="arrow-icon"></i>
+                                    <span>Radar fraud prevention</span>
+                                </div>
+                                <div class="resource-link">
+                                    <i data-lucide="arrow-right" class="arrow-icon"></i>
+                                    <span>Checkout optimization</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        `;
+
+        // Add the view to the main content area
+        const mainContentInner = document.querySelector('.main-content-inner');
+        if (mainContentInner) {
+            // Check if overview view already exists in the main content
+            let existingView = mainContentInner.querySelector('#overview-view');
+            if (existingView) {
+                existingView.remove();
+            }
+            mainContentInner.appendChild(overviewView);
+        } else {
+            document.body.appendChild(overviewView);
+        }
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Update the page with current business type data
+        const currentDateRange = document.getElementById('dateRangeDropdown').textContent.trim();
+        updateOptimizationPage(currentBusinessType, currentDateRange);
+        
+        return overviewView;
+    }
+
     function createAuthenticationView() {
         const authView = document.createElement('div');
         authView.id = 'authentication-view';
@@ -13337,6 +14272,33 @@
 
         document.body.appendChild(authView);
         return authView;
+    }
+
+    function createCostView() {
+        const costView = document.createElement('div');
+        costView.id = 'cost-view';
+        costView.className = 'tab-content';
+        costView.style.cssText = `
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+            background: var(--color-gray-100);
+            min-height: 100vh;
+        `;
+
+        costView.innerHTML = `
+            <div class="cost-header">
+                <h1 class="cost-title">Cost & Pricing Analytics</h1>
+                <p class="cost-subtitle">Monitor your payment processing costs and optimize pricing</p>
+            </div>
+            <div class="cost-content">
+                <p>Cost view coming soon...</p>
+            </div>
+        `;
+
+        document.body.appendChild(costView);
+        return costView;
     }
 
     function createDisputesView() {
@@ -13599,9 +14561,29 @@
     
     // AI Integration Functions
     function askAIAboutAcceptanceDrop() {
-        const question = "Why did my acceptance rate drop 2.1% in Germany and what can I do about it?";
-        openAIPanel(question, "medium", "acceptance-drop", 63.27, "Last 90 days", 31);
-        toggleNotificationPanel();
+        console.log('askAIAboutAcceptanceDrop function called');
+        alert('askAIAboutAcceptanceDrop function is working!');
+        const question = "Why did my acceptance rate drop significantly in Germany and what can I do about it?";
+        console.log('About to call openAIPanel with:', { question, businessType: "medium", topic: "acceptance-drop", metric: 85.2, dateRange: "Last 90 days", payments: 94 });
+        
+        try {
+            openAIPanel(question, "medium", "acceptance-drop", 85.2, "Last 90 days", 94);
+            console.log('openAIPanel called successfully');
+        } catch (error) {
+            console.error('Error calling openAIPanel:', error);
+            alert('Error calling openAIPanel: ' + error.message);
+        }
+        
+        console.log('About to call toggleNotificationPanel');
+        try {
+            toggleNotificationPanel();
+            console.log('toggleNotificationPanel called successfully');
+        } catch (error) {
+            console.error('Error calling toggleNotificationPanel:', error);
+            alert('Error calling toggleNotificationPanel: ' + error.message);
+        }
+        
+        console.log('askAIAboutAcceptanceDrop function completed');
     }
     
     function askAIAboutFraudPattern() {
@@ -13617,8 +14599,131 @@
     }
     
     function viewAcceptanceDetails() {
+        // Change time frame to "Last 30 days"
+        const dateRangeDropdown = document.getElementById('dateRangeDropdown');
+        if (dateRangeDropdown) {
+            dateRangeDropdown.textContent = 'Last 30 days';
+            // Update the active state in the dropdown menu
+            const dropdownMenu = document.getElementById('dateRangeMenu');
+            if (dropdownMenu) {
+                const items = dropdownMenu.querySelectorAll('.dropdown-item');
+                items.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.textContent === 'Last 30 days') {
+                        item.classList.add('active');
+                    }
+                });
+            }
+        }
+        
+        // Set card country filter to Germany
+        const cardCountryFilter = document.querySelector('.filter-chip[data-filter="card-country"]');
+        if (cardCountryFilter) {
+            cardCountryFilter.textContent = 'Germany';
+            cardCountryFilter.classList.add('active');
+        }
+        
+        // Switch to acceptance tab
         switchTabView("acceptance");
         toggleNotificationPanel();
+        
+        // Automatically select the "Accepted volume" metric card and show the drop
+        setTimeout(() => {
+            const allCards = document.querySelectorAll('.metric-card');
+            let acceptedVolumeCard = null;
+            
+            // Find the Accepted volume card
+            allCards.forEach(card => {
+                const label = card.querySelector('.metric-label');
+                if (label && label.textContent === 'Accepted volume') {
+                    acceptedVolumeCard = card;
+                }
+            });
+            
+            if (acceptedVolumeCard) {
+                // Trigger the metric card click event to create the proper Accepted volume chart
+                acceptedVolumeCard.click();
+                
+                // Update the chart to show the drop with a red dot
+                setTimeout(() => {
+                    updateMainChart();
+                    
+                    // Force a more pronounced drop for Germany in last 30 days
+                    const chartContainer = document.querySelector('.chart-container');
+                    if (chartContainer) {
+                        const svg = chartContainer.querySelector('svg');
+                        if (svg) {
+                            // Remove existing indicators and add the red dot
+                            const existingIndicators = svg.querySelectorAll('.acceptance-alert-indicator');
+                            existingIndicators.forEach(indicator => indicator.remove());
+                            
+                            // Calculate x-coordinates based on the number of data points
+                            const generator = new RealisticDataGenerator(currentBusinessType, 'Last 30 days');
+                            const volumeData = generator.generateTimeSeriesData(50, 0.2, 0.05);
+                            const numDataPoints = volumeData.length;
+                            const svgWidth = 800;
+                            const xPoints = [];
+                            for (let i = 0; i < numDataPoints; i++) {
+                                if (numDataPoints === 1) {
+                                    xPoints.push(400);
+                                } else {
+                                    xPoints.push(80 + (i * (svgWidth - 160) / (numDataPoints - 1)));
+                                }
+                            }
+                            const lastX = xPoints[xPoints.length - 1];
+                            const lastY = 120; // Position for the drop
+                            
+                            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                            circle.setAttribute('cx', lastX);
+                            circle.setAttribute('cy', lastY);
+                            circle.setAttribute('r', '8');
+                            circle.setAttribute('fill', '#EF4444');
+                            circle.setAttribute('stroke', '#ffffff');
+                            circle.setAttribute('stroke-width', '2');
+                            circle.setAttribute('filter', 'drop-shadow(0 2px 4px rgba(239, 68, 68, 0.3))');
+                            circle.classList.add('acceptance-alert-indicator');
+                            circle.dataset.index = xPoints.length - 1;
+                            circle.dataset.type = 'acceptance-alert';
+                            
+                            // Add hover functionality
+                            circle.addEventListener('mouseenter', function() {
+                                showAcceptanceAlertTooltip(lastX, lastY);
+                            });
+                            
+                            circle.addEventListener('mouseleave', function() {
+                                hideAcceptanceAlertTooltip();
+                            });
+                            
+                            svg.appendChild(circle);
+                        }
+                    }
+                }, 200);
+            }
+        }, 100);
+    }
+    
+    function showAcceptanceAlertDetails() {
+        switchTabView("acceptance");
+        hideAcceptanceAlertTooltip();
+        
+        // Automatically select the "Accepted volume" metric card
+        setTimeout(() => {
+            const allCards = document.querySelectorAll('.metric-card');
+            let acceptedVolumeCard = null;
+            
+            // Find the Accepted volume card
+            allCards.forEach(card => {
+                const label = card.querySelector('.metric-label');
+                if (label && label.textContent === 'Accepted volume') {
+                    acceptedVolumeCard = card;
+                }
+            });
+            
+            if (acceptedVolumeCard) {
+                // Trigger the metric card click event to create the proper Accepted volume chart
+                acceptedVolumeCard.click();
+            }
+        }, 100);
     }
     
     function viewFraudDetails() {
@@ -13638,6 +14743,15 @@
     function testExperimentButton() {
         console.log('Test function called - JavaScript is working!');
         alert('JavaScript is working!');
+    }
+    
+    // Test function for Ask Assistant button
+    function testAskAssistant() {
+        console.log('testAskAssistant function called');
+        alert('Ask Assistant button is working!');
+        
+        // Now call the actual function
+        askAIAboutAcceptanceDrop();
     }
     
     // Test function for experiment drawer
@@ -14371,43 +15485,11 @@
                     <span class="notification-timestamp">Jul 17</span>
                 </div>
                 <div class="notification-message">
-                    Acceptance rate dropped 2.1% in Germany over the last 24 hours. This represents a potential revenue loss of $1,200.
+                    Acceptance rate dropped significantly in Germany over the last 24 hours. This represents a potential revenue loss of $1,200.
                 </div>
                 <div class="notification-actions">
-                    <button class="notification-btn" onclick="askAIAboutAcceptanceDrop()">Ask AI</button>
+                    <button class="notification-btn" onclick="testAskAssistant()">Ask Assistant</button>
                     <button class="notification-btn primary" onclick="viewAcceptanceDetails()">View Details</button>
-                </div>
-            </div>
-        </div>
-        <div class="notification-item">
-            <div class="notification-dot-indicator"></div>
-            <div class="notification-content">
-                <div class="notification-header">
-                    <span class="notification-type">Fraud Alert</span>
-                    <span class="notification-timestamp">Jul 16</span>
-                </div>
-                <div class="notification-message">
-                    New fraud pattern detected in Asia. 15 suspicious transactions flagged in the last hour.
-                </div>
-                <div class="notification-actions">
-                    <button class="notification-btn" onclick="askAIAboutFraudPattern()">Ask AI</button>
-                    <button class="notification-btn primary" onclick="viewFraudDetails()">Review</button>
-                </div>
-            </div>
-        </div>
-        <div class="notification-item">
-            <div class="notification-dot-indicator"></div>
-            <div class="notification-content">
-                <div class="notification-header">
-                    <span class="notification-type">Optimization</span>
-                    <span class="notification-timestamp">Jul 15</span>
-                </div>
-                <div class="notification-message">
-                    Apple Pay conversion rate improved 15% this month. Consider expanding to other regions.
-                </div>
-                <div class="notification-actions">
-                    <button class="notification-btn" onclick="askAIAboutApplePayOptimization()">Ask AI</button>
-                    <button class="notification-btn primary" onclick="expandApplePay()">Expand</button>
                 </div>
             </div>
         </div>
