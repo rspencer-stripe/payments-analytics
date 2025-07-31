@@ -7686,12 +7686,13 @@
     // Function to navigate to optimization tab
     function navigateToOptimizationTab() {
         console.log('Navigating to optimization tab');
-        const optimizationTab = document.querySelector('[data-tab="optimization"]');
+        // Find the optimization tab button
+        const optimizationTab = document.querySelector('.nav-tab[onclick*="optimization"]');
         if (optimizationTab) {
             optimizationTab.click();
         } else {
             // Fallback: try to find the tab by text content
-            const tabs = document.querySelectorAll('.tab-button');
+            const tabs = document.querySelectorAll('.nav-tab');
             tabs.forEach(tab => {
                 if (tab.textContent.toLowerCase().includes('optimization')) {
                     tab.click();
