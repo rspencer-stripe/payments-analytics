@@ -10329,7 +10329,7 @@
         insightsSections.forEach(section => {
             section.innerHTML = top3Opportunities.map((opp, index) => `
                 <div class="insight-card" onclick="openExperimentDrawer({
-                    id: '${opp.title.toLowerCase().replace(/\s+/g, '-')}',
+                    id: '${opp.id}',
                     title: '${opp.title}',
                     description: '${opp.description}',
                     uplift: ${parseInt(opp.impact.replace(/[^0-9]/g, '')) || 0},
