@@ -1248,7 +1248,7 @@
 .optimization-insights {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 0px;
     margin-top: 16px;
 }
 
@@ -1266,7 +1266,7 @@
 
 .insight-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
     flex: 1;
 }
@@ -13705,20 +13705,6 @@
                                         <span class="impact-label">Revenue impact</span>
                                     </div>
                                 </div>
-                                
-                                <div class="insight-card" onclick="navigateToOptimizationTab()">
-                                    <div class="insight-header">
-                                        <i data-lucide="zap" class="insight-icon"></i>
-                                        <div class="insight-content">
-                                            <h4 class="insight-title">View all recommendations</h4>
-                                            <p class="insight-description">Explore complete optimization strategy</p>
-                                        </div>
-                                    </div>
-                                    <div class="insight-impact">
-                                        <span class="impact-value">+$161,000/year</span>
-                                        <span class="impact-label">Total potential</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         
@@ -14457,27 +14443,13 @@
                                     </div>
                                     <div class="insight-impact">
                                         <span class="impact-value">+$44,800/year</span>
-                                        <span class="impact-label">Revenue impact</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="insight-card" onclick="navigateToOptimizationTab()">
-                                    <div class="insight-header">
-                                        <i data-lucide="zap" class="insight-icon"></i>
-                                        <div class="insight-content">
-                                            <h4 class="insight-title">View all recommendations</h4>
-                                            <p class="insight-description">Explore complete optimization strategy</p>
+                                                                                    <span class="impact-label">Revenue impact</span>
                                         </div>
-                                    </div>
-                                    <div class="insight-impact">
-                                        <span class="impact-value">+$161,000/year</span>
-                                        <span class="impact-label">Total potential</span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- Quick Actions -->
+                            
+                            <!-- Quick Actions -->
                         <div class="quick-actions">
                             <h3 class="actions-title">Quick actions</h3>
                             <button class="quick-action-btn" onclick="openAIPanel('How do I set up a new experiment?', '${currentBusinessType}', 'setup-ab-test', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
