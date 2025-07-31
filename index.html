@@ -9749,7 +9749,9 @@
         };
         
         // Update performance stats (the four cards at the top)
-        updatePerformanceStats(optimizationView, data);
+        setTimeout(() => {
+            updatePerformanceStats(optimizationView, data);
+        }, 100);
         
         // Update summary stats (only if they exist)
         const summaryStats = optimizationView.querySelectorAll('.summary-stats .stat-value');
