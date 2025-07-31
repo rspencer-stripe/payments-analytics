@@ -772,6 +772,18 @@
             border-color: var(--color-gray-400);
         }
         
+        .filter-chip.active {
+            background: var(--color-purple-50);
+            border-color: var(--color-purple-300);
+            color: var(--color-purple-700);
+            border-style: solid;
+        }
+        
+        .filter-chip.active:hover {
+            background: var(--color-purple-100);
+            border-color: var(--color-purple-400);
+        }
+        
         .chip-icon {
             width: 14px;
             height: 14px;
@@ -1025,7 +1037,7 @@
         }
 
         .positive {
-            color: #22C55E; /* Green */
+            color: #6B7280; /* Medium gray */
         }
 
         .negative {
@@ -1212,7 +1224,7 @@
         }
 
         .insights-section {
-            margin-bottom: 24px;
+            margin-bottom: 36px;
             padding: 0;
             background: transparent;
             width: 100%;
@@ -1230,7 +1242,7 @@
 
         
         .assistant-section {
-            margin-bottom: 32px;
+            margin-bottom: 48px;
             padding: 0;
             background: transparent;
             width: 100%;
@@ -1306,19 +1318,19 @@
     margin-left: 12px;
 }
 
-.impact-value {
-    font-size: 11px;
-    font-weight: 500;
-    color: #1E293B;
-    line-height: 1.2;
+.insight-impact .impact-value {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #1E293B !important;
+    line-height: 1.2 !important;
 }
 
-.impact-label {
-    font-size: 10px;
-    color: #94A3B8;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    font-weight: 500;
+.insight-impact .impact-label {
+    font-size: 11px !important;
+    color: #94A3B8 !important;
+    text-transform: none !important;
+    letter-spacing: 0.3px !important;
+    font-weight: 500 !important;
 }
         
         .assistant-section.slide-up {
@@ -1405,6 +1417,7 @@
             padding: 0;
             background: transparent;
             width: 100%;
+            margin-bottom: 24px;
         }
 
         .resources-title {
@@ -2717,7 +2730,7 @@
         
         .recommendation-uplift {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             gap: 8px;
             margin-bottom: 16px;
         }
@@ -2862,6 +2875,12 @@
             font-size: 14px;
             color: var(--color-gray-900);
             white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+        
+        .experiment-toast a:hover {
+            text-decoration: underline;
         }
         
         /* Experiment Selection Modal Styles */
@@ -4883,14 +4902,15 @@
         }
 
         .quick-actions {
-            margin-bottom: 24px;
+            margin-bottom: 36px;
+            margin-top: 24px;
         }
 
         .actions-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             color: var(--color-gray-900);
-            margin: 0 0 16px 0;
+            margin-bottom: 20px;
         }
 
         .quick-action-btn {
@@ -5855,7 +5875,7 @@
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color optimized"></div>
-                                    <span>AI-optimized potential</span>
+                                    <span>Industry benchmark</span>
                                     <span id="legend-optimized-value" style="font-weight:600;margin-left:6px;"></span>
                                 </div>
                             </div>
@@ -6220,29 +6240,29 @@
 </div>
 
 <!-- Acceptance Alert Tooltip -->
-<div class="acceptance-alert-tooltip" id="acceptanceAlertTooltip" style="display: none; position: fixed; background: white; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); z-index: 10000; max-width: 320px; font-size: 13px;">
-    <div class="tooltip-header" id="acceptanceTooltipHeader" style="font-weight: 600; color: var(--color-gray-900); margin-bottom: 12px; font-size: 14px;">Acceptance Alert</div>
+<div class="chart-tooltip" id="acceptanceAlertTooltip" style="display: none;">
+    <div class="tooltip-header" id="acceptanceTooltipHeader">Acceptance Alert</div>
     <div class="tooltip-data" id="acceptanceTooltipData">
-        <div style="margin-bottom: 8px;">
-            <span style="color: var(--color-gray-600); font-size: 12px;">Current Rate:</span>
-            <span style="font-weight: 600; color: var(--color-gray-900); margin-left: 8px;">78.5%</span>
+        <div class="tooltip-data-item">
+            <span class="tooltip-label">Current Rate:</span>
+            <span class="tooltip-value">78.5%</span>
         </div>
-        <div style="margin-bottom: 8px;">
-            <span style="color: var(--color-gray-600); font-size: 12px;">Previous Rate:</span>
-            <span style="font-weight: 600; color: var(--color-gray-900); margin-left: 8px;">80.6%</span>
+        <div class="tooltip-data-item">
+            <span class="tooltip-label">Previous Rate:</span>
+            <span class="tooltip-value">80.6%</span>
         </div>
-        <div style="margin-bottom: 12px;">
-            <span style="color: var(--color-gray-600); font-size: 12px;">Potential Recovery:</span>
-            <span style="font-weight: 600; color: var(--color-gray-900); margin-left: 8px;">$480</span>
+        <div class="tooltip-data-item">
+            <span class="tooltip-label">Potential Recovery:</span>
+            <span class="tooltip-value">$480</span>
         </div>
     </div>
     <div class="tooltip-actions">
         <button class="tooltip-changes-btn" onclick="showAcceptanceAlertDetails()">
-            <i data-lucide="trending-up" style="width: 10px; height: 10px;"></i>
+            <i data-lucide="trending-up"></i>
             What happened?
         </button>
         <button class="tooltip-ask-btn" onclick="askAIAboutAcceptanceDrop()">
-            <i data-lucide="sparkles" style="width: 10px; height: 10px;"></i>
+            <i data-lucide="sparkles"></i>
             Ask Assistant
         </button>
     </div>
@@ -6267,18 +6287,55 @@
     </div>
 </div>
 
-<script>
+
+
+    <script>
     lucide.createIcons();
     
     // Test function to verify JavaScript is working
     console.log('JavaScript loaded successfully');
     
+    // Tab switching functionality
+    function switchTabView(tabName) {
+        console.log('Switching to tab:', tabName);
+        
+        // Remove active class from all tabs
+        const tabs = document.querySelectorAll('.nav-tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        const activeTab = document.querySelector(`[onclick*="${tabName}"]`);
+        if (activeTab) {
+            activeTab.classList.add('active');
+        }
+        
+        // Hide all content sections
+        const contentSections = document.querySelectorAll('.content-section');
+        contentSections.forEach(section => {
+            section.style.display = 'none';
+        });
+        
+        // Show the selected content section
+        const selectedSection = document.getElementById(`${tabName}Content`);
+        if (selectedSection) {
+            selectedSection.style.display = 'block';
+        }
+        
+        // Initialize the view for the selected tab
+        if (tabName === 'overview') {
+            createOverviewView();
+        } else if (tabName === 'optimization') {
+            createOptimizationViewNew();
+        } else if (tabName === 'acceptance') {
+            createAcceptanceView();
+        }
+    }
+    
     // Chart Tooltip Functionality
     let currentTooltipData = null;
-    let tooltipTimeout = null;
-    let lastHoverIndex = null;
-    let isHovering = false;
-    let lastHoverTime = 0;
+    let currentHoverTarget = null;
+    let hoverTimeout = null;
+    let isTooltipVisible = false;
     let tooltipPosition = { x: 0, y: 0 }; // Store last tooltip position
     
     function initializeChartTooltips() {
@@ -6400,7 +6457,7 @@
                         } else {
                             aiRecommendation = 'Excellent work! Consider expanding to new payment methods to capture additional revenue.';
                         }
-                        question = `What specific steps should I take to achieve the AI-optimized potential for ${tooltipData.date} (${tooltipData.dateRange})? The AI recommendation is: ${aiRecommendation}`;
+                        question = `What specific steps should I take to achieve the industry benchmark for ${tooltipData.date} (${tooltipData.dateRange})? The AI recommendation is: ${aiRecommendation}`;
                     }
                     topic = 'ai-insight';
                 } else if (isAIInsight && barChartArea && !failedChartArea) {
@@ -6419,7 +6476,7 @@
                     if (chartArea && chartArea.contains(document.querySelector('.chart-svg'))) {
                         chartType = 'authorization rate chart';
                         topic = 'success-rate';
-                        question = `I'm looking to learn about the authorization rate performance for ${tooltipData.date} (${tooltipData.dateRange}). The current rate is ${tooltipData.current}, baseline is ${tooltipData.baseline}, and AI-optimized potential is ${tooltipData.optimized}. Can you help me understand what's driving these numbers and how to improve them?`;
+                        question = `I'm looking to learn about the authorization rate performance for ${tooltipData.date} (${tooltipData.dateRange}). The current rate is ${tooltipData.current}, baseline is ${tooltipData.baseline}, and industry benchmark is ${tooltipData.optimized}. Can you help me understand what's driving these numbers and how to improve them?`;
                     } else if (barChartArea && !failedChartArea) {
                         chartType = 'payment volume breakdown chart';
                         topic = 'optimization';
@@ -6539,189 +6596,220 @@
     
     function addChartHoverListeners() {
         // Remove any existing listeners to prevent duplicates
-        document.removeEventListener('mouseenter', handleChartMouseEnter);
-        document.removeEventListener('mouseleave', handleChartMouseLeave);
-        document.removeEventListener('mouseover', handleChartMouseOver);
-        document.removeEventListener('mouseout', handleChartMouseOut);
+        document.removeEventListener('mouseover', handleUnifiedHover, true);
+        document.removeEventListener('mouseout', handleUnifiedMouseOut, true);
         
-        // Add event listeners
-        document.addEventListener('mouseenter', handleChartMouseEnter, true);
-        document.addEventListener('mouseleave', handleChartMouseLeave, true);
-        document.addEventListener('mouseover', handleChartMouseOver);
-        document.addEventListener('mouseout', handleChartMouseOut);
+        // Add unified event listeners using event delegation
+        document.addEventListener('mouseover', handleUnifiedHover, true);
+        document.addEventListener('mouseout', handleUnifiedMouseOut, true);
     }
     
-    function handleChartMouseEnter(e) {
-        if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
-            const index = parseInt(e.target.dataset.index);
-            if (!isNaN(index) && index !== lastHoverIndex) {
-                const now = Date.now();
-                
-                // Prevent rapid hover changes
-                if (now - lastHoverTime < 50) {
-                    return;
-                }
-                
-                lastHoverIndex = index;
-                lastHoverTime = now;
-                isHovering = true;
-                
-                if (tooltipTimeout) {
-                    clearTimeout(tooltipTimeout);
-                }
-                
-                // Handle acceptance alert indicator separately
-                if (e.target.classList.contains('acceptance-alert-indicator')) {
-                    const cx = parseFloat(e.target.getAttribute('cx'));
-                    const cy = parseFloat(e.target.getAttribute('cy'));
-                    showAcceptanceAlertTooltip(cx, cy);
-                } else {
-                    handleDataPointHover(e, index);
-                }
-            }
+    function handleUnifiedHover(event) {
+        const target = event.target;
+        
+        // Check if target is a hoverable element
+        if (!isHoverableElement(target)) {
+            return;
+        }
+
+        // Clear any existing timeout
+        if (hoverTimeout) {
+            clearTimeout(hoverTimeout);
+            hoverTimeout = null;
+        }
+
+        // If we're already hovering this element, don't re-trigger
+        if (currentHoverTarget === target) {
+            return;
+        }
+
+        // Update current hover target
+        currentHoverTarget = target;
+        isTooltipVisible = true;
+
+        // Handle different types of hoverable elements
+        if (target.classList.contains('acceptance-alert-indicator')) {
+            handleAcceptanceAlertHover(target);
+        } else if (target.classList.contains('data-point') || target.classList.contains('hover-area')) {
+            handleDataPointHover(target);
+        } else if (target.classList.contains('ai-insight-indicator')) {
+            handleAIInsightHover(target);
         }
     }
-    
-    function handleChartMouseLeave(e) {
-        if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
-            // Handle acceptance alert indicator separately
-            if (e.target.classList.contains('acceptance-alert-indicator')) {
-                isHovering = false;
-                lastHoverIndex = null;
-                
-                if (tooltipTimeout) {
-                    clearTimeout(tooltipTimeout);
-                }
-                tooltipTimeout = setTimeout(() => {
-                    if (!isHovering) {
-                        hideAcceptanceAlertTooltip();
-                    }
-                }, 50);
-                return;
-            }
-            
-            // Check if mouse is moving to the tooltip
-            const tooltip = document.getElementById('chartTooltip');
-            if (tooltip && tooltip.classList.contains('visible')) {
-                return;
-            }
-            
-            isHovering = false;
-            lastHoverIndex = null;
-            
-            if (tooltipTimeout) {
-                clearTimeout(tooltipTimeout);
-            }
-            tooltipTimeout = setTimeout(() => {
-                if (!isHovering) {
-                    hideTooltip();
-                }
-            }, 50);
+
+    function isHoverableElement(element) {
+        return element && element.classList && (
+            element.classList.contains('data-point') ||
+            element.classList.contains('hover-area') ||
+            element.classList.contains('ai-insight-indicator') ||
+            element.classList.contains('acceptance-alert-indicator')
+        );
+    }
+
+    function handleAcceptanceAlertHover(target) {
+        console.log('Acceptance alert hover detected');
+        
+        // Hide any existing tooltips first
+        hideAllTooltips();
+        
+        // Show acceptance alert tooltip
+        const cx = parseFloat(target.getAttribute('cx'));
+        const cy = parseFloat(target.getAttribute('cy'));
+        showAcceptanceAlertTooltip(cx, cy);
+    }
+
+    function handleDataPointHover(target) {
+        console.log('Data point hover detected');
+        
+        // Hide any existing tooltips first
+        hideAllTooltips();
+        
+        // Show regular chart tooltip
+        const index = parseInt(target.dataset.index);
+        if (!isNaN(index)) {
+            showDataPointTooltip(target, index);
         }
     }
+
+    function handleAIInsightHover(target) {
+        console.log('AI insight hover detected');
+        
+        // Hide any existing tooltips first
+        hideAllTooltips();
+        
+        // Show AI insight tooltip
+        const index = parseInt(target.dataset.index);
+        if (!isNaN(index)) {
+            showAIInsightTooltip(target, index);
+        }
+    }
+
+    function hideAllTooltips() {
+        // Hide all tooltips
+        const tooltips = document.querySelectorAll('#chartTooltip, #acceptanceAlertTooltip');
+        tooltips.forEach(tooltip => {
+            if (tooltip) {
+                tooltip.style.display = 'none';
+                tooltip.classList.remove('visible');
+            }
+        });
+    }
+
+    function showDataPointTooltip(target, index) {
+        const dateLabels = getDateLabels(document.getElementById('dateRangeDropdown').textContent.trim());
+        const generator = new RealisticDataGenerator(currentBusinessType, document.getElementById('dateRangeDropdown').textContent.trim());
+        const chartData = generator.generateMainChartData();
+        
+        // Convert Y coordinates back to percentages
+        const yToPercent = y => ((200-y)/2).toFixed(1) + '%';
+        
+        const tooltipData = {
+            date: dateLabels[index],
+            dateRange: document.getElementById('dateRangeDropdown').textContent.trim(),
+            current: yToPercent(chartData.current[index]),
+            baseline: yToPercent(chartData.baseline[index]),
+            optimized: yToPercent(chartData.optimized[index]),
+            metric: 'Authorization rate',
+            value: yToPercent(chartData.current[index]),
+            payments: generator.getBusinessMetrics().dailyTransactions * generator.getTimeframeMultipliers().days,
+            dataIndex: index
+        };
+        
+        showTooltip(target, tooltipData);
+    }
+
+    function showAIInsightTooltip(target, index) {
+        // Implementation for AI insight tooltips
+        console.log('Showing AI insight tooltip for index:', index);
+        // Add AI insight specific tooltip logic here
+    }
     
+    function handleUnifiedMouseOut(event) {
+        const target = event.target;
+        
+        // Check if we're moving to a child element (don't hide if moving within the same element)
+        if (target.contains(event.relatedTarget) || target === event.relatedTarget) {
+            return;
+        }
+
+        // Check if we're moving to the tooltip itself
+        const tooltip = document.getElementById('chartTooltip') || document.getElementById('acceptanceAlertTooltip');
+        if (tooltip && (tooltip.contains(event.relatedTarget) || tooltip === event.relatedTarget)) {
+            return;
+        }
+
+        // Clear current hover target
+        currentHoverTarget = null;
+
+        // Set timeout to hide tooltip
+        if (hoverTimeout) {
+            clearTimeout(hoverTimeout);
+        }
+        
+        hoverTimeout = setTimeout(() => {
+            if (!currentHoverTarget) {
+                hideAllTooltips();
+                isTooltipVisible = false;
+            }
+        }, 150); // Slightly longer delay for better UX
+    }
+    
+    // Legacy functions - kept for compatibility but no longer used
     function handleChartMouseOver(e) {
-        if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
-            const index = parseInt(e.target.dataset.index);
-            if (!isNaN(index) && index !== lastHoverIndex) {
-                const now = Date.now();
-                if (now - lastHoverTime < 50) {
-                    return;
-                }
-                
-                lastHoverIndex = index;
-                lastHoverTime = now;
-                isHovering = true;
-                
-                if (tooltipTimeout) {
-                    clearTimeout(tooltipTimeout);
-                }
-                
-                // Handle acceptance alert indicator separately
-                if (e.target.classList.contains('acceptance-alert-indicator')) {
-                    const cx = parseFloat(e.target.getAttribute('cx'));
-                    const cy = parseFloat(e.target.getAttribute('cy'));
-                    showAcceptanceAlertTooltip(cx, cy);
-                } else {
-                    handleDataPointHover(e, index);
-                }
-            }
-        }
+        // Now handled by unified system
     }
     
     function handleChartMouseOut(e) {
-        if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
-            // Handle acceptance alert indicator separately
-            if (e.target.classList.contains('acceptance-alert-indicator')) {
-                isHovering = false;
-                lastHoverIndex = null;
-                
-                if (tooltipTimeout) {
-                    clearTimeout(tooltipTimeout);
-                }
-                tooltipTimeout = setTimeout(() => {
-                    if (!isHovering) {
-                        hideAcceptanceAlertTooltip();
-                    }
-                }, 50);
-                return;
-            }
-            
-            // Check if mouse is moving to the tooltip
-            const tooltip = document.getElementById('chartTooltip');
-            if (tooltip && tooltip.classList.contains('visible')) {
-                return;
-            }
-            
-            isHovering = false;
-            lastHoverIndex = null;
-            
-            if (tooltipTimeout) {
-                clearTimeout(tooltipTimeout);
-            }
-            tooltipTimeout = setTimeout(() => {
-                if (!isHovering) {
-                    hideTooltip();
-                }
-            }, 50);
-        }
+        // Now handled by unified system
     }
     
     function addTooltipHoverListeners() {
-        const tooltip = document.getElementById('chartTooltip');
-        if (!tooltip) return;
+        const tooltips = document.querySelectorAll('#chartTooltip, #acceptanceAlertTooltip');
         
-        // Keep tooltip open when mouse enters the tooltip itself
-        tooltip.addEventListener('mouseenter', function(e) {
-            console.log('Mouse entered tooltip, keeping it open');
-            isHovering = true;
-            if (tooltipTimeout) {
-                clearTimeout(tooltipTimeout);
-            }
-        });
-        
-        // Hide tooltip when mouse leaves the tooltip
-        tooltip.addEventListener('mouseleave', function(e) {
-            console.log('Mouse left tooltip, starting hide timer');
-            isHovering = false;
-            if (tooltipTimeout) {
-                clearTimeout(tooltipTimeout);
-            }
-            tooltipTimeout = setTimeout(() => {
-                if (!isHovering) {
-                    hideTooltip();
+        tooltips.forEach(tooltip => {
+            if (!tooltip) return;
+            
+            // Keep tooltip open when mouse enters
+            tooltip.addEventListener('mouseenter', function(e) {
+                console.log('Mouse entered tooltip, keeping it open');
+                currentHoverTarget = this;
+                isTooltipVisible = true;
+                
+                if (hoverTimeout) {
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = null;
                 }
-            }, 200); // Shorter delay for more responsive interaction
-        });
-        
-        // Also prevent tooltip from hiding when clicking inside it
-        tooltip.addEventListener('click', function(e) {
-            e.stopPropagation();
-            console.log('Tooltip clicked, preventing hide');
-            isHovering = true;
-            if (tooltipTimeout) {
-                clearTimeout(tooltipTimeout);
-            }
+            });
+            
+            // Hide tooltip when mouse leaves
+            tooltip.addEventListener('mouseleave', function(e) {
+                console.log('Mouse left tooltip');
+                currentHoverTarget = null;
+                isTooltipVisible = false;
+                
+                if (hoverTimeout) {
+                    clearTimeout(hoverTimeout);
+                }
+                
+                hoverTimeout = setTimeout(() => {
+                    if (!currentHoverTarget) {
+                        hideAllTooltips();
+                    }
+                }, 200);
+            });
+            
+            // Prevent tooltip from hiding when clicking inside
+            tooltip.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Tooltip clicked, preventing hide');
+                currentHoverTarget = this;
+                isTooltipVisible = true;
+                
+                if (hoverTimeout) {
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = null;
+                }
+            });
         });
     }
     
@@ -6747,7 +6835,7 @@
             current: yToPercent(chartData.current[dataIndex]),
             baseline: yToPercent(chartData.baseline[dataIndex]),
             optimized: yToPercent(chartData.optimized[dataIndex]),
-            metric: 'Authorization Rate',
+            metric: 'Authorization rate',
             value: yToPercent(chartData.current[dataIndex]),
             payments: generator.getBusinessMetrics().dailyTransactions * generator.getTimeframeMultipliers().days,
             dataIndex: dataIndex
@@ -6788,7 +6876,7 @@
             debitVolume: `$${breakdownData.bars[dataIndex].debit.toFixed(2)}`,
             creditPayments: breakdownData.bars[dataIndex].payments.credit,
             debitPayments: breakdownData.bars[dataIndex].payments.debit,
-            metric: 'Payment Volume',
+            metric: 'Payment volume',
             value: `$${(breakdownData.bars[dataIndex].credit + breakdownData.bars[dataIndex].debit).toFixed(2)}`,
             payments: breakdownData.bars[dataIndex].payments.credit + breakdownData.bars[dataIndex].payments.debit,
             dataIndex: dataIndex
@@ -6853,49 +6941,13 @@
         
         console.log('Set currentTooltipData:', currentTooltipData);
         
-        // Position tooltip relative to the data point being hovered
+        // Position tooltip relative to the mouse cursor for stable positioning
         const tooltipWidth = 336;
-        const tooltipHeight = 200; // Approximate tooltip height
+        const tooltipHeight = 200;
         
-        // Get the chart area to calculate data point positioning
-        const chartArea = event.target.closest('.chart-area') || event.target.closest('.bar-chart-area');
-        if (!chartArea) {
-            console.error('Chart area not found');
-            return;
-        }
-        
-        const chartRect = chartArea.getBoundingClientRect();
-        const dataIndex = currentTooltipData.dataIndex || 0;
-        
-        // Use the exact x-coordinates that match the SVG data points
-        const xPoints = [80, 200, 320, 440, 560, 680, 720];
-        const svgWidth = 800; // SVG viewBox width
-        const chartWidth = chartRect.width;
-        
-        // Calculate the actual data point position by scaling the SVG coordinates to the chart width
-        const dataPointX = (xPoints[dataIndex] / svgWidth) * chartWidth;
-        
-        // Get the current chart data to find the actual y-coordinate of the data point
-        const generator = new RealisticDataGenerator(currentBusinessType, document.getElementById('dateRangeDropdown').textContent.trim());
-        const chartData = generator.generateMainChartData();
-        const dataPointY = chartData.current[dataIndex]; // This is the actual y-coordinate in SVG space
-        
-        // Scale the SVG y-coordinate to the chart height
-        const svgHeight = 200; // SVG viewBox height
-        const scaledDataPointY = (dataPointY / svgHeight) * chartRect.height;
-        
-        // Calculate tooltip position relative to the actual data point
-        // Position tooltip closer to cursor for better interaction
-        let tooltipX = chartRect.left + dataPointX + 10;
-        let tooltipY;
-        
-        // Position tooltip to the right and slightly below the data point for easier interaction
-        tooltipY = chartRect.top + scaledDataPointY + 20; // 20px below the data point
-        
-        // For data points near the right edge, position to the left instead
-        if (dataIndex >= 5) {
-            tooltipX = chartRect.left + dataPointX - tooltipWidth - 10;
-        }
+        // Use mouse position for more stable tooltip positioning
+        let tooltipX = event.clientX + 15; // 15px to the right of cursor
+        let tooltipY = event.clientY - 10; // 10px above cursor
         
         // Ensure tooltip doesn't go off-screen
         const viewportWidth = window.innerWidth;
@@ -6903,27 +6955,22 @@
         
         // Adjust horizontal position if tooltip goes off-screen
         if (tooltipX + tooltipWidth > viewportWidth - 10) {
-            tooltipX = chartRect.left + dataPointX - tooltipWidth - 15; // Position to the left of data point
+            tooltipX = event.clientX - tooltipWidth - 15; // Position to the left of cursor
         }
         
         // Adjust vertical position if tooltip goes off-screen
         if (tooltipY < 10) {
-            tooltipY = chartRect.top + scaledDataPointY + 15; // Position below the data point
+            tooltipY = event.clientY + 15; // Position below cursor
         }
         
         // Ensure minimum distance from edges
         tooltipX = Math.max(10, Math.min(tooltipX, viewportWidth - tooltipWidth - 10));
         tooltipY = Math.max(10, Math.min(tooltipY, viewportHeight - tooltipHeight - 10));
         
-        // Check if the new position is significantly different from the last position
-        const positionChanged = Math.abs(tooltipX - tooltipPosition.x) > 5 || Math.abs(tooltipY - tooltipPosition.y) > 5;
-        
-        // Only update position if it has changed significantly to prevent micro-adjustments
-        if (positionChanged || !tooltip.classList.contains('visible')) {
-            tooltipPosition = { x: tooltipX, y: tooltipY };
-            tooltip.style.left = tooltipX + 'px';
-            tooltip.style.top = tooltipY + 'px';
-        }
+        // Update tooltip position
+        tooltipPosition = { x: tooltipX, y: tooltipY };
+        tooltip.style.left = tooltipX + 'px';
+        tooltip.style.top = tooltipY + 'px';
         
         // Update tooltip content
         tooltipHeader.textContent = data.date;
@@ -6946,14 +6993,14 @@
                 <div class="tooltip-data-item">
                     <span class="tooltip-label">
                         <div class="tooltip-color-swatch" style="background: #E4E7EC;"></div>
-                        Baseline Performance:
+                        Baseline performance:
                     </span>
                     <span class="tooltip-value">${data.baseline}</span>
                 </div>
                 <div class="tooltip-data-item">
                     <span class="tooltip-label">
                         <div class="tooltip-color-swatch" style="background: #22C55E;"></div>
-                        AI-Optimized Potential:
+                        Industry benchmark:
                     </span>
                     <span class="tooltip-value">${data.optimized}</span>
                 </div>
@@ -7236,7 +7283,7 @@
             // Authorization rate chart analysis
             analysis = `
                 <div class="changes-section">
-                    <h4 style="font-size: 14px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 12px 0;">Authorization Rate Changes</h4>
+                    <h4 style="font-size: 14px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 12px 0;">Authorization rate changes</h4>
                     <div class="change-item" style="margin-bottom: 16px;">
                         <div class="change-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                             <span class="change-indicator ${change >= 0 ? 'positive' : 'negative'}" style="width: 8px; height: 8px; border-radius: 50%; background: ${change >= 0 ? '#22C55E' : '#EF4444'};"></span>
@@ -7280,7 +7327,7 @@
             // Payment volume chart analysis
             analysis = `
                 <div class="changes-section">
-                    <h4 style="font-size: 14px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 12px 0;">Payment Volume Changes</h4>
+                    <h4 style="font-size: 14px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 12px 0;">Payment volume changes</h4>
                     <div class="change-item" style="margin-bottom: 16px;">
                         <div class="change-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                             <span class="change-indicator positive" style="width: 8px; height: 8px; border-radius: 50%; background: #22C55E;"></span>
@@ -7552,11 +7599,11 @@
         for (let i = 0; i < numDataPoints; i++) {
             const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             const dataPointX = xPoints[i]; // Use exact x-coordinate from the array
-            const hoverWidth = 80; // Increased hover area for better interaction
+            const hoverWidth = 40; // Reduced hover area for more precise interaction
             
             // Get the Y position of the current data point for the line
             const currentY = chartData.current[i];
-            const buffer = 25; // Increased buffer for easier targeting
+            const buffer = 15; // Reduced buffer for more precise targeting
             
             rect.setAttribute('x', dataPointX - (hoverWidth / 2));
             rect.setAttribute('y', Math.max(0, currentY - buffer)); // Position around the line with buffer
@@ -7636,7 +7683,12 @@
     // Function to add acceptance alert indicator for July 17th
     function addAcceptanceAlertIndicator(svg, x, y, index) {
         console.log('Creating acceptance alert indicator at coordinates:', x, y);
-        console.log('SVG element:', svg);
+        
+        // Create a single, larger hover area with the red dot inside
+        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        group.classList.add('acceptance-alert-indicator');
+        group.dataset.index = index;
+        group.dataset.type = 'acceptance-alert';
         
         // Create the red circle indicator
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -7647,52 +7699,27 @@
         circle.setAttribute('stroke', '#ffffff');
         circle.setAttribute('stroke-width', '2');
         circle.setAttribute('filter', 'drop-shadow(0 2px 4px rgba(239, 68, 68, 0.5))');
-        circle.classList.add('acceptance-alert-indicator');
-        circle.dataset.index = index;
-        circle.dataset.type = 'acceptance-alert';
-        circle.style.cursor = 'pointer';
-        circle.style.pointerEvents = 'auto';
         
-        // Add click event to the red dot itself
-        circle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showAcceptanceAlertTooltip(x, y);
-        });
-        
-        // Create an invisible larger hover area for easier interaction
+        // Create an invisible larger hover area
         const hoverArea = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         hoverArea.setAttribute('cx', x);
         hoverArea.setAttribute('cy', y);
-        hoverArea.setAttribute('r', '60');
+        hoverArea.setAttribute('r', '20'); // Smaller, more precise hover area
         hoverArea.setAttribute('fill', 'transparent');
-        hoverArea.setAttribute('stroke', 'rgba(239, 68, 68, 0.1)');
-        hoverArea.setAttribute('stroke-width', '1');
-        hoverArea.classList.add('acceptance-alert-indicator');
-        hoverArea.classList.add('hover-area');
-        hoverArea.dataset.index = index;
-        hoverArea.dataset.type = 'acceptance-alert';
-        hoverArea.style.cursor = 'pointer';
-        hoverArea.style.pointerEvents = 'auto';
+        hoverArea.setAttribute('stroke', 'transparent');
         
-        // Add click event to the hover area
-        hoverArea.addEventListener('click', function(e) {
+        // Add both elements to the group
+        group.appendChild(hoverArea);
+        group.appendChild(circle);
+        
+        // Add click event to the group
+        group.addEventListener('click', function(e) {
             e.stopPropagation();
             showAcceptanceAlertTooltip(x, y);
         });
         
-        // Hover functionality is now handled by the general hover system
-        
-        svg.appendChild(hoverArea);
-        svg.appendChild(circle);
-        console.log('Red dot indicator added to SVG');
-        console.log('Red dot element created:', circle);
-        console.log('Red dot attributes:', {
-            cx: circle.getAttribute('cx'),
-            cy: circle.getAttribute('cy'),
-            r: circle.getAttribute('r'),
-            fill: circle.getAttribute('fill'),
-            class: circle.getAttribute('class')
-        });
+        svg.appendChild(group);
+        console.log('Acceptance alert indicator added successfully');
     }
     
     // Function to navigate to optimization tab
@@ -7827,7 +7854,7 @@
                     const generator = new RealisticDataGenerator(currentBusinessType, currentDateRange);
                     const volumeData = generator.generateTimeSeriesData(50, 0.2, 0.05);
                     const previousVolumeData = volumeData.map(v => v * 0.8);
-                    const optimizedVolumeData = volumeData.map(v => v * 1.25); // AI-optimized potential
+                    const optimizedVolumeData = volumeData.map(v => v * 1.25); // Industry benchmark
                     
                     // Ensure we have valid data
                     console.log('Raw volume data:', volumeData);
@@ -7947,7 +7974,7 @@
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color optimized"></div>
-                                    <span>AI-optimized potential</span>
+                                    <span>Industry benchmark</span>
                                 </div>
                             </div>
                             <span class="update-status">Updated yesterday</span>
@@ -8028,7 +8055,7 @@
                     const generator = new RealisticDataGenerator(currentBusinessType, currentDateRange);
                     const paymentsData = generator.generateTimeSeriesData(25, 0.25, 0.02);
                     const previousPaymentsData = paymentsData.map(v => v * 0.85);
-                    const optimizedPaymentsData = paymentsData.map(v => v * 1.3); // AI-optimized potential
+                    const optimizedPaymentsData = paymentsData.map(v => v * 1.3); // Industry benchmark
                     
                     // Convert to Y coordinates
                     const currentY = paymentsData.map(v => 200 - (v * 4));
@@ -8091,7 +8118,7 @@
                                 </div>
                                 <div class="legend-item">
                                     <div class="legend-color optimized"></div>
-                                    <span>AI-optimized potential</span>
+                                    <span>Industry benchmark</span>
                                 </div>
                             </div>
                             <span class="update-status">Updated yesterday</span>
@@ -8359,15 +8386,15 @@
             return metrics[this.businessType];
         }
 
-        // Generate timeframe multipliers
+        // Generate timeframe multipliers - use "Last 90 days" as baseline (1.0)
         getTimeframeMultipliers() {
             const multipliers = {
-                'Last 7 days': { volume: 0.1, payments: 0.1, days: 7 },
-                'Last 30 days': { volume: 0.33, payments: 0.33, days: 30 },
-                'Last 60 days': { volume: 0.67, payments: 0.67, days: 60 },
-                'Last 90 days': { volume: 1.0, payments: 1.0, days: 90 },
-                'Last 6 months': { volume: 2.0, payments: 2.0, days: 180 },
-                'Last 12 months': { volume: 4.0, payments: 4.0, days: 365 }
+                'Last 7 days': { volume: 0.078, payments: 0.078, days: 7 }, // 7/90 ≈ 0.078
+                'Last 30 days': { volume: 0.333, payments: 0.333, days: 30 }, // 30/90 = 0.333
+                'Last 60 days': { volume: 0.667, payments: 0.667, days: 60 }, // 60/90 = 0.667
+                'Last 90 days': { volume: 1.0, payments: 1.0, days: 90 }, // Baseline
+                'Last 6 months': { volume: 2.0, payments: 2.0, days: 180 }, // 180/90 = 2.0
+                'Last 12 months': { volume: 4.0, payments: 4.0, days: 365 } // 365/90 ≈ 4.0
             };
             return multipliers[this.dateRange];
         }
@@ -8405,34 +8432,42 @@
             return distributions[this.businessType];
         }
 
-        // Generate main chart data with three lines
+        // Generate main chart data with three lines - scaled from "Last 90 days" baseline
         generateMainChartData() {
             const businessMetrics = this.getBusinessMetrics();
             const timeframeMultipliers = this.getTimeframeMultipliers();
             
+            // Use "Last 90 days" as the baseline for consistent scaling
+            const baselineDateRange = 'Last 90 days';
+            const baselineGenerator = new RealisticDataGenerator(this.businessType, baselineDateRange);
+            const baselineBusinessMetrics = baselineGenerator.getBusinessMetrics();
+            
             // Generate current success rate data with realistic fluctuations
+            // Scale from 90-day baseline but maintain percentage data type
             const baseSuccessRate = businessMetrics.successRate;
             const currentData = this.generateTimeSeriesData(baseSuccessRate, 0.08, 0.1);
             
             // Generate baseline data (past performance - slightly lower)
-            const baselineSuccessRate = baseSuccessRate * 0.92;
+            // Use 90-day baseline as reference point
+            const baselineSuccessRate = baselineBusinessMetrics.successRate * 0.92;
             const baselineData = this.generateTimeSeriesData(baselineSuccessRate, 0.08, 0.05);
             
             // Generate AI-optimized data (potential future performance - varies by business size)
+            // Scale from 90-day baseline but maintain percentage data type
             let optimizedSuccessRate;
             if (this.businessType === 'small') {
                 // Small businesses have the most room for improvement
-                optimizedSuccessRate = Math.min(baseSuccessRate * 1.25, 92); // Up to 25% improvement
+                optimizedSuccessRate = Math.min(baselineBusinessMetrics.successRate * 1.25, 92); // Up to 25% improvement
             } else if (this.businessType === 'medium') {
                 // Medium businesses have moderate room for improvement
-                optimizedSuccessRate = Math.min(baseSuccessRate * 1.15, 94); // Up to 15% improvement
+                optimizedSuccessRate = Math.min(baselineBusinessMetrics.successRate * 1.15, 94); // Up to 15% improvement
             } else {
                 // Large businesses are already well-optimized, smaller gains
-                optimizedSuccessRate = Math.min(baseSuccessRate * 1.08, 96); // Up to 8% improvement
+                optimizedSuccessRate = Math.min(baselineBusinessMetrics.successRate * 1.08, 96); // Up to 8% improvement
             }
             const optimizedData = this.generateTimeSeriesData(optimizedSuccessRate, 0.06, 0.15);
             
-            // Convert to Y coordinates
+            // Convert to Y coordinates (maintain percentage scaling)
             let currentY = currentData.map(rate => 200 - (rate * 2));
             const baselineY = baselineData.map(rate => 200 - (rate * 2));
             const optimizedY = optimizedData.map(rate => 200 - (rate * 2));
@@ -9611,7 +9646,7 @@
         console.log('Initial business type set to:', currentBusinessType);
     });
 
-    // Function to update AI assistant prompts based on business type and data
+    // Function to update AI assistant prompts based on business type and data - use "Last 90 days" as baseline
     function updateOverviewPage(businessType, dateRange) {
         console.log('updateOverviewPage called with:', businessType, dateRange);
         const overviewView = document.getElementById('overview-view');
@@ -9621,7 +9656,12 @@
         }
         console.log('Found overview view, updating content...');
         
-        // Generate realistic data based on business type and date range
+        // Use "Last 90 days" as the baseline for consistent scaling
+        const baselineDateRange = 'Last 90 days';
+        const baselineGenerator = new RealisticDataGenerator(businessType, baselineDateRange);
+        const baselineMetrics = baselineGenerator.getBusinessMetrics();
+        
+        // Generate current data based on selected date range
         const generator = new RealisticDataGenerator(businessType, dateRange);
         const allData = generator.generateAllData();
         const metrics = generator.getBusinessMetrics();
@@ -9632,13 +9672,28 @@
         const recoveredPayments = Math.round(allData.metrics.payments * 0.12); // Assume 12% of payments are recovered
         const successRate = metrics.successRate;
         
-        // Update performance stats
-        const performanceStats = overviewView.querySelectorAll('.performance-stat-card .stat-value');
+        // Update performance stats - ALWAYS use percentages for these metrics
+        const performanceStats = overviewView.querySelectorAll('.performance-stat-card');
         if (performanceStats.length >= 4) {
-            performanceStats[0].textContent = `$${totalRevenue.toFixed(0)}`;
-            performanceStats[1].textContent = `$${recoveredRevenue.toFixed(0)}`;
-            performanceStats[2].textContent = recoveredPayments.toString();
-            performanceStats[3].textContent = `${successRate.toFixed(1)}%`;
+            // Authorization rate (use success rate as proxy)
+            const authorizationRate = successRate;
+            performanceStats[0].querySelector('.stat-value').textContent = `${authorizationRate.toFixed(1)}%`;
+            performanceStats[0].querySelector('.stat-benchmark').textContent = `Benchmark: 94.8%`;
+            
+            // Payment success rate
+            const paymentSuccessRate = successRate;
+            performanceStats[1].querySelector('.stat-value').textContent = `${paymentSuccessRate.toFixed(1)}%`;
+            performanceStats[1].querySelector('.stat-benchmark').textContent = `Benchmark: 87.5%`;
+            
+            // Payment failures (use failure rate)
+            const paymentFailures = metrics.failureRate;
+            performanceStats[2].querySelector('.stat-value').textContent = `${paymentFailures.toFixed(1)}%`;
+            performanceStats[2].querySelector('.stat-benchmark').textContent = `Benchmark: 1.1%`;
+            
+            // Cost of payments (static percentage)
+            const costOfPayments = 2.8;
+            performanceStats[3].querySelector('.stat-value').textContent = `${costOfPayments.toFixed(1)}%`;
+            performanceStats[3].querySelector('.stat-benchmark').textContent = `Benchmark: 2.5%`;
         }
         
         // Update waterfall chart
@@ -10053,7 +10108,7 @@
                     appearsOn: "/acceptance"
                 },
                 {
-                    title: "Enable [Afterpay/Klarna]",
+                    title: "Enable {Afterpay/Klarna}",
                     description: "Help improve your conversion rate by enabling {Afterpay/Klarna}, a Buy Now, Pay Later (BNPL) payment method",
                     impact: "Up to $120K",
                     impactLabel: "USD annual revenue increase",
@@ -10210,14 +10265,15 @@
             ]
         };
         
-        const businessOpportunities = opportunities[businessType] || opportunities.medium;
+        const filteredOpportunities = getRecommendations(businessType);
+        
         const tableBody = container.querySelector('.opportunities-table tbody');
         
         console.log('Found opportunities table body:', !!tableBody);
-        console.log('Business opportunities for', businessType, ':', businessOpportunities.length, 'items');
+        console.log('Business opportunities for', businessType, ':', filteredOpportunities.length, 'items');
         
         if (tableBody) {
-            tableBody.innerHTML = businessOpportunities.map((opp, index) => {
+            tableBody.innerHTML = filteredOpportunities.map((opp, index) => {
                 const statusBadge = opp.status ? `<span class="status-badge ${opp.status.toLowerCase().includes('finished') ? 'completed' : opp.status.toLowerCase().includes('progress') ? 'in-progress' : 'blocked'}">${opp.status}</span>` : '';
                 const categoryBadge = opp.category ? `<span class="category-badge">${opp.category}</span>` : '';
                 
@@ -10233,12 +10289,6 @@
                             </div>
                         </td>
                         <td>
-                            <div class="impact-cell">
-                                <span class="impact-value">${opp.impact}</span>
-                                <span class="impact-label">${opp.impactLabel}</span>
-                            </div>
-                        </td>
-                        <td>
                             <span class="revenue-impact">${opp.revenue}</span>
                         </td>
                         <td>
@@ -10249,7 +10299,7 @@
                         <td>
                             <div class="table-actions">
                                 <button class="table-btn secondary" onclick="openExperimentDrawer({
-                                    id: '${opp.title.toLowerCase().replace(/\s+/g, '-')}',
+                                    id: '${opp.id}',
                                     title: '${opp.title}',
                                     description: '${opp.description}',
                                     uplift: ${parseInt(opp.impact.replace(/[^0-9]/g, '')) || 0},
@@ -10263,6 +10313,46 @@
                     </tr>
                 `;
             }).join('');
+        }
+        
+        // Update optimization insights cards with top 3 recommendations
+        updateOptimizationInsightsCards(businessType);
+    }
+    
+    function updateOptimizationInsightsCards(businessType = 'medium') {
+        // Get top 3 opportunities using unified data source
+        const top3Opportunities = getTopRecommendations(businessType, 3);
+        
+        // Update all optimization insights sections
+        const insightsSections = document.querySelectorAll('.optimization-insights');
+        
+        insightsSections.forEach(section => {
+            section.innerHTML = top3Opportunities.map((opp, index) => `
+                <div class="insight-card" onclick="openExperimentDrawer({
+                    id: '${opp.title.toLowerCase().replace(/\s+/g, '-')}',
+                    title: '${opp.title}',
+                    description: '${opp.description}',
+                    uplift: ${parseInt(opp.impact.replace(/[^0-9]/g, '')) || 0},
+                    revenue: '${opp.revenue}',
+                    effort: '${opp.effort}'
+                })">
+                    <div class="insight-header">
+                        <div class="insight-content">
+                            <h4 class="insight-title">${opp.title}</h4>
+                            <p class="insight-description">${opp.description}</p>
+                        </div>
+                    </div>
+                    <div class="insight-impact">
+                        <span class="impact-value">${opp.impact}</span>
+                        <div class="impact-label">${opp.impactLabel}</div>
+                    </div>
+                </div>
+            `).join('');
+        });
+        
+        // Re-initialize icons after updating content
+        if (window.lucide) {
+            window.lucide.createIcons();
         }
     }
     
@@ -10364,7 +10454,7 @@
                     outcome: "Fraud rate reduced by 0.8%"
                 },
                 {
-                    title: "Regional Payment Methods",
+                    title: "Regional payment methods",
                     description: "Successfully added local payment options for international markets",
                     impact: "+2.8%",
                     impactLabel: "conversion rate",
@@ -10407,7 +10497,6 @@
                             <tr>
                                 <th>Optimization</th>
                                 <th>Status</th>
-                                <th>Impact</th>
                                 <th>Revenue</th>
                                 <th>Outcome</th>
                                 <th>Date</th>
@@ -10438,12 +10527,6 @@
                                         </td>
                                         <td>
                                             ${statusCell}
-                                        </td>
-                                        <td>
-                                            <div class="impact-cell">
-                                                <span class="impact-value">${event.impact}</span>
-                                                <span class="impact-label">${event.impactLabel}</span>
-                                            </div>
                                         </td>
                                         <td>
                                             <span class="revenue-impact">${event.revenue}</span>
@@ -11628,10 +11711,6 @@
                             <div class="skeleton-opportunity-desc"></div>
                         </div>
                         <div class="skeleton-table-td">
-                            <div class="skeleton-impact-value"></div>
-                            <div class="skeleton-impact-label"></div>
-                        </div>
-                        <div class="skeleton-table-td">
                             <div class="skeleton-revenue"></div>
                         </div>
                         <div class="skeleton-table-td">
@@ -11647,10 +11726,6 @@
                             <div class="skeleton-opportunity-desc"></div>
                         </div>
                         <div class="skeleton-table-td">
-                            <div class="skeleton-impact-value"></div>
-                            <div class="skeleton-impact-label"></div>
-                        </div>
-                        <div class="skeleton-table-td">
                             <div class="skeleton-revenue"></div>
                         </div>
                         <div class="skeleton-table-td">
@@ -11664,10 +11739,6 @@
                         <div class="skeleton-table-td">
                             <div class="skeleton-opportunity-title"></div>
                             <div class="skeleton-opportunity-desc"></div>
-                        </div>
-                        <div class="skeleton-table-td">
-                            <div class="skeleton-impact-value"></div>
-                            <div class="skeleton-impact-label"></div>
                         </div>
                         <div class="skeleton-table-td">
                             <div class="skeleton-revenue"></div>
@@ -12569,7 +12640,7 @@
                 current: yToPercent(chartData.current[dataIndex]),
                 baseline: yToPercent(chartData.baseline[dataIndex]),
                 optimized: yToPercent(chartData.optimized[dataIndex]),
-                metric: 'Authorization Rate',
+                metric: 'Authorization rate',
                 value: yToPercent(chartData.current[dataIndex]),
                 payments: generator.getBusinessMetrics().dailyTransactions * generator.getTimeframeMultipliers().days,
                 dataIndex: dataIndex,
@@ -12590,7 +12661,7 @@
                 debitVolume: `$${breakdownData.bars[dataIndex].debit.toFixed(2)}`,
                 creditPayments: breakdownData.bars[dataIndex].payments.credit,
                 debitPayments: breakdownData.bars[dataIndex].payments.debit,
-                metric: 'Payment Volume',
+                metric: 'Payment volume',
                 value: `$${(breakdownData.bars[dataIndex].credit + breakdownData.bars[dataIndex].debit).toFixed(2)}`,
                 payments: breakdownData.bars[dataIndex].payments.credit + breakdownData.bars[dataIndex].payments.debit,
                 dataIndex: dataIndex
@@ -12606,7 +12677,7 @@
                 failedVolume: `$${failedData.volume[dataIndex].toFixed(2)}`,
                 failedPayments: Math.round(failedData.payments[dataIndex]),
                 failureRate: `${failedData.failureRate.toFixed(1)}%`,
-                metric: 'Failed Payments',
+                metric: 'Failed payments',
                 value: `$${failedData.volume[dataIndex].toFixed(2)}`,
                 payments: Math.round(failedData.payments[dataIndex]),
                 dataIndex: dataIndex
@@ -12640,9 +12711,8 @@
         // Initialize assistant prompts
         updateAssistantPrompts('medium', 'Last 90 days');
         
-
-        
-
+        // Initialize optimization insights cards with top 3 recommendations
+        updateOptimizationInsightsCards('medium');
         
         // Initialize navigation tabs
         initializeNavigationTabs();
@@ -12871,7 +12941,15 @@
             separator.style.display = 'block';
         }
         
-
+        // Hide the overview view if it exists
+        const overviewView = document.getElementById('overview-view');
+        if (overviewView) {
+            overviewView.style.display = 'none';
+        }
+        
+        // Update optimization insights to ensure fresh content
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        updateOptimizationInsightsCards(currentBusinessType);
     }
 
     function showCostView() {
@@ -12904,6 +12982,10 @@
             costView = createCostView();
         }
         costView.style.display = 'block';
+        
+        // Update optimization insights to ensure fresh content
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        updateOptimizationInsightsCards(currentBusinessType);
     }
 
     function showAuthenticationView() {
@@ -12936,6 +13018,10 @@
             authView = createAuthenticationView();
         }
         authView.style.display = 'block';
+        
+        // Update optimization insights to ensure fresh content
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        updateOptimizationInsightsCards(currentBusinessType);
     }
 
     function showDisputesView() {
@@ -12968,6 +13054,10 @@
             disputesView = createDisputesView();
         }
         disputesView.style.display = 'block';
+        
+        // Update optimization insights to ensure fresh content
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        updateOptimizationInsightsCards(currentBusinessType);
     }
 
     function showPaymentMethodsView() {
@@ -13000,6 +13090,10 @@
             paymentMethodsView = createPaymentMethodsView();
         }
         paymentMethodsView.style.display = 'block';
+        
+        // Update optimization insights to ensure fresh content
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        updateOptimizationInsightsCards(currentBusinessType);
     }
 
     function showOptimizationView() {
@@ -13101,6 +13195,10 @@
         }
         overviewView.style.display = 'block';
         
+        // Update optimization insights to ensure fresh content
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        updateOptimizationInsightsCards(currentBusinessType);
+        
         // Initialize the overview date range dropdown
         setTimeout(() => {
             initializeOverviewDateRangeDropdown();
@@ -13117,681 +13215,7 @@
         }, 100);
     }
 
-    function createOptimizationView() {
-        const optimizationView = document.createElement('div');
-        optimizationView.id = 'optimization-view';
-        optimizationView.className = 'tab-content optimization-tab-content';
-        optimizationView.style.cssText = `
-            width: 100%;
-            background: white;
-            min-height: 100vh;
-            display: block;
-        `;
 
-        const dateRange = document.getElementById('dateRangeDropdown').textContent.trim();
-        const generator = new RealisticDataGenerator(currentBusinessType, dateRange);
-        const metrics = generator.getBusinessMetrics();
-
-        optimizationView.innerHTML = `
-                <!-- Simple Two Column Layout -->
-                <div style="display: flex; gap: 24px; margin-top: 48px; width: 100%;">
-                    <!-- Left Column -->
-                    <div style="flex: 0 0 70%;">
-                    <!-- Performance Header and Time Filter -->
-                    <div class="performance-header-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                        <h2 style="margin: 0; font-size: 20px; font-weight: 600; color: var(--color-gray-900); line-height: 28px;">Performance</h2>
-                        
-                        <!-- Time Filter for Optimization Page -->
-                        <div class="date-range-dropdown">
-                            <button class="filter-btn dropdown-trigger" id="optimizationDateRangeDropdown">
-                                Last 90 days
-                                <i data-lucide="chevron-down" class="filter-icon"></i>
-                            </button>
-                            <div class="dropdown-menu" id="optimizationDateRangeMenu">
-                                <div class="dropdown-item" data-range="7">Last 7 days</div>
-                                <div class="dropdown-item" data-range="30">Last 30 days</div>
-                                <div class="dropdown-item" data-range="60">Last 60 days</div>
-                                <div class="dropdown-item active" data-range="90">Last 90 days</div>
-                                <div class="dropdown-item" data-range="180">Last 6 months</div>
-                                <div class="dropdown-item" data-range="365">Last 12 months</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Performance Stats -->
-                    <div class="performance-stats" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 72px;">
-                        <div class="performance-stat-card" data-metric="total-revenue" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Total revenue</div>
-                        </div>
-                        <div class="performance-stat-card" data-metric="revenue-recovered" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$0</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Total revenue recovered</div>
-                        </div>
-                        <div class="performance-stat-card" data-metric="recovered-payments" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">134</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Recovered payments</div>
-                        </div>
-                        <div class="performance-stat-card" data-metric="success-rate" style="background: #fff; border: 1px solid var(--color-gray-200); border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">0%</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Success rate</div>
-                        </div>
-                    </div>
-
-                    <!-- Payment Lifecycle Header -->
-                    <div class="lifecycle-header">
-                        <h1 class="lifecycle-title">Payment lifecycle</h1>
-                        <p class="lifecycle-subtitle">Optimize every stage of your payment journey for maximum revenue capture</p>
-                    </div>
-
-                    <!-- Payment Lifecycle Waterfall Chart -->
-                    <div class="waterfall-chart">
-                        
-                        <div class="waterfall-container">
-                            <!-- Acceptance -->
-                            <div class="waterfall-item starting">
-                                <div class="waterfall-bar" style="height: 100px; background: #3B82F6;"></div>
-                                <div class="waterfall-label">Acceptance</div>
-                                <div class="waterfall-details">
-                                    <span class="detail-value">$0</span>
-                                    <span class="detail-rate">0 transactions</span>
-                                </div>
-                            </div>
-
-                            <!-- Authorization Losses -->
-                            <div class="waterfall-item negative">
-                                <div class="waterfall-bar" style="height: 20px; background: #EF4444;"></div>
-                                <div class="waterfall-label">Declines</div>
-                                <div class="waterfall-details">
-                                    <span class="detail-value">$0</span>
-                                    <span class="detail-rate">0 declined</span>
-                                </div>
-                            </div>
-
-                            <!-- Dispute Losses -->
-                            <div class="waterfall-item negative">
-                                <div class="waterfall-bar" style="height: 10px; background: #F97316;"></div>
-                                <div class="waterfall-label">Disputes</div>
-                                <div class="waterfall-details">
-                                    <span class="detail-value">$0</span>
-                                    <span class="detail-rate">0 disputes</span>
-                                </div>
-                            </div>
-
-                            <!-- Fraud -->
-                            <div class="waterfall-item positive">
-                                <div class="waterfall-bar" style="height: 50px; background: #10B981;"></div>
-                                <div class="waterfall-label">Fraud</div>
-                                <div class="waterfall-details">
-                                    <span class="detail-value">$0</span>
-                                    <span class="detail-rate">-$0 fraud losses</span>
-                                </div>
-                            </div>
-
-                            <!-- Final Total -->
-                            <div class="waterfall-item total">
-                                <div class="waterfall-bar" style="height: 80px; background: #533AFD;"></div>
-                                <div class="waterfall-label">Total revenue</div>
-                                <div class="waterfall-details">
-                                    <span class="detail-value">$0</span>
-                                    <span class="detail-rate">0% success rate</span>
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-                    <!-- Key Metrics -->
-                    <div class="performance-snapshot">
-                        <h2 class="snapshot-title">Key metrics</h2>
-                        <div class="snapshot-grid">
-                            <!-- Active Subscribers Card -->
-                            <div class="snapshot-card">
-                                <div class="snapshot-card-header">
-                                    <h3 class="snapshot-card-title">Active subscribers</h3>
-                                    <div class="snapshot-card-value">108</div>
-                                    <div class="snapshot-card-change positive">+11.11%</div>
-                                </div>
-                                <div class="snapshot-chart-container">
-                                    <div class="snapshot-chart-content">
-                                        <div class="snapshot-chart-y-axis">
-                                            <span>150</span>
-                                            <span>100</span>
-                                            <span>50</span>
-                                            <span>0</span>
-                                        </div>
-                                        <div class="snapshot-chart-area">
-                                            <div class="snapshot-chart-grid"></div>
-                                            <div class="snapshot-chart-bars">
-                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
-                                                    <!-- Baseline line (dashed gray) -->
-                                                    <path d="M10,120 L50,110 L90,105 L130,100 L170,95 L190,95" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
-                                                    <!-- Current line (solid blue) -->
-                                                    <path d="M10,110 L50,100 L90,95 L130,90 L170,85 L190,85" stroke="#3B82F6" stroke-width="2" fill="none"/>
-                                                </svg>
-                                            </div>
-                                            <div class="snapshot-chart-x-axis">
-                                                <span>Jul 18</span>
-                                                <span>Jul 22</span>
-                                                <span>Jul 25</span>
-                                                <span>Jul 29</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Monthly Revenue Card -->
-                            <div class="snapshot-card">
-                                <div class="snapshot-card-header">
-                                    <h3 class="snapshot-card-title">Monthly revenue</h3>
-                                    <div class="snapshot-card-value">$12.4K</div>
-                                    <div class="snapshot-card-change positive">+8.5%</div>
-                                </div>
-                                <div class="snapshot-chart-container">
-                                    <div class="snapshot-chart-content">
-                                        <div class="snapshot-chart-y-axis">
-                                            <span>$15K</span>
-                                            <span>$10K</span>
-                                            <span>$5K</span>
-                                            <span>$0</span>
-                                        </div>
-                                        <div class="snapshot-chart-area">
-                                            <div class="snapshot-chart-grid"></div>
-                                            <div class="snapshot-chart-bars">
-                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
-                                                    <!-- Baseline line (dashed gray) -->
-                                                    <path d="M20,140 L60,130 L100,125 L140,120 L180,115" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
-                                                    <!-- Current line (solid blue) -->
-                                                    <path d="M20,130 L60,120 L100,115 L140,110 L180,105" stroke="#3B82F6" stroke-width="2" fill="none"/>
-                                                </svg>
-                                            </div>
-                                            <div class="snapshot-chart-x-axis">
-                                                <span>Jul 18</span>
-                                                <span>Jul 22</span>
-                                                <span>Jul 25</span>
-                                                <span>Jul 29</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Conversion Rate Card -->
-                            <div class="snapshot-card">
-                                <div class="snapshot-card-header">
-                                    <h3 class="snapshot-card-title">Conversion rate</h3>
-                                    <div class="snapshot-card-value">3.2%</div>
-                                    <div class="snapshot-card-change positive">+2.1%</div>
-                                </div>
-                                <div class="snapshot-chart-container">
-                                    <div class="snapshot-chart-content">
-                                        <div class="snapshot-chart-y-axis">
-                                            <span>4%</span>
-                                            <span>3%</span>
-                                            <span>2%</span>
-                                            <span>1%</span>
-                                            <span>0%</span>
-                                        </div>
-                                        <div class="snapshot-chart-area">
-                                            <div class="snapshot-chart-grid"></div>
-                                            <div class="snapshot-chart-bars">
-                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
-                                                    <!-- Baseline line (dashed gray) -->
-                                                    <path d="M20,180 L60,175 L100,170 L140,165 L180,160" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
-                                                    <!-- Current line (solid blue) -->
-                                                    <path d="M20,175 L60,170 L100,165 L140,160 L180,155" stroke="#3B82F6" stroke-width="2" fill="none"/>
-                                                </svg>
-                                            </div>
-                                            <div class="snapshot-chart-x-axis">
-                                                <span>Jul 18</span>
-                                                <span>Jul 22</span>
-                                                <span>Jul 25</span>
-                                                <span>Jul 29</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Customer Satisfaction Card -->
-                            <div class="snapshot-card">
-                                <div class="snapshot-card-header">
-                                    <h3 class="snapshot-card-title">Customer satisfaction</h3>
-                                    <div class="snapshot-card-value">4.8</div>
-                                    <div class="snapshot-card-change positive">+0.2</div>
-                                </div>
-                                <div class="snapshot-chart-container">
-                                    <div class="snapshot-chart-content">
-                                        <div class="snapshot-chart-y-axis">
-                                            <span>5.0</span>
-                                            <span>4.0</span>
-                                            <span>3.0</span>
-                                            <span>2.0</span>
-                                            <span>1.0</span>
-                                        </div>
-                                        <div class="snapshot-chart-area">
-                                            <div class="snapshot-chart-grid"></div>
-                                            <div class="snapshot-chart-bars">
-                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
-                                                    <!-- Baseline line (dashed gray) -->
-                                                    <path d="M20,200 L60,195 L100,190 L140,185 L180,180" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
-                                                    <!-- Current line (solid blue) -->
-                                                    <path d="M20,195 L60,190 L100,185 L140,180 L180,175" stroke="#3B82F6" stroke-width="2" fill="none"/>
-                                                </svg>
-                                            </div>
-                                            <div class="snapshot-chart-x-axis">
-                                                <span>Jul 18</span>
-                                                <span>Jul 22</span>
-                                                <span>Jul 25</span>
-                                                <span>Jul 29</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    <!-- Optimization Opportunities Table -->
-                    <div class="optimization-opportunities">
-                        <div class="opportunities-header">
-                            <div class="opportunities-title-section">
-                                                            <h2 class="opportunities-title">Recommendations</h2>
-                            <p class="opportunities-subtitle">Synthesized user card recommendations to optimize your payment performance</p>
-                            </div>
-                            <a href="#" class="view-all-link" onclick="openAIPanel('Show me all optimization opportunities and their detailed analysis', '${currentBusinessType}', 'all-optimizations', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
-                                View all
-                                <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
-                            </a>
-                        </div>
-                        
-                        <div class="opportunities-table-container">
-                            <table class="opportunities-table">
-                                                            <thead>
-                                <tr>
-                                    <th>Recommendation</th>
-                                    <th>Impact</th>
-                                    <th>Potential impact</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="high-priority">
-                                    <td>
-                                        <div class="opportunity-cell">
-                                            <div class="opportunity-info">
-                                                <div class="opportunity-title">Payment Intents</div>
-                                                <div class="opportunity-description">Implement Payment Intents for better authorization rates</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="effort-badge medium">Medium</span>
-                                        <div class="effort-detail">1-2 dev days</div>
-                                    </td>
-                                        <td>
-                                            <div class="table-actions">
-                                                <button class="table-btn secondary" onclick="console.log('Payment Intents button clicked'); openExperimentDrawer({
-                                                    id: 'payment-intents',
-                                                    title: 'Payment Intents',
-                                                    description: 'Implement Payment Intents for better authorization rates and improved payment success.',
-                                                    uplift: 12,
-                                                    revenue: '+$45,000/year',
-                                                    effort: 'Medium (1-2 dev days)'
-                                                })">
-                                                    <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i>
-                                                    Experiment
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="high-priority">
-                                        <td>
-                                            <div class="opportunity-cell">
-                                                <div class="opportunity-info">
-                                                    <div class="opportunity-title">Smart Retries</div>
-                                                    <div class="opportunity-description">Enable intelligent retry logic for declined payments</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="effort-badge easy">Easy</span>
-                                            <div class="effort-detail">30 minute setup</div>
-                                        </td>
-                                        <td>
-                                            <div class="table-actions">
-                                                <button class="table-btn secondary" onclick="console.log('Smart Retries button clicked'); openExperimentDrawer({
-                                                    id: 'smart-retries',
-                                                    title: 'Smart Retries',
-                                                    description: 'Enable intelligent retry logic for declined payments to recover lost revenue.',
-                                                    uplift: 8,
-                                                    revenue: '+$38,000/year',
-                                                    effort: 'Easy (30 minute setup)'
-                                                })">
-                                                    <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i>
-                                                    Experiment
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="medium-priority">
-                                        <td>
-                                            <div class="opportunity-cell">
-                                                <div class="opportunity-info">
-                                                    <div class="opportunity-title">Connect marketplace</div>
-                                                    <div class="opportunity-description">Set up Connect for multi-party payment flows</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="effort-badge medium">Medium</span>
-                                            <div class="effort-detail">3-5 dev days</div>
-                                        </td>
-                                        <td>
-                                            <div class="table-actions">
-                                                <button class="table-btn secondary" onclick="console.log('Connect Marketplace button clicked'); openExperimentDrawer({
-                                                    id: 'connect-marketplace',
-                                                    title: 'Connect Marketplace',
-                                                    description: 'Set up Connect for multi-party payment flows to enable marketplace functionality.',
-                                                    uplift: 15,
-                                                    revenue: '+$32,000/year',
-                                                    effort: 'Medium (3-5 dev days)'
-                                                })">
-                                                    <i data-lucide="users" style="width: 14px; height: 14px;"></i>
-                                                    Experiment
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Experiments Table -->
-                    <div class="ab-testing-section">
-                        <div class="ab-header">
-                            <h2 class="ab-title">Experiments</h2>
-                            <button class="new-test-btn" onclick="openNewExperimentDrawer()">
-                                <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
-                                New experiment
-                            </button>
-                        </div>
-                        
-                        <div class="ab-tests-table-container">
-                            <table class="ab-tests-table">
-                                <thead>
-                                    <tr>
-                                        <th>Test name</th>
-                                        <th>Status</th>
-                                        <th>Progress</th>
-                                        <th>Control</th>
-                                        <th>Variant</th>
-                                        <th>Improvement</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="active">
-                                        <td>
-                                            <div class="test-cell">
-                                                <div class="test-title">3D Secure optimization</div>
-                                                <div class="test-description">Testing automatic vs. challenge-based 3D Secure authentication</div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="status-cell active">
-                                                <span class="status-dot"></span>
-                                                <span class="status-text">Active</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="progress-cell">
-                                                <div class="progress-bar">
-                                                    <div class="progress-fill" style="width: 67%"></div>
-                                                </div>
-                                                <span class="progress-text">67% Complete</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="rate-value">89.2%</span>
-                                        </td>
-                                        <td>
-                                            <span class="rate-value">91.8%</span>
-                                        </td>
-                                        <td>
-                                            <span class="improvement">+2.6%</span>
-                                        </td>
-                                        <td>
-                                            <div class="table-actions">
-                                                <button class="table-btn secondary">
-                                                    <i data-lucide="bar-chart" style="width: 14px; height: 14px;"></i>
-                                                    Details
-                                                </button>
-                                                <button class="table-btn secondary">
-                                                    <i data-lucide="pause" style="width: 14px; height: 14px;"></i>
-                                                    Pause
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="completed">
-                                        <td>
-                                            <div class="test-cell">
-                                                <div class="test-title">Smart Retries configuration</div>
-                                                <div class="test-description">Testing different retry strategies for declined payments</div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="status-cell completed">
-                                                <span class="status-dot"></span>
-                                                <span class="status-text">Completed</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="progress-cell">
-                                                <div class="progress-bar">
-                                                    <div class="progress-fill" style="width: 100%"></div>
-                                                </div>
-                                                <span class="progress-text">100% Complete</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="rate-value">85.1%</span>
-                                        </td>
-                                        <td>
-                                            <span class="rate-value winner">87.3%</span>
-                                        </td>
-                                        <td>
-                                            <span class="improvement">+2.2%</span>
-                                        </td>
-                                        <td>
-                                            <div class="table-actions">
-                                                <button class="table-btn secondary">
-                                                    <i data-lucide="check" style="width: 14px; height: 14px;"></i>
-                                                    Deploy
-                                                </button>
-                                                <button class="table-btn secondary">
-                                                    <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
-                                                    Report
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Past Optimizations Table -->
-                    <div class="ab-testing-section">
-                        <div class="ab-header">
-                            <h2 class="ab-title">Past optimizations</h2>
-                        </div>
-                        
-                        <div class="timeline-container">
-                            <!-- Table will be dynamically populated by updateTimeline function -->
-                        </div>
-                    </div>
-                    
-                    </div>
-                    <!-- Right Column -->
-                    <div style="flex: 0 0 30%; background: white; padding: 20px; border-radius: 8px;">
-                        <!-- Optimization Insights Section -->
-                        <div class="assistant-section">
-                            <div class="assistant-header">
-                                <div class="assistant-title-section">
-                                    <i data-lucide="trending-up" class="sparkles-icon"></i>
-                                    <h3 class="assistant-title">Optimization insights</h3>
-                                </div>
-                                <a href="#" class="view-all-link" onclick="navigateToOptimizationTab()">
-                                    View all
-                                    <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
-                                </a>
-                            </div>
-                            <div class="optimization-insights">
-                                <div class="insight-card" onclick="openExperimentDrawer({
-                                    id: 'payment-intents',
-                                    title: 'Payment Intents',
-                                    description: 'Implement Payment Intents for better authorization rates and improved payment success.',
-                                    uplift: 12,
-                                    revenue: '+$63,000/year',
-                                    effort: 'Medium (1-2 dev days)'
-                                })">
-                                    <div class="insight-header">
-                                        <i data-lucide="credit-card" class="insight-icon"></i>
-                                        <div class="insight-content">
-                                            <h4 class="insight-title">Payment Intents</h4>
-                                            <p class="insight-description">Better authorization rates</p>
-                                        </div>
-                                    </div>
-                                    <div class="insight-impact">
-                                        <span class="effort-badge medium">Medium</span>
-                                        <div class="effort-detail">1-2 dev days</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="insight-card" onclick="openExperimentDrawer({
-                                    id: 'smart-retries',
-                                    title: 'Smart Retries',
-                                    description: 'Enable intelligent retry logic for declined payments to recover lost revenue.',
-                                    uplift: 8,
-                                    revenue: '+$53,200/year',
-                                    effort: 'Easy (30 minute setup)'
-                                })">
-                                    <div class="insight-header">
-                                        <i data-lucide="refresh-cw" class="insight-icon"></i>
-                                        <div class="insight-content">
-                                            <h4 class="insight-title">Smart Retries</h4>
-                                            <p class="insight-description">Recover declined payments</p>
-                                        </div>
-                                    </div>
-                                    <div class="insight-impact">
-                                        <span class="effort-badge easy">Easy</span>
-                                        <div class="effort-detail">30 minute setup</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="insight-card" onclick="openExperimentDrawer({
-                                    id: 'connect-marketplace',
-                                    title: 'Connect Marketplace',
-                                    description: 'Set up Connect for multi-party payment flows to enable marketplace functionality.',
-                                    uplift: 15,
-                                    revenue: '+$44,800/year',
-                                    effort: 'Medium (3-5 dev days)'
-                                })">
-                                    <div class="insight-header">
-                                        <i data-lucide="users" class="insight-icon"></i>
-                                        <div class="insight-content">
-                                            <h4 class="insight-title">Connect Marketplace</h4>
-                                            <p class="insight-description">Multi-party payment flows</p>
-                                        </div>
-                                    </div>
-                                    <div class="insight-impact">
-                                        <span class="effort-badge medium">Medium</span>
-                                        <div class="effort-detail">3-5 dev days</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-
-                        
-                        <!-- Quick Actions -->
-                        <div class="quick-actions">
-                            <h3 class="actions-title">Quick actions</h3>
-                            <button class="quick-action-btn" onclick="openAIPanel('How do I set up a new experiment?', '${currentBusinessType}', 'setup-ab-test', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
-                                <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
-                                Create experiment
-                            </button>
-                            <button class="quick-action-btn" onclick="openAIPanel('How do I implement Payment Intents?', '${currentBusinessType}', 'implement-payment-intents', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
-                                <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i>
-                                Implement Payment Intents
-                            </button>
-                            <button class="quick-action-btn" onclick="openAIPanel('How do I configure Smart Retries?', '${currentBusinessType}', 'configure-retries', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
-                                <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
-                                Configure Smart Retries
-                            </button>
-                        </div>
-                        
-                        <!-- Resources Section -->
-                        <div class="resources-section">
-                            <h3 class="resources-title">Resources</h3>
-                            <div class="resource-item">
-                                <i data-lucide="file-text" class="resource-icon"></i>
-                                <div class="resource-content">
-                                    <span class="resource-name">Payment optimization guide</span>
-                                    <span class="resource-description">Learn how to optimize your payment performance and increase revenue.</span>
-                                </div>
-                            </div>
-                            <div class="resource-item">
-                                <i data-lucide="bar-chart" class="resource-icon"></i>
-                                <div class="resource-content">
-                                    <span class="resource-name">Experiments best practices</span>
-                                    <span class="resource-description">Learn how to design and run effective payment optimization tests.</span>
-                                </div>
-                            </div>
-                            <div class="resource-subsection">
-                                <span class="subsection-title">View other optimization tools</span>
-                                <div class="resource-link">
-                                    <i data-lucide="arrow-right" class="arrow-icon"></i>
-                                    <span>Radar fraud prevention</span>
-                                </div>
-                                <div class="resource-link">
-                                    <i data-lucide="arrow-right" class="arrow-icon"></i>
-                                    <span>Checkout optimization</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        `;
-
-        // Add the view to the main content area
-        const mainContentInner = document.querySelector('.main-content-inner');
-        if (mainContentInner) {
-            // Check if optimization view already exists in the main content
-            let existingView = mainContentInner.querySelector('#optimization-view');
-            if (existingView) {
-                existingView.remove();
-            }
-            mainContentInner.appendChild(optimizationView);
-        } else {
-            document.body.appendChild(optimizationView);
-        }
-        
-        // Initialize Lucide icons
-        lucide.createIcons();
-        
-        // Update the page with current business type data
-        const currentDateRange = document.getElementById('dateRangeDropdown').textContent.trim();
-        updateOptimizationPage(currentBusinessType, currentDateRange);
-        
-        return optimizationView;
-    }
 
     function createOptimizationViewNew() {
         const optimizationView = document.createElement('div');
@@ -13832,8 +13256,9 @@
                             <thead>
                                 <tr>
                                     <th>Recommendation</th>
-                                    <th>Impact</th>
                                     <th>Potential impact</th>
+                                    <th>Effort/Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -13845,6 +13270,9 @@
                                                 <div class="opportunity-description">Implement Payment Intents for better authorization rates</div>
                                             </div>
                                         </div>
+                                    </td>
+                                    <td>
+                                        <span class="revenue-impact">+$63,000/year</span>
                                     </td>
                                     <td>
                                         <span class="effort-badge medium">Medium</span>
@@ -13876,6 +13304,9 @@
                                         </div>
                                     </td>
                                     <td>
+                                        <span class="revenue-impact">+$53,200/year</span>
+                                    </td>
+                                    <td>
                                         <span class="effort-badge easy">Easy</span>
                                         <div class="effort-detail">30 minute setup</div>
                                     </td>
@@ -13903,6 +13334,9 @@
                                                 <div class="opportunity-description">Set up Connect for multi-party payment flows</div>
                                             </div>
                                         </div>
+                                    </td>
+                                    <td>
+                                        <span class="revenue-impact">+$44,800/year</span>
                                     </td>
                                     <td>
                                         <span class="effort-badge hard">Hard</span>
@@ -14127,21 +13561,25 @@
 
                     <!-- Performance Stats -->
                     <div class="performance-stats" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 72px;">
-                        <div class="performance-stat-card" data-metric="total-revenue" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$${totalRevenue.toFixed(0)}</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Total revenue</div>
+                        <div class="performance-stat-card" data-metric="authorization-rate" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">92.3%</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600); margin-bottom: 2px;">Authorization rate</div>
+                            <div class="stat-benchmark" style="font-size: 11px; color: var(--color-gray-500);">Benchmark: 94.8%</div>
                         </div>
-                        <div class="performance-stat-card" data-metric="revenue-recovered" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">$${recoveredRevenue.toFixed(0)}</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Total revenue recovered</div>
+                        <div class="performance-stat-card" data-metric="payment-success-rate" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">85.2%</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600); margin-bottom: 2px;">Payment success rate</div>
+                            <div class="stat-benchmark" style="font-size: 11px; color: var(--color-gray-500);">Benchmark: 87.5%</div>
                         </div>
-                        <div class="performance-stat-card" data-metric="recovered-payments" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">${recoveredPayments}</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Recovered payments</div>
+                        <div class="performance-stat-card" data-metric="payment-failures" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">1.2%</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600); margin-bottom: 2px;">Payment failures</div>
+                            <div class="stat-benchmark" style="font-size: 11px; color: var(--color-gray-500);">Benchmark: 1.1%</div>
                         </div>
-                        <div class="performance-stat-card" data-metric="success-rate" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">${successRate.toFixed(1)}%</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600);">Success rate</div>
+                        <div class="performance-stat-card" data-metric="cost-of-payments" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;">
+                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">2.8%</div>
+                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600); margin-bottom: 2px;">Cost of payments</div>
+                            <div class="stat-benchmark" style="font-size: 11px; color: var(--color-gray-500);">Benchmark: 2.5%</div>
                         </div>
                     </div>
 
@@ -14372,7 +13810,7 @@
                     <!-- Right Column -->
                     <div style="flex: 0 0 30%; background: white; padding: 20px; border-radius: 8px;">
                         <!-- Optimization Insights Section -->
-                        <div class="assistant-section">
+                        <div class="assistant-section" style="margin-bottom: 48px;">
                             <div class="assistant-header">
                                 <div class="assistant-title-section">
                                     <i data-lucide="trending-up" class="sparkles-icon"></i>
@@ -14385,71 +13823,68 @@
                             </div>
                             <div class="optimization-insights">
                                 <div class="insight-card" onclick="openExperimentDrawer({
-                                    id: 'payment-intents',
-                                    title: 'Payment Intents',
-                                    description: 'Implement Payment Intents for better authorization rates and improved payment success.',
-                                    uplift: 12,
-                                    revenue: '+$63,000/year',
-                                    effort: 'Medium (1-2 dev days)'
+                                    id: 'enable-network-tokens',
+                                    title: 'Enable Network Tokens',
+                                    description: 'Increase your authorization rate by replacing card numbers with secure tokens',
+                                    uplift: 6720,
+                                    revenue: '+$6,720,000/year',
+                                    effort: 'Easy'
                                 })">
                                     <div class="insight-header">
-                                        <i data-lucide="credit-card" class="insight-icon"></i>
                                         <div class="insight-content">
-                                            <h4 class="insight-title">Payment Intents</h4>
-                                            <p class="insight-description">Better authorization rates</p>
+                                            <h4 class="insight-title">Enable Network Tokens</h4>
+                                            <p class="insight-description">Increase your authorization rate</p>
                                         </div>
                                     </div>
                                     <div class="insight-impact">
-                                        <span class="effort-badge medium">Medium</span>
-                                        <div class="effort-detail">1-2 dev days</div>
+                                        <span class="impact-value">Up to $6.72M</span>
+                                        <div class="impact-label">Est. impact</div>
                                     </div>
                                 </div>
                                 
                                 <div class="insight-card" onclick="openExperimentDrawer({
-                                    id: 'smart-retries',
-                                    title: 'Smart Retries',
-                                    description: 'Enable intelligent retry logic for declined payments to recover lost revenue.',
-                                    uplift: 8,
-                                    revenue: '+$53,200/year',
-                                    effort: 'Easy (30 minute setup)'
+                                    id: 'enable-card-account-updater',
+                                    title: 'Enable Card Account Updater',
+                                    description: 'Raise your authorization rate by refreshing outdated customer payment details',
+                                    uplift: 650,
+                                    revenue: '+$650,000/year',
+                                    effort: 'Easy'
                                 })">
                                     <div class="insight-header">
-                                        <i data-lucide="refresh-cw" class="insight-icon"></i>
                                         <div class="insight-content">
-                                            <h4 class="insight-title">Smart Retries</h4>
-                                            <p class="insight-description">Recover declined payments</p>
+                                            <h4 class="insight-title">Enable Card Account Updater</h4>
+                                            <p class="insight-description">Raise your authorization rate</p>
                                         </div>
                                     </div>
                                     <div class="insight-impact">
-                                        <span class="effort-badge easy">Easy</span>
-                                        <div class="effort-detail">30 minute setup</div>
+                                        <span class="impact-value">Up to $650K</span>
+                                        <div class="impact-label">Est. impact</div>
                                     </div>
                                 </div>
                                 
                                 <div class="insight-card" onclick="openExperimentDrawer({
-                                    id: 'connect-marketplace',
-                                    title: 'Connect Marketplace',
-                                    description: 'Set up Connect for multi-party payment flows to enable marketplace functionality.',
-                                    uplift: 15,
-                                    revenue: '+$44,800/year',
-                                    effort: 'Medium (3-5 dev days)'
+                                    id: 'use-stored-credentials-api',
+                                    title: 'Use Stored Credentials API',
+                                    description: 'Send authorization messages in required formats',
+                                    uplift: 650,
+                                    revenue: '+$650,000/year',
+                                    effort: 'Medium'
                                 })">
                                     <div class="insight-header">
-                                        <i data-lucide="users" class="insight-icon"></i>
                                         <div class="insight-content">
-                                            <h4 class="insight-title">Connect Marketplace</h4>
-                                            <p class="insight-description">Multi-party payment flows</p>
+                                            <h4 class="insight-title">Use Stored Credentials API</h4>
+                                            <p class="insight-description">Send authorization messages in required formats</p>
                                         </div>
                                     </div>
                                     <div class="insight-impact">
-                                        <span class="effort-badge medium">Medium</span>
-                                        <div class="effort-detail">3-5 dev days</div>
+                                        <span class="impact-value">Up to $650K</span>
+                                        <div class="impact-label">Est. impact</div>
                                     </div>
                                 </div>
                             </div>
                             
                             <!-- Quick Actions -->
-                        <div class="quick-actions">
+                        <div class="quick-actions" style="margin-bottom: 36px;">
                             <h3 class="actions-title">Quick actions</h3>
                             <button class="quick-action-btn" onclick="openAIPanel('How do I set up a new experiment?', '${currentBusinessType}', 'setup-ab-test', 85.2, '${dateRange}', ${metrics.dailyTransactions * 30})">
                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
@@ -14466,7 +13901,7 @@
                         </div>
                         
                         <!-- Resources Section -->
-                        <div class="resources-section">
+                        <div class="resources-section" style="margin-bottom: 24px;">
                             <h3 class="resources-title">Resources</h3>
                             <div class="resource-item">
                                 <i data-lucide="file-text" class="resource-icon"></i>
@@ -14617,7 +14052,7 @@
 
         paymentMethodsView.innerHTML = `
             <div class="payment-methods-header">
-                <h1 class="payment-methods-title">Payment Methods</h1>
+                                    <h1 class="payment-methods-title">Payment methods</h1>
                 <p class="payment-methods-subtitle">Configure and manage your payment methods</p>
             </div>
             <div class="payment-methods-content">
@@ -14819,7 +14254,6 @@
     });
 
     // Initialize performance stat cards when optimization view is created
-    const originalCreateOptimizationView = createOptimizationView;
     
     // Notification Panel Functionality
     function toggleNotificationPanel() {
@@ -14966,8 +14400,15 @@
         hideNotificationPanel();
         hideAcceptanceAlertTooltip();
         
-        // Automatically select the "Accepted volume" metric card
+        // Set filters for the specific alert context
         setTimeout(() => {
+            // Set date range to "Last 7 days"
+            setDateRangeFilter('Last 7 days');
+            
+            // Set card country filter to "GE" (Germany)
+            setCardCountryFilter('GE');
+            
+            // Automatically select the "Accepted volume" metric card
             console.log('Looking for Accepted volume card...');
             const allCards = document.querySelectorAll('.metric-card');
             let acceptedVolumeCard = null;
@@ -15012,6 +14453,119 @@
                 console.log('Accepted volume card not found');
             }
         }, 100);
+    }
+
+    // Helper function to set date range filter
+    function setDateRangeFilter(dateRange) {
+        console.log('Setting date range filter to:', dateRange);
+        
+        const dateRangeDropdown = document.getElementById('dateRangeDropdown');
+        const dateRangeMenu = document.getElementById('dateRangeMenu');
+        
+        if (dateRangeDropdown && dateRangeMenu) {
+            // Update dropdown trigger text
+            dateRangeDropdown.textContent = dateRange;
+            dateRangeDropdown.appendChild(document.createElement('i')).setAttribute('data-lucide', 'chevron-down');
+            dateRangeDropdown.querySelector('i').classList.add('filter-icon');
+            
+            // Update active state in dropdown menu
+            const dropdownItems = dateRangeMenu.querySelectorAll('.dropdown-item');
+            dropdownItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent === dateRange) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Update charts with new date range
+            const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+            updateChartDateRanges(dateRange, currentBusinessType);
+            
+            // Update AI assistant prompts
+            updateAssistantPrompts(currentBusinessType, dateRange);
+            
+            // Reinitialize lucide icons
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+            
+            console.log('Date range filter set successfully to:', dateRange);
+        } else {
+            console.error('Date range dropdown elements not found');
+        }
+    }
+
+    // Helper function to set card country filter
+    function setCardCountryFilter(countryCode) {
+        console.log('Setting card country filter to:', countryCode);
+        
+        // Find the card country filter chip
+        const filterChips = document.querySelectorAll('.filter-chip');
+        let cardCountryChip = null;
+        
+        filterChips.forEach(chip => {
+            if (chip.textContent.includes('Card country')) {
+                cardCountryChip = chip;
+            }
+        });
+        
+        if (cardCountryChip) {
+            // Convert country code to display name
+            const countryNames = {
+                'GE': 'Germany',
+                'US': 'United States',
+                'GB': 'United Kingdom',
+                'FR': 'France',
+                'IT': 'Italy',
+                'ES': 'Spain',
+                'NL': 'Netherlands',
+                'CA': 'Canada',
+                'AU': 'Australia',
+                'JP': 'Japan'
+            };
+            
+            const countryName = countryNames[countryCode] || countryCode;
+            
+            // Update the chip to show the selected country
+            cardCountryChip.innerHTML = `
+                <i data-lucide="x" class="chip-icon" style="cursor: pointer;" onclick="clearCardCountryFilter(event)"></i>
+                Card country: ${countryName}
+            `;
+            cardCountryChip.classList.add('active');
+            cardCountryChip.dataset.selectedCountry = countryCode;
+            
+            // Reinitialize lucide icons
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+            
+            console.log('Card country filter set successfully to:', countryName);
+        } else {
+            console.error('Card country filter chip not found');
+        }
+    }
+
+    // Helper function to clear card country filter
+    function clearCardCountryFilter(event) {
+        event.stopPropagation();
+        
+        const cardCountryChip = event.target.closest('.filter-chip');
+        if (cardCountryChip) {
+                    // Reset to default state
+        cardCountryChip.innerHTML = `
+            <i data-lucide="plus" class="chip-icon"></i>
+            Card country
+        `;
+        cardCountryChip.classList.remove('active');
+        delete cardCountryChip.dataset.selectedCountry;
+            
+            // Reinitialize lucide icons
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+            
+            console.log('Card country filter cleared');
+        }
     }
     
     function viewFraudDetails() {
@@ -15320,12 +14874,39 @@
             uplift: recommendation.uplift
         });
         
+        // Calculate appropriate impact percentage based on recommendation
+        let impactPercentage = 0;
+        let impactText = '';
+        
+        if (recommendation.id === 'enable-network-tokens') {
+            impactPercentage = 8;
+            impactText = 'Expected increase in authorization rate';
+        } else if (recommendation.id === 'enable-card-account-updater') {
+            impactPercentage = 6;
+            impactText = 'Expected increase in authorization rate';
+        } else if (recommendation.id === 'use-stored-credentials-api') {
+            impactPercentage = 5;
+            impactText = 'Expected increase in authorization rate';
+        } else if (recommendation.id === 'payment-intents') {
+            impactPercentage = 12;
+            impactText = 'Expected increase in success rate';
+        } else if (recommendation.id === 'smart-retries') {
+            impactPercentage = 8;
+            impactText = 'Expected recovery of declined payments';
+        } else if (recommendation.id === 'connect-marketplace') {
+            impactPercentage = 15;
+            impactText = 'Expected increase in conversion rate';
+        } else {
+            impactPercentage = 5;
+            impactText = 'Expected improvement in performance';
+        }
+        
         recommendationDiv.innerHTML = `
             <div class="recommendation-title">${recommendation.title || 'Recommendation'}</div>
             <div class="recommendation-description">${recommendation.description || 'No description available'}</div>
             <div class="recommendation-uplift">
-                <span class="uplift-badge">+${recommendation.uplift || 0}%</span>
-                <span class="uplift-text">Expected uplift in success rate</span>
+                <span class="uplift-badge">+${impactPercentage}%</span>
+                <span class="uplift-text">${impactText}</span>
             </div>
         `;
         
@@ -15395,11 +14976,11 @@
             results: null
         };
         
-        // Add to experiments list (you can store this in localStorage or send to backend)
+        // Add to experiments list (this will make it appear in the Experiments table)
         addExperimentToList(experiment);
         
-        // Remove recommendation from opportunities list
-        removeRecommendationFromList(currentRecommendation.id);
+        // Update all views to reflect the change
+        updateAllViewsAfterExperimentStart(experiment);
         
         // Close drawer
         closeExperimentDrawer();
@@ -15410,58 +14991,299 @@
     
     // Global storage for experiments
     window.activeExperiments = [];
-    window.recommendations = [
-        {
-            id: 'payment-intents',
-            title: 'Payment Intents',
-            description: 'Implement Payment Intents for better authorization rates',
-            revenue: '+$45,000/year',
-            effort: 'Medium',
-            effortDetail: '1-2 dev days',
-            priority: 'high'
-        },
-        {
-            id: 'smart-retries',
-            title: 'Smart Retries',
-            description: 'Enable intelligent retry logic for declined payments',
-            revenue: '+$38,000/year',
-            effort: 'Easy',
-            effortDetail: '30 minute setup',
-            priority: 'high'
-        },
-        {
-            id: 'connect-marketplace',
-            title: 'Connect marketplace',
-            description: 'Set up Connect for multi-party payment flows',
-            revenue: '+$32,000/year',
-            effort: 'Medium',
-            effortDetail: '3-5 dev days',
-            priority: 'medium'
-        }
-    ];
+    
+    // Unified data management functions
+    function getRecommendations(businessType = 'medium') {
+        const opportunities = window.opportunitiesData[businessType] || window.opportunitiesData.medium;
+        const activeExperimentIds = window.activeExperiments.map(exp => exp.recommendation.id);
+        const availableRecommendations = opportunities.filter(opp => !activeExperimentIds.includes(opp.id));
+        
+        console.log('Available recommendations:', availableRecommendations.length, 'out of', opportunities.length, 'total');
+        console.log('Active experiments:', window.activeExperiments.length);
+        
+        return availableRecommendations;
+    }
+    
+    function getTopRecommendations(businessType = 'medium', count = 3) {
+        const recommendations = getRecommendations(businessType);
+        const topRecommendations = recommendations.slice(0, count);
+        
+        console.log('Top recommendations for', businessType, ':', topRecommendations.length);
+        
+        return topRecommendations;
+    }
+    
+    function isRecommendationActive(recommendationId) {
+        return window.activeExperiments.some(exp => exp.recommendation.id === recommendationId);
+    }
+    
+    // Function to get active experiments for display
+    function getActiveExperiments() {
+        return window.activeExperiments.filter(exp => exp.status === 'active');
+    }
+    
+    // Function to get completed experiments for display
+    function getCompletedExperiments() {
+        return window.activeExperiments.filter(exp => exp.status === 'completed');
+    }
+    
+    // Unified opportunities data source
+    window.opportunitiesData = {
+        small: [
+            {
+                id: 'enable-network-tokens',
+                title: 'Enable Network Tokens',
+                description: 'Increase your authorization rate',
+                impact: 'Up to $67K',
+                impactLabel: 'Est. impact',
+                revenue: '+$67,000/year',
+                effort: 'Easy',
+                effortDetail: 'No code required',
+                timeline: 'Same day',
+                category: 'Acceptance',
+                cta: 'Experiment',
+                implementation: 'No code required',
+                appearsOn: '/acceptance'
+            },
+            {
+                id: 'enable-card-account-updater',
+                title: 'Enable Card Account Updater',
+                description: 'Raise your authorization rate',
+                impact: 'Up to $6.5K',
+                impactLabel: 'Est. impact',
+                revenue: '+$6,500/year',
+                effort: 'Easy',
+                effortDetail: 'No code required',
+                timeline: 'Same day',
+                category: 'Acceptance',
+                cta: 'Experiment',
+                implementation: 'No code required',
+                appearsOn: '/acceptance'
+            },
+            {
+                id: 'use-stored-credentials-api',
+                title: 'Use Stored Credentials API',
+                description: 'Send authorization messages in required formats',
+                impact: 'Up to $6.5K',
+                impactLabel: 'Est. impact',
+                revenue: '+$6,500/year',
+                effort: 'Medium',
+                effortDetail: 'Requires code',
+                timeline: '1-2 weeks',
+                category: 'Acceptance',
+                cta: 'Experiment',
+                implementation: 'Requires code'
+            }
+        ],
+        medium: [
+            {
+                id: 'enable-network-tokens',
+                title: 'Enable Network Tokens',
+                description: 'Increase your authorization rate',
+                impact: 'Up to $6.72M',
+                impactLabel: 'Est. impact',
+                revenue: '+$6,720,000/year',
+                effort: 'Easy',
+                effortDetail: 'No code required',
+                timeline: 'Same day',
+                category: 'Acceptance',
+                cta: 'Experiment',
+                implementation: 'No code required',
+                appearsOn: '/acceptance'
+            },
+            {
+                id: 'enable-card-account-updater',
+                title: 'Enable Card Account Updater',
+                description: 'Raise your authorization rate',
+                impact: 'Up to $650K',
+                impactLabel: 'Est. impact',
+                revenue: '+$650,000/year',
+                effort: 'Easy',
+                effortDetail: 'No code required',
+                timeline: 'Same day',
+                category: 'Acceptance',
+                cta: 'Experiment',
+                implementation: 'No code required',
+                appearsOn: '/acceptance'
+            },
+            {
+                id: 'use-stored-credentials-api',
+                title: 'Use Stored Credentials API',
+                description: 'Send authorization messages in required formats',
+                impact: 'Up to $650K',
+                impactLabel: 'Est. impact',
+                revenue: '+$650,000/year',
+                effort: 'Medium',
+                effortDetail: 'Requires code',
+                timeline: '1-2 weeks',
+                category: 'Acceptance',
+                cta: 'Experiment',
+                implementation: 'Requires code'
+            }
+        ],
+        large: [
+            {
+                id: 'enable-network-tokens',
+                title: 'Enable Network Tokens',
+                description: 'Increase your authorization rate',
+                impact: 'Up to $67M',
+                impactLabel: 'Est. impact',
+                revenue: '+$67,000,000/year',
+                effort: 'Easy',
+                effortDetail: 'No code required',
+                timeline: 'Same day',
+                category: 'Acceptance',
+                cta: 'Experiment',
+                implementation: 'No code required',
+                appearsOn: '/acceptance'
+            },
+            {
+                id: 'enable-card-account-updater',
+                title: 'Enable Card Account Updater',
+                description: 'Raise your authorization rate',
+                impact: 'Up to $6.5M',
+                impactLabel: 'Est. impact',
+                revenue: '+$6,500,000/year',
+                effort: 'Easy',
+                effortDetail: 'No code required',
+                timeline: 'Same day',
+                category: 'Acceptance',
+                cta: 'Experiment',
+                implementation: 'No code required',
+                appearsOn: '/acceptance'
+            },
+            {
+                id: 'use-stored-credentials-api',
+                title: 'Use Stored Credentials API',
+                description: 'Send authorization messages in required formats',
+                impact: 'Up to $6.5M',
+                impactLabel: 'Est. impact',
+                revenue: '+$6,500,000/year',
+                effort: 'Medium',
+                effortDetail: 'Requires code',
+                timeline: '1-2 weeks',
+                category: 'Acceptance',
+                cta: 'Experiment',
+                implementation: 'Requires code'
+            }
+        ]
+    };
 
     function addExperimentToList(experiment) {
         // Add to global experiments array
         window.activeExperiments.push(experiment);
         
+        console.log('Experiment added to list:', experiment);
+        console.log('Total active experiments:', window.activeExperiments.length);
+        
         // Update the experiments table
         updateExperimentsTable();
+    }
+    
+    // Function to update all views after an experiment is started
+    function updateAllViewsAfterExperimentStart(experiment) {
+        console.log('Updating all views after experiment start:', experiment);
         
-        console.log('Experiment added to list:', experiment);
+        // Update recommendations table (will automatically filter out active experiments)
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        updateRecommendationsTable(currentBusinessType);
+        
+        // Update optimization insights cards (will show next available recommendations)
+        updateOptimizationInsightsCards(currentBusinessType);
+        
+        // Update experiments table (will show the new experiment)
+        updateExperimentsTable();
+        
+        // Update overview page optimization insights if visible
+        const overviewView = document.getElementById('overview-view');
+        if (overviewView && overviewView.style.display !== 'none') {
+            updateOptimizationInsightsCards(currentBusinessType);
+        }
+        
+        // Show a visual indicator that the object moved from Recommendations to Experiments
+        showObjectLifecycleTransition(experiment);
+    }
+    
+    // Function to show visual transition of object moving from Recommendations to Experiments
+    function showObjectLifecycleTransition(experiment) {
+        // Create a toast notification showing the transition
+        const toast = document.createElement('div');
+        toast.className = 'experiment-toast';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        toast.innerHTML = `
+            <i data-lucide="check-circle" style="width: 16px; height: 16px; color: #22C55E; margin-right: 8px;"></i>
+            <span>Experiment "${experiment.name}" started! View it in the <a href="#" onclick="switchTabView('optimization')" style="color: #533AFD; text-decoration: underline;">Optimizations tab</a>.</span>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.style.transform = 'translateX(-50%) translateY(0)';
+        }, 100);
+        
+        // Remove after 5 seconds
+        setTimeout(() => {
+            toast.style.transform = 'translateX(-50%) translateY(100%)';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, 5000);
+        
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
     
     function removeRecommendationFromList(recommendationId) {
-        // Remove from global recommendations array
-        window.recommendations = window.recommendations.filter(rec => rec.id !== recommendationId);
+        // Recommendations are now managed through the unified system
+        // The filtering happens automatically in getRecommendations()
         
         // Update the recommendations table
-        updateRecommendationsTable();
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        updateRecommendationsTable(currentBusinessType);
         
         console.log('Recommendation removed from list:', recommendationId);
     }
     
+    function removeOptimizationInsightCard(recommendationId) {
+        // Find and remove the insight card that matches the recommendation ID
+        const insightCards = document.querySelectorAll('.insight-card');
+        insightCards.forEach(card => {
+            const onclickAttr = card.getAttribute('onclick');
+            if (onclickAttr && onclickAttr.includes(`id: '${recommendationId}'`)) {
+                card.remove();
+                console.log('Optimization insight card removed:', recommendationId);
+            }
+        });
+        
+        // Update the optimization page to reflect the change
+        const optimizationView = document.querySelector('.optimization-view');
+        if (optimizationView) {
+            const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+            updateOptimizationOpportunities(optimizationView, currentBusinessType, {}, 'Last 90 days');
+        }
+        
+        // Also update the optimization insights on the overview page
+        updateOptimizationInsightsCards('medium');
+    }
+    
     function updateExperimentsTable() {
-        const tableBody = document.querySelector('.ab-tests-table tbody');
+        // Find the Experiments table specifically (not Past optimizations)
+        const experimentsSections = document.querySelectorAll('.ab-testing-section');
+        let tableBody = null;
+        
+        for (const section of experimentsSections) {
+            const title = section.querySelector('.ab-title');
+            if (title && title.textContent === 'Experiments') {
+                tableBody = section.querySelector('.ab-tests-table tbody');
+                break;
+            }
+        }
+        
         if (!tableBody) return;
         
         // Clear existing rows except the first two (which are static examples)
@@ -15470,8 +15292,11 @@
             existingRows[i].remove();
         }
         
+        const activeExperiments = getActiveExperiments();
+        console.log('Adding experiments to table:', activeExperiments.length, 'active experiments');
+        
         // Add new experiments
-        window.activeExperiments.forEach(experiment => {
+        activeExperiments.forEach(experiment => {
             const row = document.createElement('tr');
             row.className = 'active';
             row.innerHTML = `
@@ -15526,15 +15351,18 @@
         }
     }
     
-    function updateRecommendationsTable() {
+    function updateRecommendationsTable(businessType = 'medium') {
         const tableBody = document.querySelector('.opportunities-table tbody');
         if (!tableBody) return;
         
         // Clear existing rows
         tableBody.innerHTML = '';
         
+        // Get recommendations using unified data source
+        const recommendations = getRecommendations(businessType);
+        
         // Add remaining recommendations
-        window.recommendations.forEach(rec => {
+        recommendations.forEach(rec => {
             const row = document.createElement('tr');
             row.className = rec.priority + '-priority';
             row.innerHTML = `
@@ -15545,9 +15373,6 @@
                             <div class="opportunity-description">${rec.description}</div>
                         </div>
                     </div>
-                </td>
-                <td>
-                    <span class="revenue-impact">${rec.revenue}</span>
                 </td>
                 <td>
                     <span class="effort-badge ${rec.effort.toLowerCase()}">${rec.effort}</span>
@@ -15574,7 +15399,8 @@
     
     // Initialize tables when page loads
     function initializeTables() {
-        updateRecommendationsTable();
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        updateRecommendationsTable(currentBusinessType);
         updateExperimentsTable();
     }
     
@@ -15584,10 +15410,18 @@
     });
     
     function showExperimentStartedMessage(experiment) {
+        // Skip showing toast for "Enable Network Tokens" experiment
+        if (experiment.recommendation && experiment.recommendation.id === 'enable-network-tokens') {
+            return;
+        }
+        
         // Create and show toast notification
         const toast = document.createElement('div');
         toast.className = 'experiment-toast';
-        toast.textContent = `${experiment.name} enabled`;
+        toast.innerHTML = `
+            <span>${experiment.name} enabled</span>
+            <a href="#" onclick="viewExperiments()" style="color: var(--color-purple-500); text-decoration: none; margin-left: 8px; font-weight: 500;">View experiments</a>
+        `;
         
         document.body.appendChild(toast);
         
@@ -15605,6 +15439,17 @@
                 }
             }, 300);
         }, 5000);
+    }
+    
+    function viewExperiments() {
+        // Switch to the optimization tab
+        switchTabView('optimization');
+        
+        // Close the toast
+        const toast = document.querySelector('.experiment-toast');
+        if (toast && toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
     }
 
 
@@ -15771,7 +15616,7 @@
                         </div>
                         <div class="legend-item" style="display: flex; align-items: center; gap: 8px;">
                             <div class="legend-color optimized" style="width: 12px; height: 3px; background: #22C55E; border-radius: 2px; border-top: 2px dashed #22C55E;"></div>
-                            <span style="font-size: 13px; color: var(--color-gray-700);">AI-optimized potential</span>
+                            <span style="font-size: 13px; color: var(--color-gray-700);">Industry benchmark</span>
                         </div>
                     </div>
                     <span class="update-status" style="font-size: 12px; color: var(--color-gray-500);">Updated yesterday</span>
@@ -15786,7 +15631,7 @@
                 </div>
                 <div class="ai-insight-content" style="background: var(--color-gray-100); border-radius: 8px; padding: 16px;">
                     <p style="font-size: 13px; color: var(--color-gray-700); margin: 0 0 12px 0; line-height: 1.5;">
-                        <strong>Performance Analysis:</strong> Your <span id="insight-metric-name">success rate</span> shows a <span id="insight-trend">positive trend</span> over the last 90 days, with a <span id="insight-improvement">12% improvement</span> compared to baseline performance.
+                        <strong>Performance analysis:</strong> Your <span id="insight-metric-name">success rate</span> shows a <span id="insight-trend">positive trend</span> over the last 90 days, with a <span id="insight-improvement">12% improvement</span> compared to baseline performance.
                     </p>
                     <div class="ai-recommendation" style="background: white; border-radius: 6px; padding: 12px; margin-top: 12px;">
                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
@@ -15829,7 +15674,30 @@
             </div>
         </div>
     </div>
-</div></body>
-</html> 
-</html> 
+</div>
+
+    // Initialize the page on load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Page loaded, initializing overview view...');
+        
+        // Initialize the overview view by default
+        createOverviewView();
+        
+        // Set the overview tab as active
+        const overviewTab = document.querySelector('.nav-tab[onclick*="overview"]');
+        if (overviewTab) {
+            overviewTab.classList.add('active');
+        }
+        
+        // Initialize chart tooltips
+        initializeChartTooltips();
+        
+        // Initialize the main chart for hover functionality
+        const currentDateRange = document.getElementById('dateRangeDropdown')?.textContent.trim() || 'Last 90 days';
+        updateMainChart(currentDateRange, currentBusinessType);
+        
+        console.log('Page initialization complete');
+    });
+    </script>
+</body>
 </html> 
