@@ -6536,150 +6536,153 @@
     }
     
     function addChartHoverListeners() {
-        // Use mouseenter/mouseleave for more stable hover detection
-        document.addEventListener('mouseenter', function(e) {
-            if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
-                const index = parseInt(e.target.dataset.index);
-                if (!isNaN(index) && index !== lastHoverIndex) {
-                    const now = Date.now();
-                    
-                    // Prevent rapid hover changes (minimum 50ms between hovers for better responsiveness)
-                    if (now - lastHoverTime < 50) {
-                        return;
-                    }
-                    
-                    lastHoverIndex = index;
-                    lastHoverTime = now;
-                    isHovering = true;
-                    
-                    if (tooltipTimeout) {
-                        clearTimeout(tooltipTimeout);
-                    }
-                    
-                    // Handle acceptance alert indicator separately to prevent general tooltip
-                    if (e.target.classList.contains('acceptance-alert-indicator')) {
-                        const cx = parseFloat(e.target.getAttribute('cx'));
-                        const cy = parseFloat(e.target.getAttribute('cy'));
-                        showAcceptanceAlertTooltip(cx, cy);
-                    } else {
-                        // Show tooltip immediately for better responsiveness
-                        handleDataPointHover(e, index);
-                    }
-                }
-            }
-        }, true);
+        // Remove any existing listeners to prevent duplicates
+        document.removeEventListener('mouseenter', handleChartMouseEnter);
+        document.removeEventListener('mouseleave', handleChartMouseLeave);
+        document.removeEventListener('mouseover', handleChartMouseOver);
+        document.removeEventListener('mouseout', handleChartMouseOut);
         
-        document.addEventListener('mouseleave', function(e) {
-            if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
+        // Add event listeners
+        document.addEventListener('mouseenter', handleChartMouseEnter, true);
+        document.addEventListener('mouseleave', handleChartMouseLeave, true);
+        document.addEventListener('mouseover', handleChartMouseOver);
+        document.addEventListener('mouseout', handleChartMouseOut);
+    }
+    
+    function handleChartMouseEnter(e) {
+        if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
+            const index = parseInt(e.target.dataset.index);
+            if (!isNaN(index) && index !== lastHoverIndex) {
+                const now = Date.now();
+                
+                // Prevent rapid hover changes
+                if (now - lastHoverTime < 50) {
+                    return;
+                }
+                
+                lastHoverIndex = index;
+                lastHoverTime = now;
+                isHovering = true;
+                
+                if (tooltipTimeout) {
+                    clearTimeout(tooltipTimeout);
+                }
+                
                 // Handle acceptance alert indicator separately
                 if (e.target.classList.contains('acceptance-alert-indicator')) {
-                    isHovering = false;
-                    lastHoverIndex = null;
-                    
-                    if (tooltipTimeout) {
-                        clearTimeout(tooltipTimeout);
-                    }
-                    tooltipTimeout = setTimeout(() => {
-                        if (!isHovering) {
-                            hideAcceptanceAlertTooltip();
-                        }
-                    }, 50);
-                    return;
+                    const cx = parseFloat(e.target.getAttribute('cx'));
+                    const cy = parseFloat(e.target.getAttribute('cy'));
+                    showAcceptanceAlertTooltip(cx, cy);
+                } else {
+                    handleDataPointHover(e, index);
                 }
-                
-                // Check if mouse is moving to the tooltip
-                const tooltip = document.getElementById('chartTooltip');
-                if (tooltip && tooltip.classList.contains('visible')) {
-                    // Don't hide immediately, let the tooltip hover listeners handle it
-                    return;
-                }
-                
+            }
+        }
+    }
+    
+    function handleChartMouseLeave(e) {
+        if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
+            // Handle acceptance alert indicator separately
+            if (e.target.classList.contains('acceptance-alert-indicator')) {
                 isHovering = false;
                 lastHoverIndex = null;
                 
-                // Add a very short delay to prevent flickering when moving between hover areas
                 if (tooltipTimeout) {
                     clearTimeout(tooltipTimeout);
                 }
                 tooltipTimeout = setTimeout(() => {
                     if (!isHovering) {
-                        hideTooltip();
+                        hideAcceptanceAlertTooltip();
                     }
-                }, 50); // Very short delay for responsive interaction
+                }, 50);
+                return;
             }
-        }, true);
-        
-        // Also handle mouseover for better compatibility
-        document.addEventListener('mouseover', function(e) {
-            if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
-                const index = parseInt(e.target.dataset.index);
-                if (!isNaN(index) && index !== lastHoverIndex) {
-                    const now = Date.now();
-                    if (now - lastHoverTime < 50) {
-                        return;
-                    }
-                    
-                    lastHoverIndex = index;
-                    lastHoverTime = now;
-                    isHovering = true;
-                    
-                    if (tooltipTimeout) {
-                        clearTimeout(tooltipTimeout);
-                    }
-                    
-                    // Handle acceptance alert indicator separately to prevent general tooltip
-                    if (e.target.classList.contains('acceptance-alert-indicator')) {
-                        const cx = parseFloat(e.target.getAttribute('cx'));
-                        const cy = parseFloat(e.target.getAttribute('cy'));
-                        showAcceptanceAlertTooltip(cx, cy);
-                    } else {
-                        handleDataPointHover(e, index);
-                    }
+            
+            // Check if mouse is moving to the tooltip
+            const tooltip = document.getElementById('chartTooltip');
+            if (tooltip && tooltip.classList.contains('visible')) {
+                return;
+            }
+            
+            isHovering = false;
+            lastHoverIndex = null;
+            
+            if (tooltipTimeout) {
+                clearTimeout(tooltipTimeout);
+            }
+            tooltipTimeout = setTimeout(() => {
+                if (!isHovering) {
+                    hideTooltip();
                 }
-            }
-        });
-        
-        document.addEventListener('mouseout', function(e) {
-            if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
+            }, 50);
+        }
+    }
+    
+    function handleChartMouseOver(e) {
+        if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
+            const index = parseInt(e.target.dataset.index);
+            if (!isNaN(index) && index !== lastHoverIndex) {
+                const now = Date.now();
+                if (now - lastHoverTime < 50) {
+                    return;
+                }
+                
+                lastHoverIndex = index;
+                lastHoverTime = now;
+                isHovering = true;
+                
+                if (tooltipTimeout) {
+                    clearTimeout(tooltipTimeout);
+                }
+                
                 // Handle acceptance alert indicator separately
                 if (e.target.classList.contains('acceptance-alert-indicator')) {
-                    isHovering = false;
-                    lastHoverIndex = null;
-                    
-                    if (tooltipTimeout) {
-                        clearTimeout(tooltipTimeout);
-                    }
-                    tooltipTimeout = setTimeout(() => {
-                        if (!isHovering) {
-                            hideAcceptanceAlertTooltip();
-                        }
-                    }, 50);
-                    return;
+                    const cx = parseFloat(e.target.getAttribute('cx'));
+                    const cy = parseFloat(e.target.getAttribute('cy'));
+                    showAcceptanceAlertTooltip(cx, cy);
+                } else {
+                    handleDataPointHover(e, index);
                 }
-                
-                // Check if mouse is moving to the tooltip
-                const tooltip = document.getElementById('chartTooltip');
-                if (tooltip && tooltip.classList.contains('visible')) {
-                    // Don't hide immediately, let the tooltip hover listeners handle it
-                    return;
-                }
-                
+            }
+        }
+    }
+    
+    function handleChartMouseOut(e) {
+        if (e.target && e.target.classList && (e.target.classList.contains('data-point') || e.target.classList.contains('hover-area') || e.target.classList.contains('ai-insight-indicator') || e.target.classList.contains('acceptance-alert-indicator'))) {
+            // Handle acceptance alert indicator separately
+            if (e.target.classList.contains('acceptance-alert-indicator')) {
                 isHovering = false;
                 lastHoverIndex = null;
                 
-                // Add a very short delay to prevent flickering when moving between hover areas
                 if (tooltipTimeout) {
                     clearTimeout(tooltipTimeout);
                 }
                 tooltipTimeout = setTimeout(() => {
                     if (!isHovering) {
-                        hideTooltip();
+                        hideAcceptanceAlertTooltip();
                     }
-                }, 50); // Very short delay for responsive interaction
+                }, 50);
+                return;
             }
-        });
-        
-        // Simplified hover behavior - use short timeout instead of complex mousemove tracking
+            
+            // Check if mouse is moving to the tooltip
+            const tooltip = document.getElementById('chartTooltip');
+            if (tooltip && tooltip.classList.contains('visible')) {
+                return;
+            }
+            
+            isHovering = false;
+            lastHoverIndex = null;
+            
+            if (tooltipTimeout) {
+                clearTimeout(tooltipTimeout);
+            }
+            tooltipTimeout = setTimeout(() => {
+                if (!isHovering) {
+                    hideTooltip();
+                }
+            }, 50);
+        }
     }
     
     function addTooltipHoverListeners() {
@@ -7473,6 +7476,11 @@
             legendBaseline.textContent = baselineValue;
             legendOptimized.textContent = optimizedValue;
         }
+        
+        // Reinitialize hover listeners after main chart update
+        setTimeout(() => {
+            addChartHoverListeners();
+        }, 200);
     }
     
     // Function to add invisible data points for hover detection (for Accepted volume chart - no indicators)
@@ -7490,11 +7498,11 @@
         for (let i = 0; i < numDataPoints; i++) {
             const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             const dataPointX = xPoints[i]; // Use exact x-coordinate from the array
-            const hoverWidth = 60; // More precise hover area (30px on each side)
+            const hoverWidth = 80; // Increased hover area for better interaction
             
             // Get the Y position of the current data point for the line
             const currentY = chartData.current[i];
-            const buffer = 15; // 15px buffer above and below the line
+            const buffer = 25; // Increased buffer for easier targeting
             
             rect.setAttribute('x', dataPointX - (hoverWidth / 2));
             rect.setAttribute('y', Math.max(0, currentY - buffer)); // Position around the line with buffer
@@ -7502,6 +7510,7 @@
             rect.setAttribute('height', Math.min(200, buffer * 2)); // Height is buffer * 2, but don't exceed chart height
             rect.setAttribute('fill', 'transparent');
             rect.setAttribute('stroke', 'none');
+            rect.setAttribute('pointer-events', 'all'); // Ensure pointer events work
             rect.classList.add('data-point');
             rect.dataset.index = i;
             svg.appendChild(rect);
@@ -7541,11 +7550,11 @@
         for (let i = 0; i < numDataPoints; i++) {
             const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             const dataPointX = xPoints[i]; // Use exact x-coordinate from the array
-            const hoverWidth = 60; // More precise hover area (30px on each side)
+            const hoverWidth = 80; // Increased hover area for better interaction
             
             // Get the Y position of the current data point for the line
             const currentY = chartData.current[i];
-            const buffer = 15; // 15px buffer above and below the line
+            const buffer = 25; // Increased buffer for easier targeting
             
             rect.setAttribute('x', dataPointX - (hoverWidth / 2));
             rect.setAttribute('y', Math.max(0, currentY - buffer)); // Position around the line with buffer
@@ -7553,6 +7562,7 @@
             rect.setAttribute('height', Math.min(200, buffer * 2)); // Height is buffer * 2, but don't exceed chart height
             rect.setAttribute('fill', 'transparent');
             rect.setAttribute('stroke', 'none');
+            rect.setAttribute('pointer-events', 'all'); // Ensure pointer events work
             rect.classList.add('data-point');
             rect.dataset.index = i;
             svg.appendChild(rect);
@@ -8274,6 +8284,11 @@
             
             tableBody.innerHTML = tableHTML;
         }
+        
+        // Reinitialize hover listeners after chart update
+        setTimeout(() => {
+            addChartHoverListeners();
+        }, 100);
     }
 
     // Realistic data generation system
