@@ -15451,8 +15451,29 @@
             toast.parentNode.removeChild(toast);
         }
     }
-
-
+    
+    // Initialize the page on load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Page loaded, initializing overview view...');
+        
+        // Initialize the overview view by default
+        createOverviewView();
+        
+        // Set the overview tab as active
+        const overviewTab = document.querySelector('.nav-tab[onclick*="overview"]');
+        if (overviewTab) {
+            overviewTab.classList.add('active');
+        }
+        
+        // Initialize chart tooltips
+        initializeChartTooltips();
+        
+        // Initialize the main chart for hover functionality
+        const currentDateRange = document.getElementById('dateRangeDropdown')?.textContent.trim() || 'Last 90 days';
+        updateMainChart(currentDateRange, currentBusinessType);
+        
+        console.log('Page initialization complete');
+    });
 
 
 </script>
@@ -15676,28 +15697,6 @@
     </div>
 </div>
 
-    // Initialize the page on load
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Page loaded, initializing overview view...');
-        
-        // Initialize the overview view by default
-        createOverviewView();
-        
-        // Set the overview tab as active
-        const overviewTab = document.querySelector('.nav-tab[onclick*="overview"]');
-        if (overviewTab) {
-            overviewTab.classList.add('active');
-        }
-        
-        // Initialize chart tooltips
-        initializeChartTooltips();
-        
-        // Initialize the main chart for hover functionality
-        const currentDateRange = document.getElementById('dateRangeDropdown')?.textContent.trim() || 'Last 90 days';
-        updateMainChart(currentDateRange, currentBusinessType);
-        
-        console.log('Page initialization complete');
-    });
     </script>
 </body>
 </html> 
