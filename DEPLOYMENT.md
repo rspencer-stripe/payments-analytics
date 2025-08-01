@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This guide explains how to make your Stripe Payment Analytics Dashboard publicly accessible.
+This guide explains how to make your Stripe Payment Performance Dashboard publicly accessible.
 
 ## Option 1: GitHub Pages (Recommended - Free)
 

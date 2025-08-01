@@ -9,7 +9,7 @@ class NoCacheHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Expires', '0')
         super().end_headers()
 
-PORT = 8001
+PORT = 8000
 
 with socketserver.TCPServer(("", PORT), NoCacheHTTPRequestHandler) as httpd:
     print(f"Server running at http://localhost:{PORT}")

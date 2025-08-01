@@ -1,10 +1,10 @@
 # Payment Assistant AI
 
-An AI-powered payment analytics and optimization dashboard built with modern web technologies. This project provides intelligent insights and tools for payment processing optimization.
+An AI-powered payment performance and optimization dashboard built with modern web technologies. This project provides intelligent insights and tools for payment processing optimization.
 
 ## Features
 
-- **AI-Powered Analytics**: Intelligent payment processing insights
+- **AI-Powered Performance**: Intelligent payment processing insights
 - **Real-time Dashboard**: Live payment metrics and performance indicators
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Modern UI**: Clean, professional interface using Tailwind CSS
@@ -16,7 +16,7 @@ An AI-powered payment analytics and optimization dashboard built with modern web
 The application includes the following sections:
 
 - **Overview**: Dashboard with key metrics (Total Revenue, Transactions, Customers, Success Rate)
-- **Analytics**: Detailed analytics and AI-powered insights
+- **Performance**: Detailed performance metrics and AI-powered insights
 - **Transactions**: Transaction management and history (with notification badge)
 - **Customers**: Customer data and management
 - **Reports**: Report generation and exports
@@ -107,7 +107,7 @@ If you need to deploy manually:
 
 ## Key Features
 
-### AI-Powered Analytics
+### AI-Powered Performance
 - Intelligent payment processing insights
 - Predictive analytics for payment optimization
 - Automated recommendations
