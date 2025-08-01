@@ -989,7 +989,7 @@
             text-align: left;
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 0px;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             /* Debug: add a subtle border to make cards more visible */
@@ -998,7 +998,7 @@
 
         .metric-card:hover {
             background: white !important;
-            border-color: var(--color-gray-300) !important;
+            border-color: var(--color-purple-500) !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04) !important;
             transform: translateY(-1px) !important;
         }
@@ -1381,6 +1381,7 @@
             text-decoration: none;
             font-weight: 500;
             transition: color 0.15s ease;
+            margin-right: -15px;
         }
 
         .view-all-link:hover {
@@ -3912,8 +3913,8 @@
         .chart-style-btn {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
+            gap: 6px;
+            padding: 6px 8px;
             background: white;
             border: 1px solid var(--color-gray-200);
             border-radius: 6px;
@@ -3922,7 +3923,6 @@
             color: var(--color-gray-700);
             cursor: pointer;
             transition: all 0.2s ease;
-            min-width: 100px;
         }
 
         .chart-style-btn:hover {
@@ -4091,13 +4091,19 @@
             padding-bottom: 16px;
         }
 
-        .bar-chart .waterfall-item {
+        .bar-chart         .waterfall-item {
             display: flex;
             flex-direction: column;
             align-items: center;
             min-width: 120px;
             flex: 1;
-            gap: 8px;
+            gap: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .waterfall-item:hover {
+            transform: translateY(-2px);
         }
 
         .bar-chart .waterfall-bar {
@@ -4139,7 +4145,9 @@
             align-items: center;
             min-width: 100px;
             flex: 1;
-            gap: 8px;
+            gap: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         .waterfall-chart-style .waterfall-bar {
@@ -4420,7 +4428,7 @@
 
         .snapshot-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
         }
 
@@ -4455,16 +4463,24 @@
         .snapshot-card-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 16px;
         }
 
-        .snapshot-card-header h3 {
+        .snapshot-card-title-section {
             flex: 1;
         }
 
-        .snapshot-card-header .snapshot-card-value {
-            margin-left: auto;
+        .snapshot-card-title-section h3 {
+            margin: 0 0 4px 0;
+        }
+
+        .snapshot-card-title-section .snapshot-card-value {
+            margin: 0 0 4px 0;
+        }
+
+        .snapshot-card-title-section .snapshot-card-change {
+            margin: 0;
         }
 
         .snapshot-card-title {
@@ -4483,31 +4499,57 @@
         .snapshot-card-change {
             font-size: 12px;
             font-weight: 500;
-            padding: 2px 6px;
-            border-radius: 4px;
             margin-left: 8px;
         }
 
         .snapshot-card-change.positive {
             color: #22C55E;
-            background: rgba(34, 197, 94, 0.1);
         }
 
         .snapshot-card-change.negative {
             color: #EF4444;
-            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .explore-link {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--color-gray-500);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 3px;
+            opacity: 0;
+            transform: translateY(5px);
+            pointer-events: none;
+        }
+
+        .snapshot-card:hover .explore-link {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .explore-link:hover {
+            color: var(--color-gray-700);
+        }
+
+        .explore-link i {
+            color: inherit;
         }
 
         .snapshot-chart-container {
             padding: 0;
+            background: white;
+            border-radius: 4px;
         }
 
         .snapshot-chart-content {
             position: relative;
-            height: 200px;
-            margin-bottom: 24px;
+            height: 120px;
+            margin-bottom: 0;
             width: 100%;
-            padding: 0;
+            padding: 8px;
         }
 
         .snapshot-chart-y-axis {
@@ -4515,26 +4557,27 @@
             left: 0;
             top: 0;
             bottom: 0;
-            width: 30px;
+            width: 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             font-size: 10px;
             color: var(--color-gray-500);
             font-weight: 500;
-            padding-right: 8px;
+            padding-right: 2px;
         }
 
         .snapshot-chart-area {
             position: absolute;
             top: 0;
-            left: 30px;
+            left: 20px;
             right: 0;
             bottom: 30px;
             background: white;
             border: none;
             outline: none;
             padding: 0;
+            width: calc(100% - 20px);
         }
 
         .snapshot-chart-grid {
@@ -4544,9 +4587,10 @@
             right: 0;
             bottom: 0;
             background-image: 
-                linear-gradient(to bottom, var(--color-gray-200) 1px, transparent 1px);
-            background-size: 100% 25%;
-            opacity: 0.3;
+                linear-gradient(to right, var(--color-gray-100) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--color-gray-100) 1px, transparent 1px);
+            background-size: 33.33% 25%;
+            opacity: 0.5;
         }
 
         .snapshot-chart-bars {
@@ -4562,6 +4606,7 @@
             width: 100%;
             height: 100%;
             max-width: none;
+            overflow: visible;
         }
 
         .snapshot-chart-x-axis {
@@ -4574,8 +4619,8 @@
             font-size: 10px;
             color: var(--color-gray-500);
             font-weight: 500;
-            padding-left: 40px;
-            padding-right: 40px;
+            padding-left: 25px;
+            padding-right: 25px;
         }
 
         .snapshot-chart-x-axis span {
@@ -6998,6 +7043,8 @@
     }
     
     function addChartHoverListeners() {
+        console.log('addChartHoverListeners called');
+        
         // Initialize simple hover system
         if (window.SimpleChartHover) {
             if (!window.simpleChartHover) {
@@ -7020,6 +7067,25 @@
             chartContainer.addEventListener('mouseout', handleChartMouseOut);
             
             console.log('Chart hover listeners added');
+            
+            // Ensure hover areas are created for the current chart
+            const svg = chartContainer.querySelector('.chart-svg');
+            if (svg) {
+                console.log('Chart SVG found, ensuring hover areas are created...');
+                const hoverAreas = svg.querySelectorAll('.simple-hover-area');
+                console.log('Existing hover areas:', hoverAreas.length);
+                
+                if (hoverAreas.length === 0) {
+                    console.log('No hover areas found, creating them...');
+                    // Get the current chart data and xPoints
+                    const generator = new RealisticDataGenerator('medium', 'Last 90 days');
+                    const chartData = generator.generateMainChartData();
+                    const xPoints = [80, 200, 320, 440, 560, 680, 720];
+                    addLineHoverAreas(svg, xPoints, chartData);
+                }
+            }
+        } else {
+            console.warn('Chart container not found');
         }
     }
     
@@ -8350,6 +8416,9 @@
         tooltip.style.display = 'block';
         tooltip.innerHTML = tooltipHTML;
         
+        // Reinitialize lucide icons for the tooltip
+        lucide.createIcons();
+        
         console.log('Simple tooltip shown for index:', index, 'at position:', x, y);
     }
     
@@ -8433,6 +8502,50 @@
             }
         } else {
             console.error('Simple hover system not found!');
+        }
+    };
+    
+    // Test function specifically for acceptance page tooltips
+    window.testAcceptanceTooltips = function() {
+        console.log('Testing Acceptance Page Tooltips...');
+        
+        // Check if we're on the acceptance page
+        const isOnAcceptanceTab = document.querySelector('.nav-tab.active')?.textContent?.includes('Acceptance');
+        console.log('On acceptance tab:', isOnAcceptanceTab);
+        
+        // Check for chart SVG
+        const chartSvg = document.querySelector('.chart-area .chart-svg');
+        console.log('Chart SVG found:', !!chartSvg);
+        
+        if (chartSvg) {
+            // Check for hover areas
+            const hoverAreas = chartSvg.querySelectorAll('.simple-hover-area');
+            console.log('Hover areas found:', hoverAreas.length);
+            
+            // Check for tooltip element
+            const tooltip = document.getElementById('simpleTooltip');
+            console.log('Tooltip element found:', !!tooltip);
+            
+            // Force reinitialize hover system
+            addChartHoverListeners();
+            
+            // Test hover after a short delay
+            setTimeout(() => {
+                const newHoverAreas = chartSvg.querySelectorAll('.simple-hover-area');
+                console.log('Hover areas after reinit:', newHoverAreas.length);
+                
+                if (newHoverAreas.length > 0) {
+                    console.log('Testing hover on first area...');
+                    const firstArea = newHoverAreas[0];
+                    const mouseEvent = new MouseEvent('mousemove', {
+                        bubbles: true,
+                        cancelable: true,
+                        clientX: 200,
+                        clientY: 100
+                    });
+                    firstArea.dispatchEvent(mouseEvent);
+                }
+            }, 100);
         }
     };
 
@@ -9199,6 +9312,9 @@
         tooltip.style.left = (x + 40) + 'px';
         tooltip.style.top = (y - 140) + 'px';
         tooltip.style.zIndex = '10000';
+        
+        // Reinitialize lucide icons for the tooltip
+        lucide.createIcons();
     }
     
     // Function to show blue dot tooltip with standard format and AI insight note
@@ -9298,6 +9414,9 @@
         tooltip.style.left = (x + 40) + 'px';
         tooltip.style.top = (y - 140) + 'px';
         tooltip.style.zIndex = '10000';
+        
+        // Reinitialize lucide icons for the tooltip
+        lucide.createIcons();
     }
     
     // Function to show acceptance alert tooltip - Best Practices Implementation
@@ -11852,40 +11971,37 @@
         const currentData = generator.generateTimeSeriesData(currentValue, 0.08, 0.02);
         const optimizedData = generator.generateTimeSeriesData(Math.min(currentValue * 1.08, maxValue), 0.06, 0.03);
 
-        // Define x-coordinates for the line chart (3 points for baseline, current, potential)
+        // Define x-coordinates for the line chart (10 points for smoother curves)
         // Use coordinates that span the full width of the SVG (0 to 200)
-        const xPoints = [0, 100, 200]; // Span the full width from 0 to 200 (200 units wide)
+        const xPoints = [0, 22, 44, 67, 89, 111, 133, 156, 178, 200]; // Span the full width from 0 to 200 (200 units wide)
 
         // Convert to Y coordinates (invert for SVG coordinate system)
-        const baselineY = baselineData.slice(0, 3).map(v => 200 - (v / maxValue * 200));
-        const currentY = currentData.slice(0, 3).map(v => 200 - (v / maxValue * 200));
-        const optimizedY = optimizedData.slice(0, 3).map(v => 200 - (v / maxValue * 200));
+        const baselineY = baselineData.slice(0, 10).map(v => 200 - (v / maxValue * 200));
+        const currentY = currentData.slice(0, 10).map(v => 200 - (v / maxValue * 200));
+        const optimizedY = optimizedData.slice(0, 10).map(v => 200 - (v / maxValue * 200));
 
-        // Build SVG paths
-        let baselineLine = '';
-        let currentLine = '';
-        let optimizedLine = '';
+        // Ensure the first and last points are at the absolute edges
+        xPoints[0] = 0;
+        xPoints[xPoints.length - 1] = 200;
 
-        for (let i = 0; i < xPoints.length; i++) {
-            if (i === 0) {
-                baselineLine = `M${xPoints[i]},${baselineY[i]}`;
-                currentLine = `M${xPoints[i]},${currentY[i]}`;
-                optimizedLine = `M${xPoints[i]},${optimizedY[i]}`;
-            } else {
-                baselineLine += ` L${xPoints[i]},${baselineY[i]}`;
-                currentLine += ` L${xPoints[i]},${currentY[i]}`;
-                optimizedLine += ` L${xPoints[i]},${optimizedY[i]}`;
-            }
+        // Build SVG paths with simple line segments to ensure full width
+        let baselineLine = `M${xPoints[0]},${baselineY[0]}`;
+        let currentLine = `M${xPoints[0]},${currentY[0]}`;
+        let optimizedLine = `M${xPoints[0]},${optimizedY[0]}`;
+
+        // Add line segments for full width coverage
+        for (let i = 1; i < xPoints.length; i++) {
+            baselineLine += ` L${xPoints[i]},${baselineY[i]}`;
+            currentLine += ` L${xPoints[i]},${currentY[i]}`;
+            optimizedLine += ` L${xPoints[i]},${optimizedY[i]}`;
         }
 
         // Update SVG content with line paths
         svg.innerHTML = `
-            <!-- Baseline performance line (gray) -->
-            <path d="${baselineLine}" stroke="#E4E7EC" stroke-width="2" fill="none"/>
-            <!-- Current performance line (purple) -->
-            <path d="${currentLine}" stroke="#533AFD" stroke-width="3" fill="none"/>
-            <!-- AI-optimized performance line (green) -->
-            <path d="${optimizedLine}" stroke="#22C55E" stroke-width="3" fill="none" stroke-dasharray="5,5"/>
+            <!-- Baseline line (dashed gray) -->
+            <path d="${baselineLine}" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+            <!-- Current line (solid blue) -->
+            <path d="${currentLine}" stroke="#3B82F6" stroke-width="2" fill="none"/>
         `;
     }
     
@@ -14787,6 +14903,26 @@
         // Update optimization insights to ensure fresh content
         const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
         updateOptimizationInsightsCards(currentBusinessType);
+        
+        // Ensure chart hover system is initialized for acceptance page
+        setTimeout(() => {
+            console.log('Ensuring chart hover system is initialized for acceptance page...');
+            const chartSvg = document.querySelector('.chart-area .chart-svg');
+            if (chartSvg) {
+                console.log('Chart SVG found, checking for hover areas...');
+                const hoverAreas = chartSvg.querySelectorAll('.simple-hover-area');
+                console.log('Hover areas found:', hoverAreas.length);
+                
+                if (hoverAreas.length === 0) {
+                    console.log('No hover areas found, reinitializing chart...');
+                    // Force chart reinitialization
+                    const selectedMetricCard = document.querySelector('.metric-card.selected');
+                    if (selectedMetricCard) {
+                        selectedMetricCard.click();
+                    }
+                }
+            }
+        }, 500);
     }
 
     function showCostView() {
@@ -15473,7 +15609,7 @@
                         <div class="waterfall-chart bar-chart">
                             <div class="waterfall-container">
                             <!-- Acceptance -->
-                            <div class="waterfall-item starting">
+                            <div class="waterfall-item starting" onclick="switchTabView('acceptance')">
                                 <div class="waterfall-bar" style="height: 100px; background: #3B82F6;"></div>
                                 <div class="waterfall-label">Acceptance</div>
                                 <div class="waterfall-details">
@@ -15483,7 +15619,7 @@
                             </div>
 
                             <!-- Authorization Losses -->
-                            <div class="waterfall-item negative">
+                            <div class="waterfall-item negative" onclick="switchTabView('acceptance')">
                                 <div class="waterfall-bar" style="height: 20px; background: #EF4444;"></div>
                                 <div class="waterfall-label">Declines</div>
                                 <div class="waterfall-details">
@@ -15493,7 +15629,7 @@
                             </div>
 
                             <!-- Dispute Losses -->
-                            <div class="waterfall-item negative">
+                            <div class="waterfall-item negative" onclick="switchTabView('disputes')">
                                 <div class="waterfall-bar" style="height: 10px; background: #F97316;"></div>
                                 <div class="waterfall-label">Disputes</div>
                                 <div class="waterfall-details">
@@ -15503,7 +15639,7 @@
                             </div>
 
                             <!-- Fraud -->
-                            <div class="waterfall-item positive">
+                            <div class="waterfall-item positive" onclick="switchTabView('authentication')">
                                 <div class="waterfall-bar" style="height: 50px; background: #10B981;"></div>
                                 <div class="waterfall-label">Fraud</div>
                                 <div class="waterfall-details">
@@ -15513,7 +15649,7 @@
                             </div>
 
                             <!-- Costs -->
-                            <div class="waterfall-item negative">
+                            <div class="waterfall-item negative" onclick="switchTabView('cost')">
                                 <div class="waterfall-bar" style="height: 15px; background: #8B5CF6;"></div>
                                 <div class="waterfall-label">Costs</div>
                                 <div class="waterfall-details">
@@ -15523,7 +15659,7 @@
                             </div>
 
                             <!-- Final Total -->
-                            <div class="waterfall-item total">
+                            <div class="waterfall-item total" onclick="switchTabView('overview')">
                                 <div class="waterfall-bar" style="height: 65px; background: #533AFD;"></div>
                                 <div class="waterfall-label">Total revenue</div>
                                 <div class="waterfall-details">
@@ -15537,7 +15673,7 @@
                         <div class="waterfall-chart waterfall-chart-style">
                             <div class="waterfall-container">
                                 <!-- Acceptance -->
-                                <div class="waterfall-item starting">
+                                <div class="waterfall-item starting" onclick="switchTabView('acceptance')">
                                     <div class="waterfall-bar" style="height: 100px; background: #3B82F6;"></div>
                                     <div class="waterfall-label">Acceptance</div>
                                     <div class="waterfall-details">
@@ -15547,7 +15683,7 @@
                                 </div>
 
                                 <!-- Authorization Losses -->
-                                <div class="waterfall-item negative">
+                                <div class="waterfall-item negative" onclick="switchTabView('acceptance')">
                                     <div class="waterfall-bar" style="height: 20px; background: #EF4444;"></div>
                                     <div class="waterfall-label">Declines</div>
                                     <div class="waterfall-details">
@@ -15557,7 +15693,7 @@
                                 </div>
 
                                 <!-- Dispute Losses -->
-                                <div class="waterfall-item negative">
+                                <div class="waterfall-item negative" onclick="switchTabView('disputes')">
                                     <div class="waterfall-bar" style="height: 10px; background: #F97316;"></div>
                                     <div class="waterfall-label">Disputes</div>
                                     <div class="waterfall-details">
@@ -15567,7 +15703,7 @@
                                 </div>
 
                                 <!-- Fraud -->
-                                <div class="waterfall-item positive">
+                                <div class="waterfall-item positive" onclick="switchTabView('authentication')">
                                     <div class="waterfall-bar" style="height: 50px; background: #10B981;"></div>
                                     <div class="waterfall-label">Fraud</div>
                                     <div class="waterfall-details">
@@ -15577,7 +15713,7 @@
                                 </div>
 
                                 <!-- Costs -->
-                                <div class="waterfall-item negative">
+                                <div class="waterfall-item negative" onclick="switchTabView('cost')">
                                     <div class="waterfall-bar" style="height: 15px; background: #8B5CF6;"></div>
                                     <div class="waterfall-label">Costs</div>
                                     <div class="waterfall-details">
@@ -15587,7 +15723,7 @@
                                 </div>
 
                                 <!-- Final Total -->
-                                <div class="waterfall-item total">
+                                <div class="waterfall-item total" onclick="switchTabView('overview')">
                                     <div class="waterfall-bar" style="height: 65px; background: #533AFD;"></div>
                                     <div class="waterfall-label">Total revenue</div>
                                     <div class="waterfall-details">
@@ -15655,48 +15791,20 @@
                     <div class="performance-snapshot">
                         <h2 class="snapshot-title">Key metrics</h2>
                         <div class="snapshot-grid">
-                            <!-- Active Subscribers Card -->
+                            <!-- Total Revenue Card -->
                             <div class="snapshot-card">
                                 <div class="snapshot-card-header">
-                                    <h3 class="snapshot-card-title">Active subscribers</h3>
-                                    <div class="snapshot-card-value">108</div>
-                                    <div class="snapshot-card-change positive">+11.11%</div>
-                                </div>
-                                <div class="snapshot-chart-container">
-                                    <div class="snapshot-chart-content">
-                                        <div class="snapshot-chart-y-axis">
-                                            <span>150</span>
-                                            <span>100</span>
-                                            <span>50</span>
-                                            <span>0</span>
-                                        </div>
-                                        <div class="snapshot-chart-area">
-                                            <div class="snapshot-chart-grid"></div>
-                                            <div class="snapshot-chart-bars">
-                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
-                                                    <!-- Baseline line (dashed gray) -->
-                                                    <path d="M10,120 L50,110 L90,105 L130,100 L170,95 L190,95" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
-                                                    <!-- Current line (solid blue) -->
-                                                    <path d="M10,110 L50,100 L90,95 L130,90 L170,85 L190,85" stroke="#3B82F6" stroke-width="2" fill="none"/>
-                                                </svg>
-                                            </div>
-                                            <div class="snapshot-chart-x-axis">
-                                                <span>Jul 18</span>
-                                                <span>Jul 22</span>
-                                                <span>Jul 25</span>
-                                                <span>Jul 29</span>
-                                            </div>
+                                    <div class="snapshot-card-title-section">
+                                        <h3 class="snapshot-card-title">Total revenue</h3>
+                                        <div class="snapshot-card-value">
+                                            $12.4K
+                                            <span class="snapshot-card-change positive">+8.5%</span>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Monthly Revenue Card -->
-                            <div class="snapshot-card">
-                                <div class="snapshot-card-header">
-                                    <h3 class="snapshot-card-title">Monthly revenue</h3>
-                                    <div class="snapshot-card-value">$12.4K</div>
-                                    <div class="snapshot-card-change positive">+8.5%</div>
+                                    <a href="#" class="explore-link">
+                                        Explore
+                                        <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+                                    </a>
                                 </div>
                                 <div class="snapshot-chart-container">
                                     <div class="snapshot-chart-content">
@@ -15711,15 +15819,13 @@
                                             <div class="snapshot-chart-bars">
                                                 <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
                                                     <!-- Baseline line (dashed gray) -->
-                                                    <path d="M20,140 L60,130 L100,125 L140,120 L180,115" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                                                    <path d="M0,140 Q50,135 100,125 Q150,120 200,115" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
                                                     <!-- Current line (solid blue) -->
-                                                    <path d="M20,130 L60,120 L100,115 L140,110 L180,105" stroke="#3B82F6" stroke-width="2" fill="none"/>
+                                                    <path d="M0,130 Q50,125 100,115 Q150,110 200,105" stroke="#3B82F6" stroke-width="2" fill="none"/>
                                                 </svg>
                                             </div>
                                             <div class="snapshot-chart-x-axis">
                                                 <span>Jul 18</span>
-                                                <span>Jul 22</span>
-                                                <span>Jul 25</span>
                                                 <span>Jul 29</span>
                                             </div>
                                         </div>
@@ -15727,20 +15833,153 @@
                                 </div>
                             </div>
                             
-                            <!-- Conversion Rate Card -->
+                            <!-- Authorization Rate Card -->
                             <div class="snapshot-card">
                                 <div class="snapshot-card-header">
-                                    <h3 class="snapshot-card-title">Conversion rate</h3>
-                                    <div class="snapshot-card-value">3.2%</div>
-                                    <div class="snapshot-card-change positive">+2.1%</div>
+                                    <div class="snapshot-card-title-section">
+                                        <h3 class="snapshot-card-title">Authorization rate</h3>
+                                        <div class="snapshot-card-value">
+                                            92.3%
+                                            <span class="snapshot-card-change positive">+1.8%</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="explore-link">
+                                        Explore
+                                        <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+                                    </a>
                                 </div>
                                 <div class="snapshot-chart-container">
                                     <div class="snapshot-chart-content">
                                         <div class="snapshot-chart-y-axis">
-                                            <span>4%</span>
-                                            <span>3%</span>
-                                            <span>2%</span>
-                                            <span>1%</span>
+                                            <span>100%</span>
+                                            <span>95%</span>
+                                            <span>90%</span>
+                                            <span>85%</span>
+                                        </div>
+                                        <div class="snapshot-chart-area">
+                                            <div class="snapshot-chart-grid"></div>
+                                            <div class="snapshot-chart-bars">
+                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
+                                                    <!-- Baseline line (dashed gray) -->
+                                                    <path d="M0,180 Q50,178 100,172 Q150,168 200,165" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                                                    <!-- Current line (solid blue) -->
+                                                    <path d="M0,175 Q50,173 100,167 Q150,163 200,160" stroke="#3B82F6" stroke-width="2" fill="none"/>
+                                                </svg>
+                                            </div>
+                                            <div class="snapshot-chart-x-axis">
+                                                <span>Jul 18</span>
+                                                <span>Jul 29</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Transaction Volume Card -->
+                            <div class="snapshot-card">
+                                <div class="snapshot-card-header">
+                                    <div class="snapshot-card-title-section">
+                                        <h3 class="snapshot-card-title">Transaction volume</h3>
+                                        <div class="snapshot-card-value">
+                                            1,247
+                                            <span class="snapshot-card-change positive">+12.3%</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="explore-link">
+                                        Explore
+                                        <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+                                    </a>
+                                </div>
+                                <div class="snapshot-chart-container">
+                                    <div class="snapshot-chart-content">
+                                        <div class="snapshot-chart-y-axis">
+                                            <span>1.5K</span>
+                                            <span>1K</span>
+                                            <span>500</span>
+                                            <span>0</span>
+                                        </div>
+                                        <div class="snapshot-chart-area">
+                                            <div class="snapshot-chart-grid"></div>
+                                            <div class="snapshot-chart-bars">
+                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
+                                                    <!-- Baseline line (dashed gray) -->
+                                                    <path d="M0,160 Q50,155 100,145 Q150,140 200,135" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                                                    <!-- Current line (solid blue) -->
+                                                    <path d="M0,150 Q50,145 100,135 Q150,130 200,125" stroke="#3B82F6" stroke-width="2" fill="none"/>
+                                                </svg>
+                                            </div>
+                                            <div class="snapshot-chart-x-axis">
+                                                <span>Jul 18</span>
+                                                <span>Jul 29</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Average Order Value Card -->
+                            <div class="snapshot-card">
+                                <div class="snapshot-card-header">
+                                    <div class="snapshot-card-title-section">
+                                        <h3 class="snapshot-card-title">Average order value</h3>
+                                        <div class="snapshot-card-value">
+                                            $99.50
+                                            <span class="snapshot-card-change positive">+5.2%</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="explore-link">
+                                        Explore
+                                        <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+                                    </a>
+                                </div>
+                                <div class="snapshot-chart-container">
+                                    <div class="snapshot-chart-content">
+                                        <div class="snapshot-chart-y-axis">
+                                            <span>$120</span>
+                                            <span>$100</span>
+                                            <span>$80</span>
+                                            <span>$60</span>
+                                        </div>
+                                        <div class="snapshot-chart-area">
+                                            <div class="snapshot-chart-grid"></div>
+                                            <div class="snapshot-chart-bars">
+                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
+                                                    <!-- Baseline line (dashed gray) -->
+                                                    <path d="M0,170 Q50,168 100,162 Q150,158 200,155" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                                                    <!-- Current line (solid blue) -->
+                                                    <path d="M0,165 Q50,163 100,157 Q150,153 200,150" stroke="#3B82F6" stroke-width="2" fill="none"/>
+                                                </svg>
+                                            </div>
+                                            <div class="snapshot-chart-x-axis">
+                                                <span>Jul 18</span>
+                                                <span>Jul 29</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Decline Rate Card -->
+                            <div class="snapshot-card">
+                                <div class="snapshot-card-header">
+                                    <div class="snapshot-card-title-section">
+                                        <h3 class="snapshot-card-title">Decline rate</h3>
+                                        <div class="snapshot-card-value">
+                                            7.7%
+                                            <span class="snapshot-card-change negative">-1.8%</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="explore-link">
+                                        Explore
+                                        <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+                                    </a>
+                                </div>
+                                <div class="snapshot-chart-container">
+                                    <div class="snapshot-chart-content">
+                                        <div class="snapshot-chart-y-axis">
+                                            <span>15%</span>
+                                            <span>10%</span>
+                                            <span>5%</span>
                                             <span>0%</span>
                                         </div>
                                         <div class="snapshot-chart-area">
@@ -15748,15 +15987,13 @@
                                             <div class="snapshot-chart-bars">
                                                 <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
                                                     <!-- Baseline line (dashed gray) -->
-                                                    <path d="M20,180 L60,175 L100,170 L140,165 L180,160" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                                                    <path d="M0,190 Q50,188 100,182 Q150,178 200,175" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
                                                     <!-- Current line (solid blue) -->
-                                                    <path d="M20,175 L60,170 L100,165 L140,160 L180,155" stroke="#3B82F6" stroke-width="2" fill="none"/>
+                                                    <path d="M0,185 Q50,183 100,177 Q150,173 200,170" stroke="#3B82F6" stroke-width="2" fill="none"/>
                                                 </svg>
                                             </div>
                                             <div class="snapshot-chart-x-axis">
                                                 <span>Jul 18</span>
-                                                <span>Jul 22</span>
-                                                <span>Jul 25</span>
                                                 <span>Jul 29</span>
                                             </div>
                                         </div>
@@ -15764,36 +16001,41 @@
                                 </div>
                             </div>
                             
-                            <!-- Customer Satisfaction Card -->
+                            <!-- Dispute Rate Card -->
                             <div class="snapshot-card">
                                 <div class="snapshot-card-header">
-                                    <h3 class="snapshot-card-title">Customer satisfaction</h3>
-                                    <div class="snapshot-card-value">4.8</div>
-                                    <div class="snapshot-card-change positive">+0.2</div>
+                                    <div class="snapshot-card-title-section">
+                                        <h3 class="snapshot-card-title">Dispute rate</h3>
+                                        <div class="snapshot-card-value">
+                                            0.8%
+                                            <span class="snapshot-card-change negative">+0.1%</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="explore-link">
+                                        Explore
+                                        <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+                                    </a>
                                 </div>
                                 <div class="snapshot-chart-container">
                                     <div class="snapshot-chart-content">
                                         <div class="snapshot-chart-y-axis">
-                                            <span>5.0</span>
-                                            <span>4.0</span>
-                                            <span>3.0</span>
-                                            <span>2.0</span>
-                                            <span>1.0</span>
+                                            <span>2%</span>
+                                            <span>1.5%</span>
+                                            <span>1%</span>
+                                            <span>0.5%</span>
                                         </div>
                                         <div class="snapshot-chart-area">
                                             <div class="snapshot-chart-grid"></div>
                                             <div class="snapshot-chart-bars">
                                                 <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
                                                     <!-- Baseline line (dashed gray) -->
-                                                    <path d="M20,200 L60,195 L100,190 L140,185 L180,180" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                                                    <path d="M0,195 Q50,193 100,187 Q150,183 200,180" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
                                                     <!-- Current line (solid blue) -->
-                                                    <path d="M20,195 L60,190 L100,185 L140,180 L180,175" stroke="#3B82F6" stroke-width="2" fill="none"/>
+                                                    <path d="M0,190 Q50,188 100,182 Q150,178 200,175" stroke="#3B82F6" stroke-width="2" fill="none"/>
                                                 </svg>
                                             </div>
                                             <div class="snapshot-chart-x-axis">
                                                 <span>Jul 18</span>
-                                                <span>Jul 22</span>
-                                                <span>Jul 25</span>
                                                 <span>Jul 29</span>
                                             </div>
                                         </div>
@@ -15811,7 +16053,6 @@
                         <div class="assistant-section" style="margin-bottom: 48px;">
                             <div class="assistant-header">
                                 <div class="assistant-title-section">
-                                    <i data-lucide="trending-up" class="sparkles-icon"></i>
                                     <h3 class="assistant-title">Optimization insights</h3>
                                 </div>
                                 <a href="#" class="view-all-link" onclick="navigateToOptimizationTab()">
@@ -15915,17 +16156,7 @@
                                     <span class="resource-description">Learn how to design and run effective payment optimization tests.</span>
                                 </div>
                             </div>
-                            <div class="resource-subsection">
-                                <span class="subsection-title">View other optimization tools</span>
-                                <div class="resource-link">
-                                    <i data-lucide="arrow-right" class="arrow-icon"></i>
-                                    <span>Radar fraud prevention</span>
-                                </div>
-                                <div class="resource-link">
-                                    <i data-lucide="arrow-right" class="arrow-icon"></i>
-                                    <span>Checkout optimization</span>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -17493,6 +17724,9 @@
                     </div>
                 </td>
                 <td>
+                    <span class="revenue-impact">${rec.revenue}</span>
+                </td>
+                <td>
                     <span class="effort-badge ${rec.effort.toLowerCase()}">${rec.effort}</span>
                     <div class="effort-detail">${rec.effortDetail}</div>
                 </td>
@@ -17506,6 +17740,7 @@
                             revenue: '${rec.revenue}',
                             effort: '${rec.effort} (${rec.effortDetail})'
                         })">
+                            <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
                             Experiment
                         </button>
                     </div>
