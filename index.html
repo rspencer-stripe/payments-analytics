@@ -1798,6 +1798,28 @@
             flex-shrink: 0;
         }
 
+        .active-optimization {
+            background: #F0F9FF !important;
+        }
+
+        .active-optimization td {
+            background: #F0F9FF !important;
+        }
+
+        .status-badge.active {
+            background: #10B981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
+        .data-table input[type="checkbox"]:checked {
+            accent-color: #10B981;
+        }
+
 
 
         /* Business Type Tabs (Horizontal Navigation) */
@@ -4169,6 +4191,93 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
+        /* Sparkline Charts Styles */
+        .sparkline-charts-container {
+            background: white;
+            padding: 0;
+            margin-bottom: 72px;
+        }
+
+        .sparkline-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .sparkline-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .sparkline-card {
+            background: #F9FAFB;
+            border-radius: 8px;
+            padding: 16px;
+            flex: 1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sparkline-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .sparkline-content {
+            flex: 1;
+        }
+
+        .sparkline-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin: 0 0 8px 0;
+        }
+
+        .sparkline-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+            display: inline-block;
+        }
+
+        .sparkline-trend {
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .sparkline-trend.positive {
+            color: #059669;
+        }
+
+        .sparkline-trend.negative {
+            color: #DC2626;
+        }
+
+        .sparkline-trend.neutral {
+            color: #6B7280;
+        }
+
+        .sparkline-rate {
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 4px;
+        }
+
+        .sparkline-chart {
+            flex-shrink: 0;
+            width: 60px;
+        }
+
+        .sparkline-chart svg {
+            width: 100%;
+            height: 30px;
+        }
+
         /* Sankey Chart Styles */
         .sankey-chart {
             display: none;
@@ -4213,6 +4322,8 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
+
+        
 
         .sankey-connection {
             position: absolute;
@@ -4428,7 +4539,7 @@
 
         .snapshot-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 24px;
         }
 
@@ -11495,32 +11606,42 @@
 
     // Function to switch between chart styles
     function switchChartStyle(style) {
+        const sparklineContainer = document.querySelector('.sparkline-charts-container');
+        const chartContainerWrapper = document.querySelector('.chart-container-wrapper');
         const barChart = document.querySelector('.bar-chart');
         const waterfallChartStyle = document.querySelector('.waterfall-chart-style');
         const sankeyChart = document.querySelector('.sankey-chart');
         
         // Hide all charts
+        if (sparklineContainer) sparklineContainer.style.display = 'none';
+        if (chartContainerWrapper) chartContainerWrapper.style.display = 'none';
         if (barChart) barChart.style.display = 'none';
         if (waterfallChartStyle) waterfallChartStyle.style.display = 'none';
         if (sankeyChart) sankeyChart.style.display = 'none';
         
         // Show selected chart
         switch (style) {
+            case 'sparkline':
+                if (sparklineContainer) sparklineContainer.style.display = 'block';
+                break;
             case 'bar':
+                if (chartContainerWrapper) chartContainerWrapper.style.display = 'block';
                 if (barChart) barChart.style.display = 'block';
                 break;
             case 'waterfall':
+                if (chartContainerWrapper) chartContainerWrapper.style.display = 'block';
                 if (waterfallChartStyle) waterfallChartStyle.style.display = 'block';
                 break;
             case 'sankey':
+                if (chartContainerWrapper) chartContainerWrapper.style.display = 'block';
                 if (sankeyChart) sankeyChart.style.display = 'block';
                 break;
             default:
-                if (barChart) barChart.style.display = 'block';
+                if (sparklineContainer) sparklineContainer.style.display = 'block';
         }
     }
 
-    // Function to update AI assistant prompts based on business type and data - use "Last 90 days" as baseline
+    // Function to update overview page with realistic data based on business type and timeframe
     function updateOverviewPage(businessType, dateRange) {
         console.log('updateOverviewPage called with:', businessType, dateRange);
         const overviewView = document.getElementById('overview-view');
@@ -11530,119 +11651,143 @@
         }
         console.log('Found overview view, updating content...');
         
-        // Use "Last 90 days" as the absolute baseline for consistent scaling
-        const baselineDateRange = 'Last 90 days';
-        const baselineGenerator = new RealisticDataGenerator(businessType, baselineDateRange);
-        const baselineMetrics = baselineGenerator.getBusinessMetrics();
-        const baselineMultipliers = baselineGenerator.getTimeframeMultipliers();
+        try {
         
-        // Get multipliers for the selected date range
+        // Generate data for the selected business type and timeframe
         const generator = new RealisticDataGenerator(businessType, dateRange);
-        const selectedMultipliers = generator.getTimeframeMultipliers();
+        const businessMetrics = generator.getBusinessMetrics();
+        const allData = generator.generateAllData();
+        const optimizationData = generator.generateOptimizationData();
+        console.log('Generated optimization data in updateOverviewPage:', optimizationData);
         
-        // Calculate scaling factor relative to 90-day baseline
-        const volumeScalingFactor = selectedMultipliers.volume / baselineMultipliers.volume;
-        const paymentsScalingFactor = selectedMultipliers.payments / baselineMultipliers.payments;
+        // Calculate key metrics
+        const totalRevenue = allData.metrics.volume;
+        const totalPayments = allData.metrics.payments;
+        const successRate = businessMetrics.successRate;
         
-        console.log('Scaling factors - Volume:', volumeScalingFactor, 'Payments:', paymentsScalingFactor);
-        
-        // Generate baseline data (90-day reference)
-        const baselineData = baselineGenerator.generateAllData();
-        
-        // Scale all metrics based on the selected timeframe relative to 90-day baseline
-        const totalRevenue = baselineData.metrics.volume * volumeScalingFactor;
-        const totalPayments = baselineData.metrics.payments * paymentsScalingFactor;
-        const successRate = baselineMetrics.successRate; // Keep success rate consistent
-        const recoveredRevenue = totalRevenue * 0.15; // Assume 15% of total revenue is recovered
-        const recoveredPayments = Math.round(totalPayments * 0.12); // Assume 12% of payments are recovered
-        
-        // Update performance stats - Scale appropriately based on timeframe
-        const performanceStats = overviewView.querySelectorAll('.performance-stat-card');
-        if (performanceStats.length >= 4) {
-            // Authorization rate - add slight variation based on timeframe
-            const authorizationRate = successRate + (generator.rng() - 0.5) * 2;
-            performanceStats[0].querySelector('.stat-value').textContent = `${Math.min(100, authorizationRate).toFixed(1)}%`;
-            performanceStats[0].querySelector('.stat-benchmark').textContent = `Benchmark: 94.8%`;
+        // Update performance stats with realistic data
+        const performanceSparklines = overviewView.querySelectorAll('.sparkline-charts-container .sparkline-row .sparkline-card');
+        if (performanceSparklines.length >= 3) {
+            // Total processing volume (in thousands)
+            const totalVolume = totalRevenue / 1000; // Convert to K
+            const volumeTrend = (generator.rng() - 0.5) * 15; // ±7.5K variation
+            performanceSparklines[0].querySelector('.sparkline-value').textContent = `$${totalVolume.toFixed(1)}K`;
+            performanceSparklines[0].querySelector('.sparkline-trend').textContent = `${volumeTrend > 0 ? '+' : ''}${volumeTrend.toFixed(1)}K`;
+            performanceSparklines[0].querySelector('.sparkline-trend').className = `sparkline-trend ${volumeTrend > 0 ? 'positive' : 'negative'}`;
+            performanceSparklines[0].querySelector('.sparkline-rate').textContent = `Benchmark: $${(totalVolume * 1.2).toFixed(1)}K`;
             
-            // Payment success rate - add slight variation based on timeframe
-            const paymentSuccessRate = successRate + (generator.rng() - 0.5) * 1.5;
-            performanceStats[1].querySelector('.stat-value').textContent = `${Math.min(100, paymentSuccessRate).toFixed(1)}%`;
-            performanceStats[1].querySelector('.stat-benchmark').textContent = `Benchmark: 87.5%`;
+            // Net revenue (after processing costs and fraud)
+            const netRevenue = totalRevenue * (1 - businessMetrics.processingCost/100 - businessMetrics.fraudRate/100);
+            const netRevenueK = netRevenue / 1000;
+            const netTrend = (generator.rng() - 0.5) * 12; // ±6K variation
+            performanceSparklines[1].querySelector('.sparkline-value').textContent = `$${netRevenueK.toFixed(1)}K`;
+            performanceSparklines[1].querySelector('.sparkline-trend').textContent = `${netTrend > 0 ? '+' : ''}${netTrend.toFixed(1)}K`;
+            performanceSparklines[1].querySelector('.sparkline-trend').className = `sparkline-trend ${netTrend > 0 ? 'positive' : 'negative'}`;
+            performanceSparklines[1].querySelector('.sparkline-rate').textContent = `Benchmark: $${(netRevenueK * 1.15).toFixed(1)}K`;
             
-            // Payment failures - scale based on timeframe
-            const paymentFailures = baselineMetrics.failureRate + (generator.rng() - 0.5) * 0.5;
-            performanceStats[2].querySelector('.stat-value').textContent = `${Math.max(0, paymentFailures).toFixed(1)}%`;
-            performanceStats[2].querySelector('.stat-benchmark').textContent = `Benchmark: 1.1%`;
-            
-            // Cost of payments - slight variation based on timeframe
-            const costOfPayments = 2.8 + (generator.rng() - 0.5) * 0.4;
-            performanceStats[3].querySelector('.stat-value').textContent = `${costOfPayments.toFixed(1)}%`;
-            performanceStats[3].querySelector('.stat-benchmark').textContent = `Benchmark: 2.5%`;
+            // Lost revenue (processing costs + fraud + disputes)
+            const lostRevenue = totalRevenue * (businessMetrics.processingCost/100 + businessMetrics.fraudRate/100 + businessMetrics.disputeRate/100);
+            const lostRevenueK = lostRevenue / 1000;
+            const lostTrend = (generator.rng() - 0.5) * 8; // ±4K variation
+            performanceSparklines[2].querySelector('.sparkline-value').textContent = `$${lostRevenueK.toFixed(1)}K`;
+            performanceSparklines[2].querySelector('.sparkline-trend').textContent = `${lostTrend > 0 ? '+' : ''}${lostTrend.toFixed(1)}K`;
+            performanceSparklines[2].querySelector('.sparkline-trend').className = `sparkline-trend ${lostTrend < 0 ? 'positive' : 'negative'}`;
+            performanceSparklines[2].querySelector('.sparkline-rate').textContent = `Benchmark: $${(lostRevenueK * 0.8).toFixed(1)}K`;
         }
         
-        // Update waterfall chart with properly scaled data
-        const waterfallDetails = overviewView.querySelectorAll('.waterfall-details .detail-value');
-        const waterfallRates = overviewView.querySelectorAll('.waterfall-details .detail-rate');
-        if (waterfallDetails.length >= 6) {
-            // Acceptance
-            waterfallDetails[0].textContent = formatUSD(totalRevenue);
-            waterfallRates[0].textContent = `${Math.round(totalPayments)} transactions`;
+        // Update sparkline charts with realistic data
+        const sparklineValues = overviewView.querySelectorAll('.sparkline-value');
+        const sparklineTrends = overviewView.querySelectorAll('.sparkline-trend');
+        
+        if (sparklineValues.length >= 6) {
+            // Acceptance rate
+            const acceptanceRate = businessMetrics.successRate + (generator.rng() - 0.5) * 3;
+            sparklineValues[0].textContent = `${Math.min(100, Math.max(0, acceptanceRate)).toFixed(1)}%`;
+            const acceptanceTrend = (generator.rng() - 0.5) * 4;
+            sparklineTrends[0].textContent = `${acceptanceTrend > 0 ? '+' : ''}${acceptanceTrend.toFixed(1)}%`;
+            sparklineTrends[0].className = `sparkline-trend ${acceptanceTrend > 0 ? 'positive' : 'negative'}`;
             
-            // Declines
-            waterfallDetails[1].textContent = formatUSD(totalRevenue * (1 - successRate/100));
-            waterfallRates[1].textContent = `${Math.round(totalPayments * (1 - successRate/100))} declined`;
+            // Auth success
+            const authSuccess = businessMetrics.authorizationRate + (generator.rng() - 0.5) * 2;
+            sparklineValues[1].textContent = `${Math.min(100, Math.max(0, authSuccess)).toFixed(1)}%`;
+            const authTrend = (generator.rng() - 0.5) * 3;
+            sparklineTrends[1].textContent = `${authTrend > 0 ? '+' : ''}${authTrend.toFixed(1)}%`;
+            sparklineTrends[1].className = `sparkline-trend ${authTrend > 0 ? 'positive' : 'negative'}`;
             
-            // Disputes
-            waterfallDetails[2].textContent = formatUSD(totalRevenue * baselineMetrics.disputeRate / 100);
-            waterfallRates[2].textContent = `${Math.round(totalPayments * baselineMetrics.disputeRate / 100)} disputes`;
+            // Dispute rate
+            const disputeRate = businessMetrics.disputeRate + (generator.rng() - 0.5) * 0.3;
+            sparklineValues[2].textContent = `${Math.max(0, disputeRate).toFixed(1)}%`;
+            const disputeTrend = (generator.rng() - 0.5) * 0.4;
+            sparklineTrends[2].textContent = `${disputeTrend > 0 ? '+' : ''}${disputeTrend.toFixed(1)}%`;
+            sparklineTrends[2].className = `sparkline-trend ${disputeTrend < 0 ? 'positive' : 'negative'}`;
             
-            // Fraud
-            waterfallDetails[3].textContent = formatUSD(totalRevenue * 0.02);
-            waterfallRates[3].textContent = `-${formatUSD(totalRevenue * 0.02)} fraud losses`;
+            // Processing cost
+            const processingCost = businessMetrics.processingCost + (generator.rng() - 0.5) * 0.4;
+            sparklineValues[3].textContent = `${Math.max(0, processingCost).toFixed(1)}%`;
+            const costTrend = (generator.rng() - 0.5) * 0.5;
+            sparklineTrends[3].textContent = `${costTrend > 0 ? '+' : ''}${costTrend.toFixed(1)}%`;
+            sparklineTrends[3].className = `sparkline-trend ${costTrend < 0 ? 'positive' : 'negative'}`;
             
-            // Costs
-            waterfallDetails[4].textContent = formatUSD(totalRevenue * 0.029);
+            // Payment methods
+            const paymentMethods = 85 + (generator.rng() - 0.5) * 10;
+            sparklineValues[4].textContent = `${Math.min(100, Math.max(0, paymentMethods)).toFixed(1)}%`;
+            const methodsTrend = (generator.rng() - 0.5) * 5;
+            sparklineTrends[4].textContent = `${methodsTrend > 0 ? '+' : ''}${methodsTrend.toFixed(1)}%`;
+            sparklineTrends[4].className = `sparkline-trend ${methodsTrend > 0 ? 'positive' : 'negative'}`;
             
-            // Final Total
-            waterfallDetails[5].textContent = formatUSD(totalRevenue * successRate/100);
-            waterfallRates[5].textContent = `${successRate.toFixed(1)}% success rate`;
+            // Optimizations
+            const optimizations = 12 + (generator.rng() - 0.5) * 8;
+            sparklineValues[5].textContent = optimizations.toFixed(0);
+            const optTrend = (generator.rng() - 0.5) * 4;
+            sparklineTrends[5].textContent = `${optTrend > 0 ? '+' : ''}${optTrend.toFixed(1)}`;
+            sparklineTrends[5].className = `sparkline-trend ${optTrend > 0 ? 'positive' : 'negative'}`;
         }
         
-        // Update key metrics with properly scaled data
-        const keyMetricsValues = overviewView.querySelectorAll('.snapshot-card-value');
-        const keyMetricsChanges = overviewView.querySelectorAll('.snapshot-card-change');
+        // Key metrics section is now hidden - removed update logic
+        // const keyMetricsValues = overviewView.querySelectorAll('.snapshot-card-value');
+        // const keyMetricsChanges = overviewView.querySelectorAll('.snapshot-card-change');
         
-        if (keyMetricsValues.length >= 4) {
-            // Active subscribers - scale based on timeframe with variation
-            const scaledDailyTransactions = baselineMetrics.dailyTransactions * paymentsScalingFactor;
-            const activeSubscribers = Math.round(scaledDailyTransactions * 30 * 1.4 * (1 + (generator.rng() - 0.5) * 0.2));
-            keyMetricsValues[0].textContent = activeSubscribers.toString();
-            
-            // Monthly revenue - scale based on timeframe with variation
-            const monthlyRevenue = baselineMetrics.avgTransactionValue * scaledDailyTransactions * 30 * 1.4 * (1 + (generator.rng() - 0.5) * 0.15);
-            keyMetricsValues[1].textContent = `$${(monthlyRevenue / 1000).toFixed(1)}K`;
-            
-            // Conversion rate - add variation based on timeframe
-            const conversionRate = (successRate * 0.95) + (generator.rng() - 0.5) * 3;
-            keyMetricsValues[2].textContent = `${Math.min(100, Math.max(0, conversionRate)).toFixed(1)}%`;
-            
-            // Customer satisfaction - add variation based on timeframe
-            const satisfaction = 4.5 + (generator.rng() - 0.5) * 0.8;
-            keyMetricsValues[3].textContent = Math.min(5.0, Math.max(3.5, satisfaction)).toFixed(1);
+        // Update optimization impact chart
+        const optimizationMetricValue = overviewView.querySelector('#optimization-metric-value');
+        const optimizationChartBars = overviewView.querySelectorAll('.bar-group rect');
+        
+        console.log('Optimization metric value element found:', !!optimizationMetricValue);
+        console.log('Optimization chart bars found:', optimizationChartBars.length);
+        
+        if (optimizationMetricValue) {
+            optimizationMetricValue.textContent = `$${optimizationData.volume.toFixed(2)}`;
+            console.log('Updated optimization metric value to:', `$${optimizationData.volume.toFixed(2)}`);
+        } else {
+            console.error('Optimization metric value element not found!');
         }
         
-        // Update change indicators with variation based on timeframe
-        if (keyMetricsChanges.length >= 4) {
-            const baseChange1 = 11.11 + (generator.rng() - 0.5) * 4;
-            const baseChange2 = 8.5 + (generator.rng() - 0.5) * 3;
-            const baseChange3 = 2.1 + (generator.rng() - 0.5) * 2;
-            const baseChange4 = 0.2 + (generator.rng() - 0.5) * 0.3;
-            
-            keyMetricsChanges[0].textContent = `${baseChange1 > 0 ? '+' : ''}${baseChange1.toFixed(1)}%`;
-            keyMetricsChanges[1].textContent = `${baseChange2 > 0 ? '+' : ''}${baseChange2.toFixed(1)}%`;
-            keyMetricsChanges[2].textContent = `${baseChange3 > 0 ? '+' : ''}${baseChange3.toFixed(1)}%`;
-            keyMetricsChanges[3].textContent = `${baseChange4 > 0 ? '+' : ''}${baseChange4.toFixed(2)}`;
-        }
+                 if (optimizationChartBars.length >= 7) {
+             // Update bar heights based on optimization data
+             const maxHeight = 160;
+             console.log('Chart bars - optimizationData.volume:', optimizationData.volume);
+             
+             // Use a more realistic scaling - if volume is $56K, make bars proportional
+             const baseHeight = Math.min(maxHeight, maxHeight * (optimizationData.volume / 100000)); // Scale to $100K max
+             console.log('Chart bars - baseHeight:', baseHeight);
+             
+             optimizationChartBars.forEach((bar, index) => {
+                 // Create a realistic trend: start high, dip in middle, recover slightly
+                 const trendFactor = index === 0 ? 1.0 : 
+                                   index === 1 ? 0.95 : 
+                                   index === 2 ? 0.90 : 
+                                   index === 3 ? 0.70 : 
+                                   index === 4 ? 0.65 : 
+                                   index === 5 ? 0.50 : 0.45;
+                 
+                 const height = Math.max(20, baseHeight * trendFactor);
+                 bar.setAttribute('height', height);
+                 bar.setAttribute('y', 200 - height);
+                 console.log(`Bar ${index}: height=${height}, trendFactor=${trendFactor}`);
+             });
+         }
+         
+         // Update optimization impact table with dynamic data
+         updateOptimizationImpactTable(overviewView, optimizationData);
         
         console.log('Overview page updated successfully');
         
@@ -11650,6 +11795,207 @@
         setTimeout(() => {
             initializeChartStyleDropdown();
         }, 100);
+        } catch (error) {
+            console.error('Error updating overview page:', error);
+        }
+    }
+
+    // Function to update optimization impact table with dynamic data
+    function updateOptimizationImpactTable(container, optimizationData) {
+        console.log('updateOptimizationImpactTable called with:', optimizationData);
+        
+        const generator = new RealisticDataGenerator(
+            document.querySelector('.business-type-tab.active')?.dataset.type || 'medium',
+            document.getElementById('overviewDateRangeDropdown')?.textContent.trim() || 'Last 90 days'
+        );
+        
+        const activeOptimizations = generator.getActiveOptimizations();
+        const allOptimizations = Object.values(generator.optimizationState);
+        
+        console.log('Active optimizations:', activeOptimizations);
+        console.log('All optimizations:', allOptimizations);
+        console.log('Optimization data features:', optimizationData.features);
+        
+        // Update the table body with dynamic data
+        const tableBody = container.querySelector('.data-table tbody');
+        console.log('Table body found:', !!tableBody);
+        if (tableBody) {
+            // Instead of replacing the entire table, update specific cells
+            allOptimizations.forEach(opt => {
+                const isActive = opt.status === 'active';
+                const featureData = optimizationData.features[opt.title] || {
+                    volume: 0,
+                    payments: 0,
+                    successRate: 0
+                };
+                
+                console.log(`Optimization "${opt.title}":`, {
+                    isActive,
+                    featureData,
+                    availableFeatures: Object.keys(optimizationData.features)
+                });
+                
+                // Find the row for this optimization and update its cells
+                const rows = tableBody.querySelectorAll('tr');
+                rows.forEach(row => {
+                    const titleCell = row.querySelector('.reason-cell span');
+                    if (titleCell && titleCell.textContent === opt.title) {
+                        // Update the volume cell
+                        const volumeCell = row.querySelector('td:nth-child(3)');
+                        if (volumeCell) {
+                            volumeCell.textContent = `+$${featureData.volume.toFixed(2)}`;
+                        }
+                        
+                        // Update the payments cell
+                        const paymentsCell = row.querySelector('td:nth-child(4)');
+                        if (paymentsCell) {
+                            paymentsCell.textContent = `+${featureData.payments.toFixed(0)}`;
+                        }
+                        
+                        // Update the success rate cell
+                        const successCell = row.querySelector('td:nth-child(5)');
+                        if (successCell) {
+                            successCell.textContent = `+${featureData.successRate.toFixed(2)}%`;
+                        }
+                        
+                        // Update checkbox status
+                        const checkbox = row.querySelector('input[type="checkbox"]');
+                        if (checkbox) {
+                            checkbox.checked = isActive;
+                        }
+                        
+                        // Update icon color
+                        const icon = row.querySelector('.reason-icon');
+                        if (icon) {
+                            icon.style.color = isActive ? '#10B981' : '#9CA3AF';
+                        }
+                    }
+                });
+            });
+            
+            // Update total row
+            const totalRow = tableBody.querySelector('.total-row');
+            if (totalRow) {
+                const totalVolumeCell = totalRow.querySelector('td:nth-child(3)');
+                const totalPaymentsCell = totalRow.querySelector('td:nth-child(4)');
+                const totalSuccessCell = totalRow.querySelector('td:nth-child(5)');
+                
+                if (totalVolumeCell) {
+                    totalVolumeCell.innerHTML = `<strong>+$${optimizationData.volume.toFixed(2)}</strong>`;
+                }
+                if (totalPaymentsCell) {
+                    totalPaymentsCell.innerHTML = `<strong>+${optimizationData.payments.toFixed(0)}</strong>`;
+                }
+                if (totalSuccessCell) {
+                    totalSuccessCell.innerHTML = `<strong>+${optimizationData.successRate.toFixed(2)}%</strong>`;
+                }
+            }
+        }
+        
+        // Update summary metrics
+        const metricValue = container.querySelector('#optimization-metric-value');
+        console.log('Metric value element found:', !!metricValue);
+        if (metricValue) {
+            metricValue.textContent = `$${optimizationData.volume.toFixed(2)}`;
+            console.log('Updated metric value to:', `$${optimizationData.volume.toFixed(2)}`);
+        }
+        
+        // Update chart bars based on active optimizations
+        updateOptimizationChartBars(container, optimizationData);
+        
+        // Reinitialize icons
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    }
+
+    // Function to toggle optimization on/off
+    function toggleOptimization(optimizationId, enabled) {
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        const currentDateRange = document.getElementById('overviewDateRangeDropdown')?.textContent.trim() || 'Last 90 days';
+        
+        const generator = new RealisticDataGenerator(currentBusinessType, currentDateRange);
+        
+        if (enabled) {
+            generator.enableOptimization(optimizationId);
+        } else {
+            generator.disableOptimization(optimizationId);
+        }
+        
+        // Update the overview page to reflect changes
+        updateOverviewPage(currentBusinessType, currentDateRange);
+        
+        // Show feedback
+        const optimization = generator.optimizationState[optimizationId];
+        if (optimization) {
+            const action = enabled ? 'enabled' : 'disabled';
+            showNotification(`${optimization.title} ${action}`, enabled ? 'success' : 'info');
+        }
+    }
+
+    // Function to update optimization chart bars
+    function updateOptimizationChartBars(container, optimizationData) {
+        const chartBars = container.querySelectorAll('.bar-group rect');
+        const activeOptimizations = Object.values(optimizationData.features).filter(f => f.status === 'active');
+        
+        if (chartBars.length >= 7) {
+            // Generate realistic bar heights based on optimization impact over time
+            const maxHeight = 160;
+            const baseImpact = optimizationData.volume;
+            console.log('Chart bars - baseImpact:', baseImpact, 'maxHeight:', maxHeight);
+            
+            chartBars.forEach((bar, index) => {
+                // Create a realistic trend: start high, dip in middle, recover slightly
+                const trendFactor = index === 0 ? 1.0 : 
+                                  index === 1 ? 0.95 : 
+                                  index === 2 ? 0.90 : 
+                                  index === 3 ? 0.70 : 
+                                  index === 4 ? 0.65 : 
+                                  index === 5 ? 0.50 : 0.45;
+                
+                const height = Math.max(20, maxHeight * (baseImpact / 2) * trendFactor);
+                bar.setAttribute('height', height);
+                bar.setAttribute('y', 200 - height);
+            });
+        }
+    }
+
+    // Function to show notification
+    function showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#10B981' : '#3B82F6'};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            font-size: 14px;
+            font-weight: 500;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        `;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
     }
 
     function updateOptimizationPage(businessType, dateRange) {
@@ -12263,31 +12609,38 @@
     }
     
     function updateOptimizationInsightsCards(businessType = 'medium') {
-        // Get top 3 opportunities using unified data source
-        const top3Opportunities = getTopRecommendations(businessType, 3);
+        try {
+            // Check if RealisticDataGenerator is available
+            if (typeof RealisticDataGenerator === 'undefined') {
+                console.error('RealisticDataGenerator is not defined');
+                return;
+            }
+            
+            // Get inactive optimizations that can be enabled
+            const generator = new RealisticDataGenerator(businessType, 'Last 90 days');
+            
+            if (!generator.getInactiveOptimizations) {
+                console.error('getInactiveOptimizations method not found on generator');
+                return;
+            }
+            
+            const inactiveOptimizations = generator.getInactiveOptimizations();
         
         // Update all optimization insights sections
         const insightsSections = document.querySelectorAll('.optimization-insights');
         
         insightsSections.forEach(section => {
-            section.innerHTML = top3Opportunities.map((opp, index) => `
-                <div class="insight-card" onclick="openExperimentDrawer({
-                    id: '${opp.id}',
-                    title: '${opp.title}',
-                    description: '${opp.description}',
-                    uplift: ${parseInt(opp.impact.replace(/[^0-9]/g, '')) || 0},
-                    revenue: '${opp.revenue}',
-                    effort: '${opp.effort}'
-                })">
+            section.innerHTML = inactiveOptimizations.slice(0, 3).map((opt, index) => `
+                <div class="insight-card" onclick="enableOptimizationFromInsight('${opt.id}')">
                     <div class="insight-header">
                         <div class="insight-content">
-                            <h4 class="insight-title">${opp.title}</h4>
-                            <p class="insight-description">${opp.description}</p>
+                            <h4 class="insight-title">${opt.title}</h4>
+                            <p class="insight-description">${opt.description}</p>
                         </div>
                     </div>
                     <div class="insight-impact">
-                        <span class="impact-value">${opp.impact}</span>
-                        <div class="impact-label">${opp.impactLabel}</div>
+                        <span class="impact-value">${opt.revenue}</span>
+                        <div class="impact-label">Est. impact</div>
                     </div>
                 </div>
             `).join('');
@@ -12296,6 +12649,34 @@
         // Re-initialize icons after updating content
         if (window.lucide) {
             window.lucide.createIcons();
+        }
+        } catch (error) {
+            console.error('Error in updateOptimizationInsightsCards:', error);
+        }
+    }
+
+    // Function to enable optimization from insight card
+    function enableOptimizationFromInsight(optimizationId) {
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        const currentDateRange = document.getElementById('overviewDateRangeDropdown')?.textContent.trim() || 'Last 90 days';
+        
+        const generator = new RealisticDataGenerator(currentBusinessType, currentDateRange);
+        const optimization = generator.optimizationState[optimizationId];
+        
+        if (optimization) {
+            // Show confirmation dialog
+            if (confirm(`Enable ${optimization.title}? This will start tracking its impact on your payment performance.`)) {
+                generator.enableOptimization(optimizationId);
+                
+                // Update the overview page to reflect changes
+                updateOverviewPage(currentBusinessType, currentDateRange);
+                
+                // Update optimization insights
+                updateOptimizationInsightsCards(currentBusinessType);
+                
+                // Show success notification
+                showNotification(`${optimization.title} enabled successfully!`, 'success');
+            }
         }
     }
     
@@ -14644,7 +15025,16 @@
         
         // Set initial tab to overview first
         setTimeout(() => {
+            console.log('Switching to overview tab...');
             switchTabView('overview');
+            
+            // Ensure overview page is populated with data
+            setTimeout(() => {
+                const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+                const currentDateRange = document.getElementById('dateRangeDropdown')?.textContent.trim() || 'Last 90 days';
+                console.log('Initializing overview page with:', currentBusinessType, currentDateRange);
+                updateOverviewPage(currentBusinessType, currentDateRange);
+            }, 200);
         }, 100);
         
         // Set up automatic blue dots after tab is set
@@ -15185,6 +15575,9 @@
                     item.classList.add('active');
                 }
             });
+            
+            // Update the overview page with data
+            updateOverviewPage(currentBusinessType, currentDateRange);
         }, 100);
     }
 
@@ -15501,6 +15894,7 @@
     }
 
     function createOverviewView() {
+        console.log('createOverviewView called');
         const overviewView = document.createElement('div');
         overviewView.id = 'overview-view';
         overviewView.className = 'tab-content optimization-tab-content';
@@ -15512,7 +15906,11 @@
         `;
 
         const dateRange = document.getElementById('dateRangeDropdown').textContent.trim();
-        const generator = new RealisticDataGenerator(currentBusinessType, dateRange);
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        console.log('Creating overview view with business type:', currentBusinessType, 'and date range:', dateRange);
+        
+        try {
+            const generator = new RealisticDataGenerator(currentBusinessType, dateRange);
         const allData = generator.generateAllData();
         const metrics = generator.getBusinessMetrics();
         const timeframeMultipliers = generator.getTimeframeMultipliers();
@@ -15529,7 +15927,7 @@
                     <!-- Left Column -->
                     <div style="flex: 0 0 70%; min-width: 0;">
                     <!-- Performance Header and Time Filter -->
-                    <div class="performance-header-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div class="performance-header-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <h2 style="margin: 0; font-size: 20px; font-weight: 600; color: var(--color-gray-900); line-height: 28px;">Performance</h2>
                         
                         <!-- Time Filter for Overview Page -->
@@ -15550,43 +15948,84 @@
                     </div>
 
                     <!-- Performance Stats -->
-                    <div class="performance-stats" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 72px;">
-                        <div class="performance-stat-card" data-metric="authorization-rate" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;" onclick="switchTabView('authentication')">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">92.3%</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600); margin-bottom: 2px;">Authorization rate</div>
-                            <div class="stat-benchmark" style="font-size: 11px; color: var(--color-gray-500);">Benchmark: 94.8%</div>
-                        </div>
-                        <div class="performance-stat-card" data-metric="payment-success-rate" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;" onclick="switchTabView('acceptance')">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">85.2%</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600); margin-bottom: 2px;">Payment success rate</div>
-                            <div class="stat-benchmark" style="font-size: 11px; color: var(--color-gray-500);">Benchmark: 87.5%</div>
-                        </div>
-                        <div class="performance-stat-card" data-metric="payment-failures" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;" onclick="switchTabView('authentication')">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">1.2%</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600); margin-bottom: 2px;">Payment failures</div>
-                            <div class="stat-benchmark" style="font-size: 11px; color: var(--color-gray-500);">Benchmark: 1.1%</div>
-                        </div>
-                        <div class="performance-stat-card" data-metric="cost-of-payments" style="border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s;" onclick="switchTabView('cost')">
-                            <div class="stat-value" style="font-size: 24px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 4px;">2.8%</div>
-                            <div class="stat-label" style="font-size: 13px; color: var(--color-gray-600); margin-bottom: 2px;">Processing costs</div>
-                            <div class="stat-benchmark" style="font-size: 11px; color: var(--color-gray-500);">Benchmark: 2.5%</div>
+                    <div class="sparkline-charts-container" style="margin-bottom: 48px;">
+                        <div class="sparkline-row">
+                            <!-- Total Processing Volume -->
+                            <div class="sparkline-card" onclick="switchTabView('authentication')">
+                                <div class="sparkline-content">
+                                    <h3 class="sparkline-title">Total processing volume</h3>
+                                    <div>
+                                        <span class="sparkline-value">$45.2K</span>
+                                        <span class="sparkline-trend positive">+3.8K</span>
+                                    </div>
+                                    <div class="sparkline-rate">Benchmark: $54.2K</div>
+                                </div>
+                                <div class="sparkline-chart">
+                                    <svg width="100%" height="30" viewBox="0 0 200 30">
+                                        <path d="M0,18 L20,16 L40,14 L60,12 L80,10 L100,8 L120,10 L140,8 L160,6 L180,8 L200,6" 
+                                              stroke="#3B82F6" stroke-width="4" fill="none"/>
+                                        <circle cx="200" cy="6" r="2" fill="#3B82F6"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Net Revenue -->
+                            <div class="sparkline-card" onclick="switchTabView('authentication')">
+                                <div class="sparkline-content">
+                                    <h3 class="sparkline-title">Net revenue</h3>
+                                    <div>
+                                        <span class="sparkline-value">$43.8K</span>
+                                        <span class="sparkline-trend positive">+2.1K</span>
+                                    </div>
+                                    <div class="sparkline-rate">Benchmark: $50.4K</div>
+                                </div>
+                                <div class="sparkline-chart">
+                                    <svg width="100%" height="30" viewBox="0 0 200 30">
+                                        <path d="M0,8 L20,10 L40,12 L60,10 L80,8 L100,6 L120,8 L140,6 L160,4 L180,6 L200,4" 
+                                              stroke="#EF4444" stroke-width="4" fill="none"/>
+                                        <circle cx="200" cy="4" r="2" fill="#EF4444"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Lost Revenue -->
+                            <div class="sparkline-card" onclick="switchTabView('cost')">
+                                <div class="sparkline-content">
+                                    <h3 class="sparkline-title">Lost revenue</h3>
+                                    <div>
+                                        <span class="sparkline-value">$1.4K</span>
+                                        <span class="sparkline-trend negative">+0.3K</span>
+                                    </div>
+                                    <div class="sparkline-rate">Benchmark: $1.1K</div>
+                                </div>
+                                <div class="sparkline-chart">
+                                    <svg width="100%" height="30" viewBox="0 0 200 30">
+                                        <path d="M0,12 L20,14 L40,16 L60,18 L80,20 L100,22 L120,20 L140,18 L160,16 L180,14 L200,16" 
+                                              stroke="#8B5CF6" stroke-width="4" fill="none"/>
+                                        <circle cx="200" cy="16" r="2" fill="#8B5CF6"/>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Payment Lifecycle Header -->
-                    <div class="lifecycle-header">
+                    <div class="lifecycle-header" style="margin-bottom: 16px;">
                         <div class="lifecycle-header-top">
                             <div class="lifecycle-title-section">
                                 <h1 class="lifecycle-title">Payment lifecycle</h1>
-                                <p class="lifecycle-subtitle">Optimize every stage of your payment journey for maximum revenue capture</p>
                             </div>
                             <div class="chart-style-dropdown">
                                 <button id="chartStyleDropdown" class="chart-style-btn">
-                                    <span id="chartStyleText">Bar</span>
+                                    <span id="chartStyleText">Sparkline</span>
                                     <i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i>
                                 </button>
                                 <div id="chartStyleMenu" class="chart-style-menu">
-                                    <div class="chart-style-item active" data-style="bar">
+                                    <div class="chart-style-item active" data-style="sparkline">
+                                        <i data-lucide="trending-up" style="width: 16px; height: 16px;"></i>
+                                        <span>Sparkline</span>
+                                    </div>
+                                    <div class="chart-style-item" data-style="bar">
                                         <i data-lucide="bar-chart-3" style="width: 16px; height: 16px;"></i>
                                         <span>Bar</span>
                                     </div>
@@ -15603,8 +16042,131 @@
                         </div>
                     </div>
 
-                    <!-- Payment Lifecycle Charts -->
-                    <div class="chart-container-wrapper">
+                    <!-- Payment Lifecycle Sparkline Charts -->
+                    <div class="sparkline-charts-container">
+                        <!-- Row 1 -->
+                        <div class="sparkline-row">
+                            <!-- Acceptance Rate Sparkline -->
+                            <div class="sparkline-card" onclick="switchTabView('acceptance')">
+                                <div class="sparkline-content">
+                                    <h3 class="sparkline-title">Acceptance rate</h3>
+                                    <div>
+                                        <span class="sparkline-value">94.2%</span>
+                                        <span class="sparkline-trend positive">+2.1%</span>
+                                    </div>
+                                    <div class="sparkline-rate">Top acceptance</div>
+                                </div>
+                                <div class="sparkline-chart">
+                                    <svg width="100%" height="30" viewBox="0 0 200 30">
+                                        <path d="M0,20 L20,18 L40,15 L60,18 L80,12 L100,8 L120,12 L140,6 L160,10 L180,6 L200,8" 
+                                              stroke="#10B981" stroke-width="4" fill="none"/>
+                                        <circle cx="200" cy="8" r="2" fill="#10B981"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Authentication Success Sparkline -->
+                            <div class="sparkline-card" onclick="switchTabView('authentication')">
+                                <div class="sparkline-content">
+                                    <h3 class="sparkline-title">Authorization success</h3>
+                                    <div>
+                                        <span class="sparkline-value">98.7%</span>
+                                        <span class="sparkline-trend positive">+1.5%</span>
+                                    </div>
+                                    <div class="sparkline-rate">Top authentication</div>
+                                </div>
+                                <div class="sparkline-chart">
+                                    <svg width="100%" height="30" viewBox="0 0 200 30">
+                                        <path d="M0,25 L20,22 L40,18 L60,20 L80,15 L100,10 L120,15 L140,8 L160,12 L180,8 L200,10" 
+                                              stroke="#3B82F6" stroke-width="4" fill="none"/>
+                                        <circle cx="200" cy="10" r="2" fill="#3B82F6"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Dispute Rate Sparkline -->
+                            <div class="sparkline-card" onclick="switchTabView('disputes')">
+                                <div class="sparkline-content">
+                                    <h3 class="sparkline-title">Dispute rate</h3>
+                                    <div>
+                                        <span class="sparkline-value">0.8%</span>
+                                        <span class="sparkline-trend negative">-0.3%</span>
+                                    </div>
+                                    <div class="sparkline-rate">Top disputes</div>
+                                </div>
+                                <div class="sparkline-chart">
+                                    <svg width="100%" height="30" viewBox="0 0 200 30">
+                                        <path d="M0,8 L20,12 L40,15 L60,18 L80,22 L100,25 L120,22 L140,18 L160,15 L180,12 L200,15" 
+                                              stroke="#F97316" stroke-width="4" fill="none"/>
+                                        <circle cx="200" cy="15" r="2" fill="#F97316"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div class="sparkline-row">
+                            <!-- Processing Cost Sparkline -->
+                            <div class="sparkline-card" onclick="switchTabView('cost')">
+                                <div class="sparkline-content">
+                                    <h3 class="sparkline-title">Processing cost</h3>
+                                    <div>
+                                        <span class="sparkline-value">2.4%</span>
+                                        <span class="sparkline-trend negative">-0.2%</span>
+                                    </div>
+                                    <div class="sparkline-rate">Top cost</div>
+                                </div>
+                                <div class="sparkline-chart">
+                                    <svg width="100%" height="30" viewBox="0 0 200 30">
+                                        <path d="M0,15 L20,18 L40,20 L60,18 L80,15 L100,12 L120,15 L140,12 L160,10 L180,8 L200,10" 
+                                              stroke="#8B5CF6" stroke-width="4" fill="none"/>
+                                        <circle cx="200" cy="10" r="2" fill="#8B5CF6"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Payment Methods Sparkline -->
+                            <div class="sparkline-card" onclick="switchTabView('payment-methods')">
+                                <div class="sparkline-content">
+                                    <h3 class="sparkline-title">Payment methods</h3>
+                                    <div>
+                                        <span class="sparkline-value">87.6%</span>
+                                        <span class="sparkline-trend positive">+3.2%</span>
+                                    </div>
+                                    <div class="sparkline-rate">Top payment methods</div>
+                                </div>
+                                <div class="sparkline-chart">
+                                    <svg width="100%" height="30" viewBox="0 0 200 30">
+                                        <path d="M0,22 L20,20 L40,18 L60,20 L80,15 L100,12 L120,15 L140,10 L160,12 L180,8 L200,10" 
+                                              stroke="#06B6D4" stroke-width="4" fill="none"/>
+                                        <circle cx="200" cy="10" r="2" fill="#06B6D4"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Optimizations Sparkline -->
+                            <div class="sparkline-card" onclick="switchTabView('optimization')">
+                                <div class="sparkline-content">
+                                    <h3 class="sparkline-title">Optimizations</h3>
+                                    <div>
+                                        <span class="sparkline-value">12</span>
+                                        <span class="sparkline-trend positive">+4</span>
+                                    </div>
+                                    <div class="sparkline-rate">Active optimizations</div>
+                                </div>
+                                <div class="sparkline-chart">
+                                    <svg width="100%" height="30" viewBox="0 0 200 30">
+                                        <path d="M0,25 L20,22 L40,18 L60,20 L80,15 L100,10 L120,8 L140,5 L160,8 L180,5 L200,3" 
+                                              stroke="#059669" stroke-width="4" fill="none"/>
+                                        <circle cx="200" cy="3" r="2" fill="#059669"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legacy Chart Containers (Hidden by default) -->
+                    <div class="chart-container-wrapper" style="display: none;">
                         <!-- Bar Chart -->
                         <div class="waterfall-chart bar-chart">
                             <div class="waterfall-container">
@@ -15786,9 +16348,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Key Metrics -->
-                    <div class="performance-snapshot">
                         <h2 class="snapshot-title">Key metrics</h2>
                         <div class="snapshot-grid">
                             <!-- Total Revenue Card -->
@@ -16044,8 +16603,522 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Key Metrics -->
+                    <div class="performance-snapshot" style="display: none;">
+                        <h2 class="snapshot-title">Key metrics</h2>
+                        <div class="snapshot-grid">
+                            <!-- Total Revenue Card -->
+                            <div class="snapshot-card">
+                                <div class="snapshot-card-header">
+                                    <div class="snapshot-card-title-section">
+                                        <h3 class="snapshot-card-title">Total revenue</h3>
+                                        <div class="snapshot-card-value">
+                                            $12.4K
+                                            <span class="snapshot-card-change positive">+8.5%</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="explore-link">
+                                        Explore
+                                        <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+                                    </a>
+                                </div>
+                                <div class="snapshot-chart-container">
+                                    <div class="snapshot-chart-content">
+                                        <div class="snapshot-chart-y-axis">
+                                            <span>$15K</span>
+                                            <span>$10K</span>
+                                            <span>$5K</span>
+                                            <span>$0</span>
+                                        </div>
+                                        <div class="snapshot-chart-area">
+                                            <div class="snapshot-chart-grid"></div>
+                                            <div class="snapshot-chart-bars">
+                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
+                                                    <!-- Baseline line (dashed gray) -->
+                                                    <path d="M0,140 Q50,135 100,125 Q150,120 200,115" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                                                    <!-- Current line (solid blue) -->
+                                                    <path d="M0,130 Q50,125 100,115 Q150,110 200,105" stroke="#3B82F6" stroke-width="2" fill="none"/>
+                                                </svg>
+                                            </div>
+                                            <div class="snapshot-chart-x-axis">
+                                                <span>Jul 18</span>
+                                                <span>Jul 29</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Authorization Rate Card -->
+                            <div class="snapshot-card">
+                                <div class="snapshot-card-header">
+                                    <div class="snapshot-card-title-section">
+                                        <h3 class="snapshot-card-title">Authorization rate</h3>
+                                        <div class="snapshot-card-value">
+                                            92.3%
+                                            <span class="snapshot-card-change positive">+1.8%</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="explore-link">
+                                        Explore
+                                        <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+                                    </a>
+                                </div>
+                                <div class="snapshot-chart-container">
+                                    <div class="snapshot-chart-content">
+                                        <div class="snapshot-chart-y-axis">
+                                            <span>100%</span>
+                                            <span>95%</span>
+                                            <span>90%</span>
+                                            <span>85%</span>
+                                        </div>
+                                        <div class="snapshot-chart-area">
+                                            <div class="snapshot-chart-grid"></div>
+                                            <div class="snapshot-chart-bars">
+                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
+                                                    <!-- Baseline line (dashed gray) -->
+                                                    <path d="M0,180 Q50,178 100,172 Q150,168 200,165" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                                                    <!-- Current line (solid blue) -->
+                                                    <path d="M0,175 Q50,173 100,167 Q150,163 200,160" stroke="#3B82F6" stroke-width="2" fill="none"/>
+                                                </svg>
+                                            </div>
+                                            <div class="snapshot-chart-x-axis">
+                                                <span>Jul 18</span>
+                                                <span>Jul 29</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Transaction Volume Card -->
+                            <div class="snapshot-card">
+                                <div class="snapshot-card-header">
+                                    <div class="snapshot-card-title-section">
+                                        <h3 class="snapshot-card-title">Transaction volume</h3>
+                                        <div class="snapshot-card-value">
+                                            49
+                                            <span class="snapshot-card-change positive">+12.3%</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="explore-link">
+                                        Explore
+                                        <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+                                    </a>
+                                </div>
+                                <div class="snapshot-chart-container">
+                                    <div class="snapshot-chart-content">
+                                        <div class="snapshot-chart-y-axis">
+                                            <span>60</span>
+                                            <span>45</span>
+                                            <span>30</span>
+                                            <span>15</span>
+                                        </div>
+                                        <div class="snapshot-chart-area">
+                                            <div class="snapshot-chart-grid"></div>
+                                            <div class="snapshot-chart-bars">
+                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
+                                                    <!-- Baseline line (dashed gray) -->
+                                                    <path d="M0,160 Q50,155 100,150 Q150,145 200,140" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                                                    <!-- Current line (solid blue) -->
+                                                    <path d="M0,150 Q50,145 100,140 Q150,135 200,130" stroke="#3B82F6" stroke-width="2" fill="none"/>
+                                                </svg>
+                                            </div>
+                                            <div class="snapshot-chart-x-axis">
+                                                <span>Jul 18</span>
+                                                <span>Jul 29</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Customer Count Card -->
+                            <div class="snapshot-card">
+                                <div class="snapshot-card-header">
+                                    <div class="snapshot-card-title-section">
+                                        <h3 class="snapshot-card-title">Customer count</h3>
+                                        <div class="snapshot-card-value">
+                                            23
+                                            <span class="snapshot-card-change positive">+4.2%</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="explore-link">
+                                        Explore
+                                        <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+                                    </a>
+                                </div>
+                                <div class="snapshot-chart-container">
+                                    <div class="snapshot-chart-content">
+                                        <div class="snapshot-chart-y-axis">
+                                            <span>30</span>
+                                            <span>22</span>
+                                            <span>15</span>
+                                            <span>8</span>
+                                        </div>
+                                        <div class="snapshot-chart-area">
+                                            <div class="snapshot-chart-grid"></div>
+                                            <div class="snapshot-chart-bars">
+                                                <svg class="snapshot-chart-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
+                                                    <!-- Baseline line (dashed gray) -->
+                                                    <path d="M0,170 Q50,168 100,165 Q150,162 200,160" stroke="#E4E7EC" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                                                    <!-- Current line (solid blue) -->
+                                                    <path d="M0,165 Q50,163 100,160 Q150,157 200,155" stroke="#3B82F6" stroke-width="2" fill="none"/>
+                                                </svg>
+                                            </div>
+                                            <div class="snapshot-chart-x-axis">
+                                                <span>Jul 18</span>
+                                                <span>Jul 29</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Optimization Impact Tracking Chart -->
+                    <div class="breakdown-section" style="margin-top: 48px;">
+                        <div class="breakdown-header">
+                            <div class="breakdown-title-section">
+                                <h3 class="breakdown-title">Optimization impact summary</h3>
+                            </div>
+                            <div class="breakdown-controls">
+                                <div class="breakdown-filters">
+                                    <button class="breakdown-filter-btn active" data-metric="volume">Payment volume</button>
+                                    <button class="breakdown-filter-btn" data-metric="payments">Payments</button>
+                                    <button class="breakdown-filter-btn" data-metric="share">Share of payments</button>
+                                    <button class="breakdown-filter-btn" data-metric="success">Success rate</button>
+                                </div>
+                                <div class="breakdown-dropdowns">
+                                    <button class="dropdown-btn">
+                                        Feature type
+                                        <i data-lucide="chevron-down" class="dropdown-icon"></i>
+                                    </button>
+                                    <button class="download-btn">
+                                        <i data-lucide="download" class="download-icon"></i>
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="breakdown-total">
+                            <div class="total-label">
+                                <span id="optimization-metric-label">Payment volume</span>
+                                <i data-lucide="info" class="info-icon" style="width: 14px; height: 14px; color: var(--color-gray-400);"></i>
+                            </div>
+                            <span class="total-value" id="optimization-metric-value">$1.00</span>
+                        </div>
+                        
+                        <!-- Bar Chart Container -->
+                        <div class="bar-chart-container">
+                            <div class="bar-chart-content">
+                                <div class="bar-chart-y-axis">
+                                    <span>$1.20</span>
+                                    <span>$0.90</span>
+                                    <span>$0.60</span>
+                                    <span>$0.30</span>
+                                    <span>$0</span>
+                                </div>
+                                <div class="bar-chart-area">
+                                    <div class="bar-chart-grid"></div>
+                                    <div class="bar-chart-bars">
+                                        <svg class="bar-chart-svg" viewBox="0 0 800 200">
+                                            <!-- Optimization impact bars -->
+                                            <g class="bar-group" transform="translate(100, 0)">
+                                                <rect x="0" y="20" width="40" height="160" fill="#3B82F6" opacity="0.8"/>
+                                            </g>
+                                            <g class="bar-group" transform="translate(200, 0)">
+                                                <rect x="0" y="40" width="40" height="140" fill="#3B82F6" opacity="0.8"/>
+                                            </g>
+                                            <g class="bar-group" transform="translate(300, 0)">
+                                                <rect x="0" y="60" width="40" height="120" fill="#3B82F6" opacity="0.8"/>
+                                            </g>
+                                            <g class="bar-group" transform="translate(400, 0)">
+                                                <rect x="0" y="80" width="40" height="100" fill="#3B82F6" opacity="0.8"/>
+                                            </g>
+                                            <g class="bar-group" transform="translate(500, 0)">
+                                                <rect x="0" y="100" width="40" height="80" fill="#3B82F6" opacity="0.8"/>
+                                            </g>
+                                            <g class="bar-group" transform="translate(600, 0)">
+                                                <rect x="0" y="120" width="40" height="60" fill="#3B82F6" opacity="0.8"/>
+                                            </g>
+                                            <g class="bar-group" transform="translate(700, 0)">
+                                                <rect x="0" y="140" width="40" height="40" fill="#3B82F6" opacity="0.8"/>
+                                            </g>
+                                        </svg>
+                                    </div>
+                                    <div class="bar-chart-x-axis">
+                                        <span>Jul 2024</span>
+                                        <span>Aug 2024</span>
+                                        <span>Sep 2024</span>
+                                        <span>Oct 2024</span>
+                                        <span>Nov 2024</span>
+                                        <span>Dec 2024</span>
+                                        <span>Jan 2025</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bar-chart-footer">
+                            </div>
+                        </div>
+                        
+                        <!-- Data Table -->
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th class="checkbox-header">
+                                            <input type="checkbox" checked>
+                                        </th>
+                                        <th>Feature</th>
+                                        <th>Recovered volume</th>
+                                        <th>Recovered payments</th>
+                                        <th>Success rate increase</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" checked>
+                                        </td>
+                                        <td>
+                                            <div class="reason-cell">
+                                                <i data-lucide="check-circle" class="reason-icon"></i>
+                                                <span>Adaptive Acceptance</span>
+                                            </div>
+                                        </td>
+                                        <td id="adaptive-volume">+$0.00</td>
+                                        <td id="adaptive-payments">+0</td>
+                                        <td id="adaptive-success">+0.00%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" checked>
+                                        </td>
+                                        <td>
+                                            <div class="reason-cell">
+                                                <i data-lucide="check-circle" class="reason-icon"></i>
+                                                <span>Network tokens</span>
+                                            </div>
+                                        </td>
+                                        <td id="network-volume">+$0.00</td>
+                                        <td id="network-payments">+0</td>
+                                        <td id="network-success">+0.00%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" checked>
+                                        </td>
+                                        <td>
+                                            <div class="reason-cell">
+                                                <i data-lucide="check-circle" class="reason-icon"></i>
+                                                <span>Card account updater</span>
+                                            </div>
+                                        </td>
+                                        <td id="updater-volume">+$0.00</td>
+                                        <td id="updater-payments">+0</td>
+                                        <td id="updater-success">+0.00%</td>
+                                    </tr>
+                                    <tr class="total-row">
+                                        <td></td>
+                                        <td><strong>Total increase</strong></td>
+                                        <td id="total-volume"><strong>+$0.00</strong></td>
+                                        <td id="total-payments"><strong>+0</strong></td>
+                                        <td id="total-success"><strong>+0.00%</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Legacy Chart Containers (Hidden by default) -->
+                    <div class="chart-container-wrapper" style="display: none;">
+                        <!-- Bar Chart -->
+                        <div class="waterfall-chart bar-chart">
+                            <div class="waterfall-container">
+                            <!-- Acceptance -->
+                            <div class="waterfall-item starting" onclick="switchTabView('acceptance')">
+                                <div class="waterfall-bar" style="height: 100px; background: #3B82F6;"></div>
+                                <div class="waterfall-label">Acceptance</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$${totalRevenue.toFixed(0)}</span>
+                                    <span class="detail-rate">${allData.metrics.payments} transactions</span>
+                                </div>
+                            </div>
+
+                            <!-- Authorization Losses -->
+                            <div class="waterfall-item negative" onclick="switchTabView('acceptance')">
+                                <div class="waterfall-bar" style="height: 20px; background: #EF4444;"></div>
+                                <div class="waterfall-label">Declines</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$${(totalRevenue * (1 - successRate/100)).toFixed(0)}</span>
+                                    <span class="detail-rate">${Math.round(allData.metrics.payments * (1 - successRate/100))} declined</span>
+                                </div>
+                            </div>
+
+                            <!-- Dispute Losses -->
+                            <div class="waterfall-item negative" onclick="switchTabView('disputes')">
+                                <div class="waterfall-bar" style="height: 10px; background: #F97316;"></div>
+                                <div class="waterfall-label">Disputes</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$${(totalRevenue * metrics.disputeRate / 100).toFixed(0)}</span>
+                                    <span class="detail-rate">${Math.round(allData.metrics.payments * metrics.disputeRate / 100)} disputes</span>
+                                </div>
+                            </div>
+
+                            <!-- Fraud -->
+                            <div class="waterfall-item positive" onclick="switchTabView('authentication')">
+                                <div class="waterfall-bar" style="height: 50px; background: #10B981;"></div>
+                                <div class="waterfall-label">Fraud</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$${(totalRevenue * 0.02).toFixed(0)}</span>
+                                    <span class="detail-rate">-$${(totalRevenue * 0.02).toFixed(0)} fraud losses</span>
+                                </div>
+                            </div>
+
+                            <!-- Costs -->
+                            <div class="waterfall-item negative" onclick="switchTabView('cost')">
+                                <div class="waterfall-bar" style="height: 15px; background: #8B5CF6;"></div>
+                                <div class="waterfall-label">Costs</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$${(totalRevenue * 0.029).toFixed(0)}</span>
+                                    <span class="detail-rate">Processing fees</span>
+                                </div>
+                            </div>
+
+                            <!-- Final Total -->
+                            <div class="waterfall-item total" onclick="switchTabView('overview')">
+                                <div class="waterfall-bar" style="height: 65px; background: #533AFD;"></div>
+                                <div class="waterfall-label">Total revenue</div>
+                                <div class="waterfall-details">
+                                    <span class="detail-value">$${(totalRevenue * successRate/100).toFixed(0)}</span>
+                                    <span class="detail-rate">${successRate.toFixed(1)}% success rate</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Waterfall Chart Style -->
+                        <div class="waterfall-chart waterfall-chart-style">
+                            <div class="waterfall-container">
+                                <!-- Acceptance -->
+                                <div class="waterfall-item starting" onclick="switchTabView('acceptance')">
+                                    <div class="waterfall-bar" style="height: 100px; background: #3B82F6;"></div>
+                                    <div class="waterfall-label">Acceptance</div>
+                                    <div class="waterfall-details">
+                                        <span class="detail-value">$${totalRevenue.toFixed(0)}</span>
+                                        <span class="detail-rate">${allData.metrics.payments} transactions</span>
+                                    </div>
+                                </div>
+
+                                <!-- Authorization Losses -->
+                                <div class="waterfall-item negative" onclick="switchTabView('acceptance')">
+                                    <div class="waterfall-bar" style="height: 20px; background: #EF4444;"></div>
+                                    <div class="waterfall-label">Declines</div>
+                                    <div class="waterfall-details">
+                                        <span class="detail-value">$${(totalRevenue * (1 - successRate/100)).toFixed(0)}</span>
+                                        <span class="detail-rate">${Math.round(allData.metrics.payments * (1 - successRate/100))} declined</span>
+                                    </div>
+                                </div>
+
+                                <!-- Dispute Losses -->
+                                <div class="waterfall-item negative" onclick="switchTabView('disputes')">
+                                    <div class="waterfall-bar" style="height: 10px; background: #F97316;"></div>
+                                    <div class="waterfall-label">Disputes</div>
+                                    <div class="waterfall-details">
+                                        <span class="detail-value">$${(totalRevenue * metrics.disputeRate / 100).toFixed(0)}</span>
+                                        <span class="detail-rate">${Math.round(allData.metrics.payments * metrics.disputeRate / 100)} disputes</span>
+                                    </div>
+                                </div>
+
+                                <!-- Fraud -->
+                                <div class="waterfall-item positive" onclick="switchTabView('authentication')">
+                                    <div class="waterfall-bar" style="height: 50px; background: #10B981;"></div>
+                                    <div class="waterfall-label">Fraud</div>
+                                    <div class="waterfall-details">
+                                        <span class="detail-value">$${(totalRevenue * 0.02).toFixed(0)}</span>
+                                        <span class="detail-rate">-$${(totalRevenue * 0.02).toFixed(0)} fraud losses</span>
+                                    </div>
+                                </div>
+
+                                <!-- Costs -->
+                                <div class="waterfall-item negative" onclick="switchTabView('cost')">
+                                    <div class="waterfall-bar" style="height: 15px; background: #8B5CF6;"></div>
+                                    <div class="waterfall-label">Costs</div>
+                                    <div class="waterfall-details">
+                                        <span class="detail-value">$${(totalRevenue * 0.029).toFixed(0)}</span>
+                                        <span class="detail-rate">Processing fees</span>
+                                    </div>
+                                </div>
+
+                                <!-- Final Total -->
+                                <div class="waterfall-item total" onclick="switchTabView('overview')">
+                                    <div class="waterfall-bar" style="height: 65px; background: #533AFD;"></div>
+                                    <div class="waterfall-label">Total revenue</div>
+                                    <div class="waterfall-details">
+                                        <span class="detail-value">$${(totalRevenue * successRate/100).toFixed(0)}</span>
+                                        <span class="detail-rate">${successRate.toFixed(1)}% success rate</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sankey Chart -->
+                        <div class="sankey-chart">
+                            <div class="sankey-container">
+                                <!-- Stage 1: Acceptance -->
+                                <div class="sankey-stage">
+                                    <div class="sankey-node">
+                                        <div class="sankey-bar" style="background: #3B82F6;">
+                                            <div class="sankey-label">Acceptance</div>
+                                            <div class="sankey-value">$${totalRevenue.toFixed(0)}</div>
+                                            <div class="sankey-rate">${allData.metrics.payments} transactions</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stage 2: Processing -->
+                                <div class="sankey-stage">
+                                    <div class="sankey-node">
+                                        <div class="sankey-bar" style="background: #EF4444;">
+                                            <div class="sankey-label">Declines</div>
+                                            <div class="sankey-value">$${(totalRevenue * (1 - successRate/100)).toFixed(0)}</div>
+                                            <div class="sankey-rate">${Math.round(allData.metrics.payments * (1 - successRate/100))} declined</div>
+                                        </div>
+                                    </div>
+                                    <div class="sankey-node">
+                                        <div class="sankey-bar" style="background: #F97316;">
+                                            <div class="sankey-label">Disputes</div>
+                                            <div class="sankey-value">$${(totalRevenue * metrics.disputeRate / 100).toFixed(0)}</div>
+                                            <div class="sankey-rate">${Math.round(allData.metrics.payments * metrics.disputeRate / 100)} disputes</div>
+                                        </div>
+                                    </div>
+                                    <div class="sankey-node">
+                                        <div class="sankey-bar" style="background: #10B981;">
+                                            <div class="sankey-label">Fraud</div>
+                                            <div class="sankey-value">$${(totalRevenue * 0.02).toFixed(0)}</div>
+                                            <div class="sankey-rate">-$${(totalRevenue * 0.02).toFixed(0)} fraud losses</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stage 3: Final -->
+                                <div class="sankey-stage">
+                                    <div class="sankey-node">
+                                        <div class="sankey-bar" style="background: #533AFD;">
+                                            <div class="sankey-label">Total revenue</div>
+                                            <div class="sankey-value">$${(totalRevenue * successRate/100).toFixed(0)}</div>
+                                            <div class="sankey-rate">${successRate.toFixed(1)}% success rate</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                </div>
                     
                     <!-- Right Column -->
                     <div style="flex: 0 0 30%; background: white; padding: 20px; border-radius: 8px; min-width: 0;">
@@ -16160,6 +17233,7 @@
                         </div>
                     </div>
                 </div>
+                </div>
         `;
 
         // Add the view to the main content area
@@ -16185,6 +17259,10 @@
         const currentDateRange = document.getElementById('dateRangeDropdown').textContent.trim();
         updateOptimizationPage(currentBusinessType, currentDateRange);
         
+        } catch (error) {
+            console.error('Error creating overview view:', error);
+        }
+        
         return overviewView;
     }
 
@@ -16206,6 +17284,7 @@
                 <h1 class="auth-title">Authentication & Security</h1>
                 <p class="auth-subtitle">Manage your authentication settings and security configurations</p>
             </div>
+            
             <div class="auth-content">
                 <p>Authentication view coming soon...</p>
             </div>
@@ -16233,6 +17312,7 @@
                 <h1 class="cost-title">Cost & Pricing Performance</h1>
                 <p class="cost-subtitle">Monitor your payment processing costs and optimize pricing</p>
             </div>
+            
             <div class="cost-content">
                 <p>Cost view coming soon...</p>
             </div>
@@ -16260,6 +17340,7 @@
                 <h1 class="disputes-title">Disputes & Chargebacks</h1>
                 <p class="disputes-subtitle">Monitor and manage payment disputes</p>
             </div>
+            
             <div class="disputes-content">
                 <p>Disputes view coming soon...</p>
             </div>
