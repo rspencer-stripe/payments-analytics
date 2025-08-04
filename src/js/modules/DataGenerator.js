@@ -1,13 +1,15 @@
 // Data Generator for realistic payment performance
-if (typeof RealisticDataGenerator === 'undefined') {
-    class RealisticDataGenerator {
+console.log('Loading RealisticDataGenerator class...');
+class RealisticDataGenerator {
         constructor(businessType, dateRange) {
+            console.log('Creating RealisticDataGenerator instance with:', businessType, dateRange);
             this.businessType = businessType;
             this.dateRange = dateRange;
             this.dataPoints = this.getDataPointsForRange(dateRange);
             this.seed = this.getSeed(businessType, dateRange);
             this.rng = this.seededRandom(this.seed);
             this.optimizationState = this.getOptimizationState();
+            console.log('RealisticDataGenerator instance created successfully');
         }
 
         // Get consistent seed for reproducible data
@@ -71,8 +73,8 @@ if (typeof RealisticDataGenerator === 'undefined') {
                     id: 'network-tokens',
                     title: 'Network Tokens',
                     description: 'Replace card numbers with secure network tokens',
-                    status: 'inactive',
-                    enabledDate: null,
+                    status: 'active',
+                    enabledDate: '2024-06-10',
                     impact: {
                         volume: 8200,
                         payments: 28,
@@ -84,10 +86,10 @@ if (typeof RealisticDataGenerator === 'undefined') {
                 },
                 'card-account-updater': {
                     id: 'card-account-updater',
-                    title: 'Card Account Updater',
+                    title: 'Card account updater',
                     description: 'Automatically update expired or changed card details',
-                    status: 'inactive',
-                    enabledDate: null,
+                    status: 'active',
+                    enabledDate: '2024-05-20',
                     impact: {
                         volume: 6800,
                         payments: 22,
@@ -398,6 +400,7 @@ if (typeof RealisticDataGenerator === 'undefined') {
             const businessMetrics = this.getBusinessMetrics();
             const multipliers = this.getTimeframeMultipliers();
             const activeOptimizations = this.getActiveOptimizations();
+            const allOptimizations = Object.values(this.optimizationState);
             
             // Calculate total impact from active optimizations
             let totalVolume = 0;
@@ -415,14 +418,16 @@ if (typeof RealisticDataGenerator === 'undefined') {
             
             const scaling = businessScaling[this.businessType] || businessScaling.medium;
             
-            activeOptimizations.forEach(opt => {
+            // Process ALL optimizations (both active and inactive) for table display
+            allOptimizations.forEach(opt => {
                 const impact = opt.impact;
+                const isActive = opt.status === 'active';
                 const enabledDays = opt.enabledDate ? 
                     Math.min(multipliers.days, Math.floor((new Date() - new Date(opt.enabledDate)) / (1000 * 60 * 60 * 24))) : 0;
                 
                 // Scale impact based on how long the optimization has been active
                 // Most optimizations show full impact within 14-30 days
-                const timeScale = Math.min(1, enabledDays / 21); // Full impact after 21 days
+                const timeScale = isActive ? Math.min(1, enabledDays / 21) : 0; // Full impact after 21 days, 0 if inactive
                 
                 // Apply business scaling but NOT timeframe multipliers for optimization impact
                 // Optimization impact should be absolute values, not scaled by timeframe
@@ -430,9 +435,12 @@ if (typeof RealisticDataGenerator === 'undefined') {
                 const scaledPayments = impact.payments * timeScale * scaling.payments;
                 const scaledSuccessRate = impact.successRate * timeScale * scaling.successRate;
                 
-                totalVolume += scaledVolume;
-                totalPayments += scaledPayments;
-                totalSuccessRate += scaledSuccessRate;
+                // Only add to totals if optimization is active
+                if (isActive) {
+                    totalVolume += scaledVolume;
+                    totalPayments += scaledPayments;
+                    totalSuccessRate += scaledSuccessRate;
+                }
                 
                 featureImpacts[opt.title] = {
                     volume: scaledVolume,
@@ -494,11 +502,24 @@ if (typeof RealisticDataGenerator === 'undefined') {
             return timeline;
         }
     }
-}
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = RealisticDataGenerator;
 } else {
     window.RealisticDataGenerator = RealisticDataGenerator;
+    console.log('RealisticDataGenerator class loaded and assigned to window');
+    
+    // Test if the class is working
+    try {
+        const testInstance = new RealisticDataGenerator('medium', 'Last 90 days');
+        console.log('Test instance created successfully:', testInstance);
+        console.log('Test instance methods:', {
+            getInactiveOptimizations: typeof testInstance.getInactiveOptimizations,
+            generateOptimizationData: typeof testInstance.generateOptimizationData,
+            getActiveOptimizations: typeof testInstance.getActiveOptimizations
+        });
+    } catch (error) {
+        console.error('Error creating test instance:', error);
+    }
 } 
