@@ -3433,12 +3433,47 @@
             width: 14px;
             height: 14px;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .ai-prompt-pill-text {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+        }
+        
+        .ai-prompt-pill i[data-lucide] {
+            width: 14px !important;
+            height: 14px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            vertical-align: middle !important;
+            line-height: 1 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .ai-prompt-pill {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            padding: 8px 12px !important;
+            background: white !important;
+            border: 1px solid var(--color-gray-200) !important;
+            border-radius: 20px !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            color: var(--color-gray-700) !important;
+            cursor: pointer !important;
+            transition: all 0.15s !important;
+            text-decoration: none !important;
+            max-width: 200px !important;
+            line-height: 1.2 !important;
         }
 
         /* Chart Tooltip Styles */
@@ -14076,11 +14111,11 @@
                 { text: "Mobile optimization", icon: "smartphone", type: "secondary", action: "mobile-optimization" }
             ];
         } else if (topic === 'success-rate-optimization') {
-            responseMessage = `**AI Insight Analysis:** Your payment success rate shows room for improvement compared to industry benchmarks.\n\n**Strategy:** Focus on foundational optimizations that don't require complex infrastructure.\n\n**Immediate Actions:**\n• Enable automatic retry logic for failed payments\n• Implement basic address verification\n• Add multiple payment method options\n• Optimize checkout page for mobile devices`;
+            responseMessage = `**AI Insight Analysis:** Your payment success rate shows room for improvement compared to industry benchmarks.\n\n**Strategy:** Focus on foundational optimizations that don't require complex infrastructure.\n\n**Potential Improvements:**\n• **Smart Retries** could improve auth rates by **1.5%**\n• **Adaptive Acceptance** could add another **0.8%**\n\n**Immediate Actions:**\n• Enable automatic retry logic for failed payments\n• Implement basic address verification\n• Add multiple payment method options\n• Optimize checkout page for mobile devices`;
             responsePills = [
-                { text: "Enable retry logic", icon: "refresh-cw", type: "primary", action: "enable-retry" },
-                { text: "Add payment methods", icon: "credit-card", type: "secondary", action: "add-payment-methods" },
-                { text: "Mobile optimization", icon: "smartphone", type: "secondary", action: "mobile-optimization" }
+                { text: "Smart Retries", icon: "refresh-cw", type: "primary", action: "enable-retry" },
+                { text: "Adaptive Acceptance", icon: "bar-chart-2", type: "secondary", action: "enable-adaptive" },
+                { text: "Add payment methods", icon: "credit-card", type: "secondary", action: "add-payment-methods" }
             ];
         } else {
             responseMessage = `**AI Insight Analysis:** Your Germany auth rate dropped from 87.3% to 74.1% over 2 weeks.\n\n**Likely Causes:**\n• Recent fraud rule updates too restrictive for German market\n• New SCA requirements causing 3D Secure failures\n• PSD3 compliance changes affecting local banks\n\n**Quick Actions:**\n• Review fraud rules for German transactions\n• Check 3D Secure authentication data\n• Contact German acquirers about network issues`;
@@ -14904,14 +14939,28 @@
                 pillElement.onclick = () => {
                     console.log('Pill clicked:', pill);
                     
-                    // Special handling for enable-retry action to show success message
+                    // Special handling for enable-retry action to open experiment drawer
                     if (pill.action === 'enable-retry') {
-                        console.log('Enable retry logic clicked, showing success message...');
+                        console.log('Smart Retries clicked, opening experiment drawer...');
                         
-                        // Add success message below the button
+                        // Close AI panel first to avoid conflicts
+                        closeAIPanel();
+                        
+                        const experimentData = {
+                            id: 'smart-retries',
+                            title: 'Smart Retries',
+                            description: 'Enable intelligent retry logic for declined payments to recover lost revenue.',
+                            uplift: 1.5,
+                            revenue: '+$18,900/year',
+                            effort: 'Easy (30 minute setup)'
+                        };
+                        
+                        console.log('Smart Retries experiment data:', experimentData);
+                        
+                        // Add a small delay to ensure AI panel is closed
                         setTimeout(() => {
-                            addAIMessage('assistant', '✅ **Retry Logic Enabled Successfully!**\n\nYour automatic retry logic is now active and will attempt to recover failed payments. The system will:\n\n• **Retry failed transactions** up to 3 times with intelligent timing\n• **Use bank-specific strategies** to maximize success rates\n• **Avoid duplicate charges** with smart deduplication\n• **Provide real-time monitoring** of retry attempts and success rates\n\nYou can monitor the results in your payment analytics dashboard.', []);
-                        }, 500);
+                            openExperimentDrawer(experimentData);
+                        }, 100);
                         
                         return;
                     }
