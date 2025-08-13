@@ -1360,9 +1360,34 @@
         }
 
         .sparkles-icon {
-            width: 16px;
-            height: 16px;
-            color: var(--color-purple-500);
+            width: 16px !important;
+            height: 16px !important;
+            color: var(--color-purple-500) !important;
+            transition: none !important;
+            transform: none !important;
+            font-size: 16px !important;
+            line-height: 16px !important;
+            display: inline-block !important;
+            vertical-align: middle !important;
+        }
+        
+        .sparkles-icon:hover,
+        .sparkles-icon:focus,
+        .sparkles-icon:active {
+            width: 16px !important;
+            height: 16px !important;
+            transform: none !important;
+            transition: none !important;
+            font-size: 16px !important;
+            line-height: 16px !important;
+        }
+        
+        /* Override any Lucide icon specific styles */
+        [data-lucide="sparkles"].sparkles-icon {
+            width: 16px !important;
+            height: 16px !important;
+            transition: none !important;
+            transform: none !important;
         }
 
         .assistant-title {
@@ -14058,11 +14083,11 @@
                 { text: "Mobile optimization", icon: "smartphone", type: "secondary", action: "mobile-optimization" }
             ];
         } else {
-            responseMessage = `**AI Insight Analysis:** I can see you're looking at an interesting data point.\n\n**Strategy:** Let me provide some recommendations for improving your payment performance.\n\n**Recommended Actions:**\n• Review your current payment method mix\n• Analyze transaction patterns and fees\n• Consider adding new payment options\n• Monitor conversion rates after changes`;
+            responseMessage = `**AI Insight Analysis:** Your Germany auth rate dropped from 87.3% to 74.1% over 2 weeks.\n\n**Likely Causes:**\n• Recent fraud rule updates too restrictive for German market\n• New SCA requirements causing 3D Secure failures\n• PSD3 compliance changes affecting local banks\n\n**Quick Actions:**\n• Review fraud rules for German transactions\n• Check 3D Secure authentication data\n• Contact German acquirers about network issues`;
             responsePills = [
                 { text: "View documentation", icon: "file-text", type: "primary", action: "view-docs" },
                 { text: "Contact support", icon: "message-circle", type: "secondary", action: "contact-support" },
-                { text: "Schedule demo", icon: "calendar", type: "secondary", action: "schedule-demo" }
+                { text: "View authentication analytics", icon: "calendar", type: "secondary", action: "schedule-demo" }
             ];
         }
         
@@ -14878,6 +14903,18 @@
                 `;
                 pillElement.onclick = () => {
                     console.log('Pill clicked:', pill);
+                    
+                    // Special handling for enable-retry action to show success message
+                    if (pill.action === 'enable-retry') {
+                        console.log('Enable retry logic clicked, showing success message...');
+                        
+                        // Add success message below the button
+                        setTimeout(() => {
+                            addAIMessage('assistant', '✅ **Retry Logic Enabled Successfully!**\n\nYour automatic retry logic is now active and will attempt to recover failed payments. The system will:\n\n• **Retry failed transactions** up to 3 times with intelligent timing\n• **Use bank-specific strategies** to maximize success rates\n• **Avoid duplicate charges** with smart deduplication\n• **Provide real-time monitoring** of retry attempts and success rates\n\nYou can monitor the results in your payment analytics dashboard.', []);
+                        }, 500);
+                        
+                        return;
+                    }
                     
                     // Special handling for smart-retries action to open experiment drawer
                     if (pill.action === 'smart-retries') {
@@ -17587,17 +17624,26 @@
                     
                     <!-- Right Column -->
                     <div style="flex: 0 0 30%; background: white; padding: 20px; border-radius: 8px; min-width: 0;">
-                        <!-- Optimization Insights Section -->
-                        <div class="assistant-section" style="margin-bottom: 48px;">
-                            <div class="assistant-header">
-                                <div class="assistant-title-section">
-                                    <h3 class="assistant-title">Optimization insights</h3>
+                            <!-- Ask Assistant Section -->
+                            <div class="assistant-section">
+                                <div class="assistant-header">
+                                    <div class="assistant-title-section">
+                                        <i data-lucide="sparkles" class="sparkles-icon"></i>
+                                        <h3 class="assistant-title">Ask Assistant</h3>
+                                    </div>
                                 </div>
-                                <a href="#" class="view-all-link" onclick="navigateToOptimizationTab()">
-                                    View all
-                                    <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
-                                </a>
+                                <div class="suggested-prompts">
+                                    <button class="prompt-btn" id="prompt-1" onclick="openAIPanel('Why has my auth rate dropped in Germany in the last 2 weeks', '${currentBusinessType}', 'germany-auth-drop', ${successRate}, '${dateRange}', ${allData.metrics.payments})">
+                                        Why has my auth rate dropped in Germany in the last 2 weeks
+                                    </button>
+                                </div>
                             </div>
+                            
+                            <!-- Optimization Insights Section -->
+                            <div class="optimization-insights-header" style="margin-bottom: 24px;">
+                                <h2 class="optimization-insights-title" style="margin: 0; font-size: 20px; font-weight: 600; color: var(--color-gray-900);">Optimization insights</h2>
+                            </div>
+                            
                             <div class="optimization-insights">
                                 <div class="insight-card" onclick="openExperimentDrawer({
                                     id: 'enable-network-tokens',
@@ -17697,6 +17743,8 @@
 
                         </div>
                     </div>
+                    
+
                 </div>
                 </div>
         `;
