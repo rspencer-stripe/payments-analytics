@@ -11915,6 +11915,30 @@
             sparklineTrends[5].className = `sparkline-trend ${optTrend > 0 ? 'positive' : 'negative'}`;
         }
         
+        // Update payment success rate sparkline to match acceptance tab data
+        const paymentSuccessRateElement = overviewView.querySelector('#overview-payment-success-rate');
+        const paymentSuccessChangeElement = overviewView.querySelector('#overview-payment-success-change');
+        
+        if (paymentSuccessRateElement && paymentSuccessChangeElement) {
+            // Get the data from the business data structure (same as acceptance tab)
+            const businessDataForType = businessData[businessType] || businessData['growth'];
+            const paymentSuccessData = businessDataForType.metrics['Payment success rate'];
+            
+            paymentSuccessRateElement.textContent = paymentSuccessData.value;
+            paymentSuccessChangeElement.textContent = paymentSuccessData.change;
+            
+            // Set the trend class based on whether the change is positive or negative
+            const isPositive = paymentSuccessData.change.startsWith('+');
+            paymentSuccessChangeElement.className = `sparkline-trend ${isPositive ? 'positive' : 'negative'}`;
+            
+            console.log('Updated payment success rate sparkline:', {
+                businessType: businessType,
+                value: paymentSuccessData.value,
+                change: paymentSuccessData.change,
+                isPositive: isPositive
+            });
+        }
+        
         // Key metrics section is now hidden - removed update logic
         // const keyMetricsValues = overviewView.querySelectorAll('.snapshot-card-value');
         // const keyMetricsChanges = overviewView.querySelectorAll('.snapshot-card-change');
@@ -16623,15 +16647,15 @@
                     <div class="sparkline-charts-container">
                         <!-- Row 1 -->
                         <div class="sparkline-row">
-                            <!-- Acceptance Rate Sparkline -->
+                            <!-- Payment Success Rate Sparkline -->
                             <div class="sparkline-card" onclick="switchTabView('acceptance')">
                                 <div class="sparkline-content">
-                                    <h3 class="sparkline-title">Acceptance rate</h3>
+                                    <h3 class="sparkline-title">Payment success rate</h3>
                                     <div>
-                                        <span class="sparkline-value">94.2%</span>
-                                        <span class="sparkline-trend positive">+2.1%</span>
+                                        <span class="sparkline-value" id="overview-payment-success-rate">85.23%</span>
+                                        <span class="sparkline-trend positive" id="overview-payment-success-change">+3.45%</span>
                                     </div>
-                                    <div class="sparkline-rate">Top acceptance</div>
+                                    <div class="sparkline-rate">Top success rate</div>
                                 </div>
                                 <div class="sparkline-chart">
                                     <svg width="100%" height="30" viewBox="0 0 200 30">
