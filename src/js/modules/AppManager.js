@@ -4,7 +4,7 @@ class AppManager {
         this.dataGenerator = null;
         this.chartManager = null;
         this.eventManager = null;
-        this.currentBusinessType = 'medium';
+        this.currentBusinessType = 'growth';
         this.currentDateRange = 'Last 90 days';
         this.currentTab = 'overview';
         this.isInitialized = false;

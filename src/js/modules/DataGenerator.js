@@ -14,7 +14,7 @@ class RealisticDataGenerator {
 
         // Get consistent seed for reproducible data
         getSeed(businessType, dateRange) {
-            const businessSeeds = { 'small': 1000, 'medium': 2000, 'large': 3000 };
+            const businessSeeds = { 'startup': 1000, 'growth': 2000, 'scale': 3000, 'enterprise': 4000 };
             const rangeSeeds = { 
                 'Last 7 days': 1, 'Last 30 days': 2, 'Last 60 days': 3, 
                 'Last 90 days': 4, 'Last 6 months': 5, 'Last 12 months': 6
@@ -214,44 +214,55 @@ class RealisticDataGenerator {
             return Object.values(this.optimizationState).filter(opt => opt.status === 'inactive');
         }
 
-        // Generate business-specific base metrics - Updated for realism
+        // Generate business-specific base metrics - Updated for realistic Stripe customer profiles
         getBusinessMetrics() {
             const metrics = {
-                'small': {
-                    // Small business: E-commerce, SaaS, or local business
-                    successRate: 82.5,
-                    avgTransactionValue: 45.20,
-                    dailyTransactions: 8.5,
-                    failureRate: 17.5,
-                    disputeRate: 1.2,
-                    fraudRate: 0.8,
-                    processingCost: 2.9,
-                    authorizationRate: 89.3
+                'startup': {
+                    // Startup: New SaaS, e-commerce, or marketplace (0-2 years)
+                    successRate: 81.2,
+                    avgTransactionValue: 32.50,
+                    dailyTransactions: 12.8,
+                    failureRate: 18.8,
+                    disputeRate: 1.8,
+                    fraudRate: 1.2,
+                    processingCost: 3.1,
+                    authorizationRate: 87.5
                 },
-                'medium': {
-                    // Medium business: Growing online business
-                    successRate: 87.8,
-                    avgTransactionValue: 78.40,
-                    dailyTransactions: 45.2,
-                    failureRate: 12.2,
-                    disputeRate: 0.6,
-                    fraudRate: 0.4,
-                    processingCost: 2.7,
-                    authorizationRate: 92.3
+                'growth': {
+                    // Growth: Established startup with product-market fit (2-5 years)
+                    successRate: 86.4,
+                    avgTransactionValue: 67.80,
+                    dailyTransactions: 89.5,
+                    failureRate: 13.6,
+                    disputeRate: 0.9,
+                    fraudRate: 0.7,
+                    processingCost: 2.8,
+                    authorizationRate: 91.8
                 },
-                'large': {
-                    // Large business: Established enterprise
-                    successRate: 93.2,
-                    avgTransactionValue: 125.80,
-                    dailyTransactions: 320.5,
-                    failureRate: 6.8,
-                    disputeRate: 0.3,
-                    fraudRate: 0.2,
-                    processingCost: 2.4,
-                    authorizationRate: 95.1
+                'scale': {
+                    // Scale: High-growth company with proven business model (5-10 years)
+                    successRate: 91.7,
+                    avgTransactionValue: 124.60,
+                    dailyTransactions: 456.2,
+                    failureRate: 8.3,
+                    disputeRate: 0.5,
+                    fraudRate: 0.3,
+                    processingCost: 2.5,
+                    authorizationRate: 94.2
+                },
+                'enterprise': {
+                    // Enterprise: Large, established company with sophisticated operations (10+ years)
+                    successRate: 94.8,
+                    avgTransactionValue: 289.40,
+                    dailyTransactions: 1247.8,
+                    failureRate: 5.2,
+                    disputeRate: 0.2,
+                    fraudRate: 0.1,
+                    processingCost: 2.2,
+                    authorizationRate: 96.5
                 }
             };
-            return metrics[this.businessType];
+            return metrics[this.businessType] || metrics['growth']; // Default to growth if invalid type
         }
 
         // Generate timeframe multipliers
@@ -411,9 +422,10 @@ class RealisticDataGenerator {
             
             // Business type scaling factors for more realistic impact
             const businessScaling = {
-                'small': { volume: 0.3, payments: 0.4, successRate: 1.0 },
-                'medium': { volume: 1.0, payments: 1.0, successRate: 1.0 },
-                'large': { volume: 2.5, payments: 2.0, successRate: 1.0 }
+                'startup': { volume: 0.4, payments: 0.5, successRate: 1.0 },
+                'growth': { volume: 1.0, payments: 1.0, successRate: 1.0 },
+                'scale': { volume: 2.8, payments: 2.2, successRate: 1.0 },
+                'enterprise': { volume: 5.2, payments: 3.8, successRate: 1.0 }
             };
             
             const scaling = businessScaling[this.businessType] || businessScaling.medium;

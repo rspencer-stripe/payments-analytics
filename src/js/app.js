@@ -4,7 +4,7 @@ class PaymentAssistantApp {
         this.appManager = null;
         this.isInitialized = false;
         this.config = {
-            defaultBusinessType: 'medium',
+            defaultBusinessType: 'growth',
             defaultDateRange: 'Last 90 days',
             defaultTab: 'overview',
             chartConfig: {

@@ -8301,7 +8301,7 @@
     console.log('JavaScript loaded successfully');
     
     // Function to update main chart with new data
-    function updateMainChart(dateRange, businessType = 'medium') {
+    function updateMainChart(dateRange, businessType = 'growth') {
         console.log('updateMainChart called with:', dateRange, 'business type:', businessType);
         const chartContainer = document.querySelector('.chart-container');
         if (!chartContainer) {
@@ -10309,26 +10309,33 @@
         // Generate business-specific base metrics
         getBusinessMetrics() {
             const metrics = {
-                'small': {
+                'startup': {
                     successRate: 78.5,
                     avgTransactionValue: 11.2, // Increased by 40% from 8.0
                     dailyTransactions: 3.1, // Increased by 40% from 2.2
                     failureRate: 21.5,
                     disputeRate: 0.8
                 },
-                'medium': {
+                'growth': {
                     successRate: 85.2,
                     avgTransactionValue: 14.4, // Increased by 40% from 10.3
                     dailyTransactions: 19.3, // Increased by 40% from 13.8
                     failureRate: 14.8,
                     disputeRate: 0.4
                 },
-                'large': {
+                'scale': {
                     successRate: 91.7,
                     avgTransactionValue: 14.0, // Increased by 40% from 10.0
                     dailyTransactions: 139.2, // Increased by 40% from 99.4
                     failureRate: 8.3,
                     disputeRate: 0.2
+                },
+                'enterprise': {
+                    successRate: 94.8,
+                    avgTransactionValue: 28.9, // Higher value for enterprise
+                    dailyTransactions: 1247.8, // Much higher volume for enterprise
+                    failureRate: 5.2,
+                    disputeRate: 0.1
                 }
             };
             return metrics[this.businessType];
@@ -10373,9 +10380,10 @@
         // Generate card type distribution
         generateCardDistribution() {
             const distributions = {
-                'small': { credit: 0.65, debit: 0.30, prepaid: 0.05 },
-                'medium': { credit: 0.70, debit: 0.25, prepaid: 0.05 },
-                'large': { credit: 0.75, debit: 0.20, prepaid: 0.05 }
+                'startup': { credit: 0.65, debit: 0.30, prepaid: 0.05 },
+                'growth': { credit: 0.70, debit: 0.25, prepaid: 0.05 },
+                'scale': { credit: 0.75, debit: 0.20, prepaid: 0.05 },
+                'enterprise': { credit: 0.80, debit: 0.15, prepaid: 0.05 }
             };
             return distributions[this.businessType];
         }
@@ -10407,14 +10415,17 @@
             // Generate AI-optimized data (potential future performance - varies by business size)
             // Scale from 90-day baseline but maintain percentage data type
             let optimizedSuccessRate;
-            if (this.businessType === 'small') {
-                // Small businesses have the most room for improvement
+            if (this.businessType === 'startup') {
+                // Startups have the most room for improvement
                 optimizedSuccessRate = Math.min(baselineBusinessMetrics.successRate * 1.25, 92); // Up to 25% improvement
-            } else if (this.businessType === 'medium') {
-                // Medium businesses have moderate room for improvement
+            } else if (this.businessType === 'growth') {
+                // Growth companies have moderate room for improvement
                 optimizedSuccessRate = Math.min(baselineBusinessMetrics.successRate * 1.15, 94); // Up to 15% improvement
+            } else if (this.businessType === 'scale') {
+                // Scale companies have some room for improvement
+                optimizedSuccessRate = Math.min(baselineBusinessMetrics.successRate * 1.10, 95); // Up to 10% improvement
             } else {
-                // Large businesses are already well-optimized, smaller gains
+                // Enterprise companies are already well-optimized, smaller gains
                 optimizedSuccessRate = Math.min(baselineBusinessMetrics.successRate * 1.08, 96); // Up to 8% improvement
             }
             const optimizedData = this.generateTimeSeriesData(optimizedSuccessRate, 0.06, 0.15);
@@ -10578,7 +10589,7 @@
     }
 
     // Function to generate data based on date range and business type
-    function generateDataForTimeframe(dateRange, businessType = 'medium') {
+    function generateDataForTimeframe(dateRange, businessType = 'growth') {
         const generator = new RealisticDataGenerator(businessType, dateRange);
         const allData = generator.generateAllData();
         
@@ -10671,7 +10682,7 @@
     }
 
     // Function to update all chart x-axes based on selected date range
-    function updateChartDateRanges(dateRange, businessType = 'medium') {
+    function updateChartDateRanges(dateRange, businessType = 'growth') {
         console.log('updateChartDateRanges called with:', dateRange, 'business type:', businessType);
         
         const dateLabels = getDateLabels(dateRange);
@@ -10772,7 +10783,7 @@
     }
 
     // Function to update main metrics cards
-    function updateMainMetrics(dateRange, businessType = 'medium') {
+    function updateMainMetrics(dateRange, businessType = 'growth') {
         const generator = new RealisticDataGenerator(businessType, dateRange);
         const allData = generator.generateAllData();
         
@@ -10793,13 +10804,13 @@
             const timeframeMultipliers = generator.getTimeframeMultipliers();
             
             // Success rate changes (smaller for larger businesses)
-            const successChange = (businessType === 'small' ? 2.5 : businessType === 'medium' ? 1.8 : 1.2) + (Math.random() - 0.5) * 2;
+            const successChange = (businessType === 'startup' ? 3.2 : businessType === 'growth' ? 2.1 : businessType === 'scale' ? 1.4 : 0.9) + (Math.random() - 0.5) * 2;
             
             // Volume changes (larger for smaller businesses due to growth potential)
-            const volumeChange = (businessType === 'small' ? 25 : businessType === 'medium' ? 18 : 12) + (Math.random() - 0.5) * 10;
+            const volumeChange = (businessType === 'startup' ? 35 : businessType === 'growth' ? 22 : businessType === 'scale' ? 15 : 8) + (Math.random() - 0.5) * 10;
             
             // Payment count changes
-            const paymentsChange = (businessType === 'small' ? 15 : businessType === 'medium' ? 12 : 8) + (Math.random() - 0.5) * 6;
+            const paymentsChange = (businessType === 'startup' ? 25 : businessType === 'growth' ? 18 : businessType === 'scale' ? 12 : 6) + (Math.random() - 0.5) * 6;
 
             changes[0].textContent = (successChange > 0 ? '+' : '') + successChange.toFixed(2) + '%';
             changes[1].textContent = (volumeChange > 0 ? '+' : '') + volumeChange.toFixed(2) + '%';
@@ -10959,18 +10970,18 @@
         });
 
         // Initialize with default date range and business type
-        updateChartDateRanges('Last 90 days', 'medium');
+        updateChartDateRanges('Last 90 days', 'growth');
         
         // Initialize AI assistant prompts
         console.log('Initializing AI assistant prompts...');
-        updateAssistantPrompts('medium', 'Last 90 days');
+        updateAssistantPrompts('growth', 'Last 90 days');
         
 
         
         // Fallback: Update prompts after a delay to ensure everything is loaded
         setTimeout(() => {
             console.log('Fallback: Updating AI assistant prompts...');
-            updateAssistantPrompts('medium', 'Last 90 days');
+            updateAssistantPrompts('growth', 'Last 90 days');
         }, 1000);
         
         // Initialize chart tooltips
@@ -11139,7 +11150,7 @@
     };
 
     // Function to generate failed payments data based on date range and business type
-    function generateFailedDataForTimeframe(dateRange, businessType = 'medium') {
+    function generateFailedDataForTimeframe(dateRange, businessType = 'growth') {
         const generator = new RealisticDataGenerator(businessType, dateRange);
         const failedData = generator.generateFailedData();
         
@@ -11268,7 +11279,7 @@
 
     // Data simulation functionality
     const businessData = {
-        'small': {
+        'startup': {
             metrics: {
                 'Payment success rate': { value: '78.45%', change: '+2.15%' },
                 'Accepted volume': { value: '$1,247.83', change: '+12.34%' },
@@ -11355,7 +11366,7 @@
                 }
             }
         },
-        'medium': {
+        'growth': {
             metrics: {
                 'Payment success rate': { value: '85.23%', change: '+3.45%' },
                 'Accepted volume': { value: '$12,847.56', change: '+18.67%' },
@@ -11442,7 +11453,7 @@
                 }
             }
         },
-        'large': {
+        'scale': {
             metrics: {
                 'Payment success rate': { value: '91.67%', change: '+2.89%' },
                 'Accepted volume': { value: '$89,432.15', change: '+24.56%' },
@@ -11528,10 +11539,97 @@
                     yAxis: ["12%", "10%", "8%", "4%", "0%"]
                 }
             }
+        },
+        'enterprise': {
+            metrics: {
+                'Payment success rate': { value: '94.80%', change: '+1.89%' },
+                'Accepted volume': { value: '$289,432.15', change: '+18.67%' },
+                'Accepted payments': { value: '124,780', change: '+15.23%' }
+            },
+            chartData: {
+                volume: {
+                    label: "Payment volume",
+                    total: "$289,432.15",
+                    yAxis: ["$150,000", "$100,000", "$50,000", "$25,000", "$0"],
+                    bars: [
+                        { credit: 40000, debit: 30000 },
+                        { credit: 50000, debit: 40000 },
+                        { credit: 35000, debit: 25000 },
+                        { credit: 25000, debit: 20000 },
+                        { credit: 45000, debit: 35000 },
+                        { credit: 55000, debit: 45000 },
+                        { credit: 65000, debit: 50000 }
+                    ]
+                },
+                payments: {
+                    label: "Payments",
+                    total: "124,780",
+                    yAxis: ["60,000", "40,000", "20,000", "10,000", "0"],
+                    bars: [
+                        { credit: 18000, debit: 14000 },
+                        { credit: 22000, debit: 18000 },
+                        { credit: 16000, debit: 12000 },
+                        { credit: 12000, debit: 9000 },
+                        { credit: 20000, debit: 16000 },
+                        { credit: 25000, debit: 20000 },
+                        { credit: 30000, debit: 24000 }
+                    ]
+                },
+                share: {
+                    label: "Share of payments",
+                    total: "100.00%",
+                    yAxis: ["100%", "75%", "50%", "25%", "0%"],
+                    bars: [
+                        { credit: 80, debit: 20 },
+                        { credit: 85, debit: 15 },
+                        { credit: 75, debit: 25 },
+                        { credit: 70, debit: 30 },
+                        { credit: 80, debit: 20 },
+                        { credit: 85, debit: 15 },
+                        { credit: 90, debit: 10 }
+                    ]
+                },
+                success: {
+                    label: "Success rate",
+                    total: "94.80%",
+                    yAxis: ["100%", "75%", "50%", "25%", "0%"],
+                    bars: [
+                        { credit: 95, debit: 85 },
+                        { credit: 96, debit: 88 },
+                        { credit: 94, debit: 82 },
+                        { credit: 92, debit: 80 },
+                        { credit: 95, debit: 85 },
+                        { credit: 97, debit: 90 },
+                        { credit: 98, debit: 92 }
+                    ]
+                }
+            },
+            failedData: {
+                'failed-volume': {
+                    label: "Failed payment volume",
+                    total: "$15,567.85",
+                    yAxis: ["$8,000", "$6,000", "$4,000", "$2,000", "$0"]
+                },
+                'failed-count': {
+                    label: "Failed",
+                    total: "6,520",
+                    yAxis: ["8,000", "6,000", "4,000", "2,000", "0"]
+                },
+                'share-failures': {
+                    label: "Share of failures",
+                    total: "100.00%",
+                    yAxis: ["100%", "75%", "50%", "25%", "0%"]
+                },
+                'failure-rate': {
+                    label: "Failure rate",
+                    total: "5.20%",
+                    yAxis: ["8%", "6%", "4%", "2%", "0%"]
+                }
+            }
         }
     };
 
-    let currentBusinessType = 'medium';
+            let currentBusinessType = 'growth';
     
             // Function to preserve the correct page title - always "Payments performance"
         function preservePageTitle() {
@@ -11607,7 +11705,7 @@
         console.log('Found business type tabs:', businessTypeTabs.length);
         
         // Set initial business type
-        currentBusinessType = 'medium';
+        currentBusinessType = 'growth';
         console.log('Initial business type set to:', currentBusinessType);
     });
 
@@ -11719,92 +11817,15 @@
         // Generate data for the selected business type and timeframe
         let generator, businessMetrics, allData, optimizationData;
         
-        // Skip DataGenerator entirely and use static data
-        console.log('Using static data instead of DataGenerator');
+        // Use DataGenerator for consistent data across all pages
+        console.log('Using DataGenerator for consistent data');
+        generator = new RealisticDataGenerator(businessType, dateRange);
+        businessMetrics = generator.getBusinessMetrics();
+        allData = generator.generateAllData();
+        optimizationData = generator.generateOptimizationData();
         
-        // Static data based on business type
-        const staticData = {
-            'small': {
-                businessMetrics: {
-                    successRate: 82.5,
-                    authorizationRate: 89.3,
-                    disputeRate: 1.2,
-                    processingCost: 2.9,
-                    fraudRate: 0.8
-                },
-                allData: {
-                    metrics: {
-                        volume: 12000,
-                        payments: 45
-                    }
-                },
-                optimizationData: {
-                    volume: 12000,
-                    payments: 45,
-                    successRate: 8,
-                    features: {
-                        'Adaptive Acceptance': { volume: 3000, payments: 12, successRate: 2.2 },
-                        'Network Tokens': { volume: 2000, payments: 8, successRate: 1.1 },
-                        'Card account updater': { volume: 1500, payments: 6, successRate: 0.9 }
-                    }
-                }
-            },
-            'medium': {
-                businessMetrics: {
-                    successRate: 87.8,
-                    authorizationRate: 92.3,
-                    disputeRate: 0.6,
-                    processingCost: 2.7,
-                    fraudRate: 0.4
-                },
-                allData: {
-                    metrics: {
-                        volume: 56800,
-                        payments: 200
-                    }
-                },
-                optimizationData: {
-                    volume: 56800,
-                    payments: 200,
-                    successRate: 10,
-                    features: {
-                        'Adaptive Acceptance': { volume: 12500, payments: 45, successRate: 2.8 },
-                        'Network Tokens': { volume: 8200, payments: 28, successRate: 1.5 },
-                        'Card account updater': { volume: 6800, payments: 22, successRate: 1.2 }
-                    }
-                }
-            },
-            'large': {
-                businessMetrics: {
-                    successRate: 93.2,
-                    authorizationRate: 95.1,
-                    disputeRate: 0.3,
-                    processingCost: 2.4,
-                    fraudRate: 0.2
-                },
-                allData: {
-                    metrics: {
-                        volume: 125000,
-                        payments: 450
-                    }
-                },
-                optimizationData: {
-                    volume: 125000,
-                    payments: 450,
-                    successRate: 12,
-                    features: {
-                        'Adaptive Acceptance': { volume: 28000, payments: 100, successRate: 3.2 },
-                        'Network Tokens': { volume: 18000, payments: 65, successRate: 1.8 },
-                        'Card account updater': { volume: 15000, payments: 55, successRate: 1.5 }
-                    }
-                }
-            }
-        };
-        
-        const data = staticData[businessType] || staticData['medium'];
-        businessMetrics = data.businessMetrics;
-        allData = data.allData;
-        optimizationData = data.optimizationData;
+        // Data is now generated consistently from DataGenerator
+        // businessMetrics, allData, and optimizationData are already set above
         
         console.log('Static data loaded successfully for', businessType);
         console.log('Business metrics for', businessType, ':', businessMetrics);
@@ -11968,11 +11989,12 @@
         const metricValue = overviewView.querySelector('#optimization-metric-value');
         if (metricValue) {
             const businessTypeValues = {
-                'small': '$12,000.00',
-                'medium': '$56,800.00',
-                'large': '$125,000.00'
+                'startup': '$12,000.00',
+                'growth': '$56,800.00',
+                'scale': '$125,000.00',
+                'enterprise': '$289,000.00'
             };
-            const value = businessTypeValues[businessType] || businessTypeValues['medium'];
+            const value = businessTypeValues[businessType] || businessTypeValues['growth'];
             metricValue.textContent = value;
             console.log('FORCE: Set metric value to', value, 'for', businessType);
         }
@@ -11984,11 +12006,12 @@
             const adaptiveVolume = tableBody.querySelector('#adaptive-volume');
             if (adaptiveVolume) {
                 const adaptiveValues = {
-                    'small': '+$3,000.00',
-                    'medium': '+$12,500.00',
-                    'large': '+$28,000.00'
+                    'startup': '+$3,000.00',
+                    'growth': '+$12,500.00',
+                    'scale': '+$28,000.00',
+                    'enterprise': '+$65,000.00'
                 };
-                const adaptiveValue = adaptiveValues[businessType] || adaptiveValues['medium'];
+                const adaptiveValue = adaptiveValues[businessType] || adaptiveValues['growth'];
                 adaptiveVolume.textContent = adaptiveValue;
                 console.log('FORCE: Set Adaptive Acceptance volume to', adaptiveValue, 'for', businessType);
             }
@@ -12047,11 +12070,12 @@
             const totalVolume = tableBody.querySelector('#total-volume');
             if (totalVolume) {
                 const totalValues = {
-                    'small': '+$12,000.00',
-                    'medium': '+$56,800.00',
-                    'large': '+$125,000.00'
+                    'startup': '+$12,000.00',
+                    'growth': '+$56,800.00',
+                    'scale': '+$125,000.00',
+                    'enterprise': '+$289,000.00'
                 };
-                const totalValue = totalValues[businessType] || totalValues['medium'];
+                const totalValue = totalValues[businessType] || totalValues['growth'];
                 totalVolume.innerHTML = `<strong>${totalValue}</strong>`;
                 console.log('FORCE: Set total volume to', totalValue, 'for', businessType);
             }
@@ -12548,7 +12572,7 @@
         const successRate = businessMetrics.successRate + (generator.rng() - 0.5) * 3; // ±1.5% variation
         const authRate = Math.min(100, successRate + 5 + (generator.rng() - 0.5) * 4); // Slightly higher than success rate
         const disputeRate = businessMetrics.disputeRate + (generator.rng() - 0.5) * 0.2; // Small variation
-        const retentionRate = 45 + (businessType === 'small' ? 0 : businessType === 'medium' ? 20 : 35) + (generator.rng() - 0.5) * 10;
+        const retentionRate = 45 + (businessType === 'startup' ? 0 : businessType === 'growth' ? 20 : businessType === 'scale' ? 35 : 45) + (generator.rng() - 0.5) * 10;
         
         // Calculate derived metrics
         const finalRevenue = totalVolume * (successRate / 100);
@@ -13133,7 +13157,7 @@
         updateOptimizationInsightsCards(businessType);
     }
     
-    function updateOptimizationInsightsCards(businessType = 'medium') {
+    function updateOptimizationInsightsCards(businessType = 'growth') {
         try {
             // Check if RealisticDataGenerator is available
             if (typeof RealisticDataGenerator === 'undefined') {
@@ -13883,7 +13907,7 @@
         console.log('updateAssistantPrompts called with:', businessType, dateRange);
         
         // Add default values if parameters are missing
-        businessType = businessType || 'medium';
+        businessType = businessType || 'growth';
         dateRange = dateRange || 'Last 90 days';
         
         const prompt1 = document.getElementById('prompt-1');
@@ -15167,12 +15191,14 @@
             
             let response = "I understand your question. Let me provide some additional insights based on your business context. ";
             
-            if (businessType === 'small') {
-                response += "For small businesses like yours, it's important to focus on the fundamentals first. ";
-            } else if (businessType === 'medium') {
-                response += "At your scale, you have enough data to make informed decisions. ";
+            if (businessType === 'startup') {
+                response += "For startups like yours, it's important to focus on the fundamentals first. ";
+            } else if (businessType === 'growth') {
+                response += "At your growth stage, you have enough data to make informed decisions. ";
+            } else if (businessType === 'scale') {
+                response += "With your scale, advanced optimization and data-driven approaches are key. ";
             } else {
-                response += "With your volume, enterprise solutions and data-driven approaches are key. ";
+                response += "With your enterprise volume, sophisticated solutions and data-driven approaches are essential. ";
             }
             
             response += "Would you like me to dive deeper into any specific aspect of this topic?";
@@ -15566,10 +15592,10 @@
         // initializeFailedPaymentsFilterInteractions();
         
         // Initialize assistant prompts
-        updateAssistantPrompts('medium', 'Last 90 days');
+        updateAssistantPrompts('growth', 'Last 90 days');
         
         // Initialize optimization insights cards with top 3 recommendations
-        updateOptimizationInsightsCards('medium');
+        updateOptimizationInsightsCards('growth');
         
         // Initialize navigation tabs
         initializeNavigationTabs();
@@ -19018,8 +19044,8 @@
     window.activeExperiments = [];
     
     // Unified data management functions
-    function getRecommendations(businessType = 'medium') {
-        const opportunities = window.opportunitiesData[businessType] || window.opportunitiesData.medium;
+    function getRecommendations(businessType = 'growth') {
+        const opportunities = window.opportunitiesData[businessType] || window.opportunitiesData.growth;
         const activeExperimentIds = window.activeExperiments.map(exp => exp.recommendation.id);
         const availableRecommendations = opportunities.filter(opp => !activeExperimentIds.includes(opp.id));
         
@@ -19029,7 +19055,7 @@
         return availableRecommendations;
     }
     
-    function getTopRecommendations(businessType = 'medium', count = 3) {
+    function getTopRecommendations(businessType = 'growth', count = 3) {
         const recommendations = getRecommendations(businessType);
         const topRecommendations = recommendations.slice(0, count);
         
@@ -19260,7 +19286,7 @@
         }
         
         // Also update the optimization insights on the overview page
-        updateOptimizationInsightsCards('medium');
+        updateOptimizationInsightsCards('growth');
     }
     
     function updateExperimentsTable() {
@@ -19343,7 +19369,7 @@
         }
     }
     
-    function updateRecommendationsTable(businessType = 'medium') {
+    function updateRecommendationsTable(businessType = 'growth') {
         const tableBody = document.querySelector('.opportunities-table tbody');
         if (!tableBody) return;
         
@@ -19471,9 +19497,10 @@
 
 <!-- Business Type Tabs -->
 <div class="business-type-tabs">
-    <button class="business-type-tab" data-type="small" onclick="switchBusinessType('small')">Small Business</button>
-    <button class="business-type-tab active" data-type="medium" onclick="switchBusinessType('medium')">Medium Business</button>
-    <button class="business-type-tab" data-type="large" onclick="switchBusinessType('large')">Large Business</button>
+                    <button class="business-type-tab" data-type="startup" onclick="switchBusinessType('startup')">Startup</button>
+                <button class="business-type-tab active" data-type="growth" onclick="switchBusinessType('growth')">Growth</button>
+                <button class="business-type-tab" data-type="scale" onclick="switchBusinessType('scale')">Scale</button>
+                <button class="business-type-tab" data-type="enterprise" onclick="switchBusinessType('enterprise')">Enterprise</button>
     </div>
 
     <!-- Lo-fi Mode Toggle -->
