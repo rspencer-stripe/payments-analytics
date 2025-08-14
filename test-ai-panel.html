@@ -294,7 +294,7 @@
             <h2 class="text-lg font-semibold mb-2">Test Instructions:</h2>
             <ol class="list-decimal list-inside space-y-1 text-sm">
                 <li>Click "Test German Card Diagnosis" to open the AI panel with the German card diagnosis</li>
-                <li>Click "Turn on Adaptive Acceptance" to test the action response</li>
+                <li>Click "Adaptive Acceptance" to test the action response</li>
                 <li>Check the console for debugging information</li>
             </ol>
         </div>
@@ -363,7 +363,7 @@
                 console.log('German card diagnosis case triggered');
                 responseMessage = `**AI Insight Analysis:** Your auth rate for German cards dropped 3.8% in the last 24 hours. This appears to be due to a specific issuing bank (Commerzbank) declining transactions with error code 'insufficient_funds' at 2.5x normal rate.\n\n**Root Cause Analysis:**\n• **Bank-specific issue:** Commerzbank is declining 15.2% of transactions vs. 6.1% normally\n• **Error pattern:** 78% of declines show 'insufficient_funds' error code\n• **Geographic scope:** Affects 23% of your German transaction volume\n• **Revenue impact:** Estimated $2,400 in declined transactions\n\n**Recommended Solution:**\nImplementing **Adaptive Acceptance** would likely improve auth rates by **1.2%** by dynamically routing these transactions through alternate networks.\n\n**Expected Outcome:**\n• Recover $1,680 of declined transactions\n• Improve overall German market auth rate to 89.1%\n• Reduce dependency on single bank network`;
                 responsePills = [
-                    { text: "Turn on Adaptive Acceptance", icon: "settings", type: "primary", action: "enable-adaptive-acceptance" },
+                    { text: "Adaptive Acceptance", icon: "settings", type: "primary", action: "enable-adaptive-acceptance" },
                     { text: "View decline details", icon: "bar-chart-2", type: "secondary", action: "view-decline-details" },
                     { text: "Contact Commerzbank", icon: "message-circle", type: "secondary", action: "contact-bank" }
                 ];
