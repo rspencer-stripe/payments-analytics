@@ -14135,31 +14135,49 @@
         // Add user's question immediately
         addAIMessage('user', question);
         
-        // Add immediate response based on topic
+        // Generate contextually appropriate responses based on the actual question and business type
         let responseMessage = '';
         let responsePills = [];
         
-        if (topic === 'volume-optimization') {
-            responseMessage = `**AI Insight Analysis:** The acceptance rate drop in Germany on July 17th represents a potential revenue loss of $1,200.\n\n**Key Finding:** German market data shows 65% of failed payments succeed on retry.\n\n**Why Smart Retries?**\nSmart retry logic can recover up to $780 of the lost $1,200 revenue by automatically retrying failed German transactions.\n\n**Expected Impact:**\n• Recover up to 65% of failed German transactions\n• Reclaim approximately $780 of lost revenue`;
+        if (topic === 'success-rate') {
+            // Response for authorization rate improvement questions
+            responseMessage = `**AI Insight Analysis:** Your ${metric.toFixed(1)}% authorization rate shows ${metric < 85 ? 'room for improvement' : 'strong performance'} for the ${dateRange.toLowerCase()}.\n\n**Key Findings:**\n• Industry benchmark for your business type: ${businessType === 'startup' ? '82-88%' : businessType === 'growth' ? '85-92%' : '88-95%'}\n• Current performance: ${metric.toFixed(1)}%\n• Gap to benchmark: ${Math.max(0, (businessType === 'startup' ? 85 : businessType === 'growth' ? 88 : 90) - metric).toFixed(1)}%\n\n**Optimization Opportunities:**\n• **Smart Retries** could improve rates by **1.5-2.5%**\n• **3D Secure optimization** could add another **0.8-1.2%**\n• **Payment method diversification** could contribute **1.0-1.8%**\n\n**Immediate Actions:**\n• Review decline code patterns for the ${dateRange.toLowerCase()}\n• Enable automatic retry logic for failed payments\n• Implement basic address verification\n• Add multiple payment method options`;
             responsePills = [
-                { text: "Smart retries", icon: "refresh-cw", type: "primary", action: "smart-retries" },
-                { text: "Add payment methods", icon: "credit-card", type: "secondary", action: "add-payment-methods" },
-                { text: "Mobile optimization", icon: "smartphone", type: "secondary", action: "mobile-optimization" }
-            ];
-        } else if (topic === 'success-rate-optimization') {
-            responseMessage = `**AI Insight Analysis:** Your payment success rate shows room for improvement compared to industry benchmarks.\n\n**Strategy:** Focus on foundational optimizations that don't require complex infrastructure.\n\n**Potential Improvements:**\n• **Smart Retries** could improve auth rates by **1.5%**\n• **Adaptive Acceptance** could add another **0.8%**\n\n**Immediate Actions:**\n• Enable automatic retry logic for failed payments\n• Implement basic address verification\n• Add multiple payment method options\n• Optimize checkout page for mobile devices`;
-            responsePills = [
-                { text: "Smart Retries", icon: "refresh-cw", type: "primary", action: "enable-retry" },
-                { text: "Adaptive Acceptance", icon: "bar-chart-2", type: "secondary", action: "enable-adaptive" },
+                { text: "Review decline codes", icon: "bar-chart-2", type: "primary", action: "view-decline-codes" },
+                { text: "Enable smart retries", icon: "refresh-cw", type: "secondary", action: "enable-retries" },
                 { text: "Add payment methods", icon: "credit-card", type: "secondary", action: "add-payment-methods" }
             ];
-        } else {
-            responseMessage = `**AI Insight Analysis:** Your Germany auth rate dropped from 87.3% to 74.1% over 2 weeks.\n\n**Likely Causes:**\n• Recent fraud rule updates too restrictive for German market\n• New SCA requirements causing 3D Secure failures\n• PSD3 compliance changes affecting local banks\n\n**Quick Actions:**\n• Review fraud rules for German transactions\n• Check 3D Secure authentication data\n• Contact German acquirers about network issues`;
+        } else if (topic === 'failure-analysis') {
+            // Response for failed payment recovery questions
+            responseMessage = `**AI Insight Analysis:** Your $${metric.toFixed(0)} in failed payments for the ${dateRange.toLowerCase()} represents a significant revenue opportunity.\n\n**Recovery Potential:**\n• **Smart retry logic** can recover **15-25%** of failed payments\n• **Payment method expansion** can reduce failures by **8-15%**\n• **Checkout optimization** can prevent **5-12%** of failures\n\n**Expected Revenue Recovery:**\n• Conservative estimate: $${(metric * 0.15).toFixed(0)} - $${(metric * 0.25).toFixed(0)}\n• Optimistic estimate: $${(metric * 0.28).toFixed(0)} - $${(metric * 0.40).toFixed(0)}\n\n**Immediate Actions:**\n• Implement intelligent retry logic with 24-hour intervals\n• Review decline code patterns to identify root causes\n• Add alternative payment methods for your top markets\n• Enable Card Updater service for expired payment methods`;
             responsePills = [
-                { text: "View fraud rules", icon: "shield-alert", type: "primary", action: "view-fraud-rules" },
-                { text: "View 3DS", icon: "shield-check", type: "secondary", action: "view-3ds" },
-                { text: "Contact support", icon: "message-circle", type: "secondary", action: "contact-support" },
-                { text: "View report", icon: "bar-chart-3", type: "secondary", action: "schedule-demo" }
+                { text: "Enable smart retries", icon: "refresh-cw", type: "primary", action: "enable-retries" },
+                { text: "Review decline codes", icon: "bar-chart-2", type: "secondary", action: "view-decline-codes" },
+                { text: "Add payment methods", icon: "credit-card", type: "secondary", action: "add-payment-methods" }
+            ];
+        } else if (topic === 'german-card-diagnosis') {
+            // Response for German card auth rate drop diagnosis
+            responseMessage = `**AI Insight Analysis:** Your auth rate for German cards dropped 3.8% in the last 24 hours. This appears to be due to a specific issuing bank (Commerzbank) declining transactions with error code 'insufficient_funds' at 2.5x normal rate.\n\n**Root Cause Analysis:**\n• **Bank-specific issue:** Commerzbank is declining 15.2% of transactions vs. 6.1% normally\n• **Error pattern:** 78% of declines show 'insufficient_funds' error code\n• **Geographic scope:** Affects 23% of your German transaction volume\n• **Revenue impact:** Estimated $2,400 in declined transactions\n\n**Recommended Solution:**\nImplementing **Adaptive Acceptance** would likely improve auth rates by **1.2%** by dynamically routing these transactions through alternate networks.\n\n**Expected Outcome:**\n• Recover $1,680 of declined transactions\n• Improve overall German market auth rate to 89.1%\n• Reduce dependency on single bank network`;
+            responsePills = [
+                { text: "Turn on Adaptive Acceptance", icon: "settings", type: "primary", action: "enable-adaptive-acceptance" },
+                { text: "View decline details", icon: "bar-chart-2", type: "secondary", action: "view-decline-details" },
+                { text: "Contact Commerzbank", icon: "message-circle", type: "secondary", action: "contact-bank" }
+            ];
+        } else if (topic === 'optimization') {
+            // Response for fraud prevention and optimization questions
+            responseMessage = `**AI Insight Analysis:** For ${payments.toLocaleString()} transactions in the ${dateRange.toLowerCase()}, implementing fraud prevention measures can significantly improve your bottom line.\n\n**Current Risk Assessment:**\n• Transaction volume: ${payments.toLocaleString()} payments\n• Recommended fraud prevention level: ${businessType === 'startup' ? 'Basic' : businessType === 'growth' ? 'Enhanced' : 'Advanced'}\n• Expected fraud rate reduction: **40-60%**\n\n**Recommended Measures:**\n• **3D Secure 2.0** for transactions over $${businessType === 'startup' ? '50' : businessType === 'growth' ? '100' : '75'}\n• **Address verification** for all transactions\n• **IP geolocation** for high-risk regions\n• **Device fingerprinting** for suspicious patterns\n\n**Implementation Priority:**\n• Phase 1: Basic fraud rules and 3D Secure\n• Phase 2: Advanced analytics and machine learning\n• Phase 3: Regional payment methods and compliance`;
+            responsePills = [
+                { text: "Configure 3D Secure", icon: "shield-check", type: "primary", action: "configure-3ds" },
+                { text: "Set fraud rules", icon: "shield-alert", type: "secondary", action: "set-fraud-rules" },
+                { text: "View analytics", icon: "bar-chart-3", type: "secondary", action: "view-analytics" }
+            ];
+        } else {
+            // Fallback response for other topics
+            responseMessage = `**AI Insight Analysis:** Based on your ${businessType} business profile and ${dateRange.toLowerCase()} data, I can help optimize your payment performance.\n\n**Current Metrics:**\n• Authorization rate: ${metric.toFixed(1)}%\n• Failed payment volume: $${metric.toFixed(0)}\n• Transaction count: ${payments ? payments.toLocaleString() : 'N/A'}\n\n**How I Can Help:**\n• Analyze decline patterns and identify optimization opportunities\n• Recommend fraud prevention strategies tailored to your business\n• Suggest payment method improvements for better conversion\n• Provide actionable insights for immediate implementation`;
+            responsePills = [
+                { text: "Analyze performance", icon: "bar-chart-2", type: "primary", action: "analyze-performance" },
+                { text: "View recommendations", icon: "lightbulb", type: "secondary", action: "view-recommendations" },
+                { text: "Schedule consultation", icon: "calendar", type: "secondary", action: "schedule-consultation" }
             ];
         }
         
@@ -15168,8 +15186,16 @@
                     { text: "Analyze results", icon: "bar-chart", type: "secondary", action: "analyze-results" }
                 ]
             },
+            'enable-adaptive-acceptance': {
+                message: "Adaptive Acceptance was successfully enabled! This feature will now dynamically route transactions through alternate networks when primary networks decline them, helping to improve your authorization rates.",
+                pills: [
+                    { text: "View performance", icon: "bar-chart-2", type: "primary", action: "view-performance" },
+                    { text: "Configure settings", icon: "settings", type: "secondary", action: "configure-settings" },
+                    { text: "Monitor results", icon: "activity", type: "secondary", action: "monitor-results" }
+                ]
+            },
             'view-fraud-rules': {
-                message: "Here are your current fraud rules and recent updates. I can help you review and adjust them to optimize for the German market.",
+                message: "Here are your current fraud rules and recent updates. I can help you review and adjust them to optimize for your primary markets.",
                 pills: [
                     { text: "Review rules", icon: "shield", type: "primary", action: "review-rules" },
                     { text: "Adjust settings", icon: "settings", type: "secondary", action: "adjust-settings" },
@@ -15177,11 +15203,75 @@
                 ]
             },
             'view-3ds': {
-                message: "Here's your current 3D Secure configuration and recent authentication data. I can help you review the SCA requirements and optimize your 3DS flows for the German market.",
+                message: "Here's your current 3D Secure configuration and recent authentication data. I can help you review the SCA requirements and optimize your 3DS flows for your primary markets.",
                 pills: [
                     { text: "Review config", icon: "settings", type: "primary", action: "review-config" },
                     { text: "Check SCA status", icon: "shield-check", type: "secondary", action: "check-sca" },
                     { text: "Test flows", icon: "test-tube", type: "secondary", action: "test-flows" }
+                ]
+            },
+            'view-decline-details': {
+                message: "Here's a detailed breakdown of your recent decline patterns. The data shows that Commerzbank declines are concentrated in the €50-200 range with 'insufficient_funds' errors.",
+                pills: [
+                    { text: "Export report", icon: "download", type: "primary", action: "export-report" },
+                    { text: "Set up alerts", icon: "bell", type: "secondary", action: "setup-alerts" },
+                    { text: "Contact bank", icon: "message-circle", type: "secondary", action: "contact-bank" }
+                ]
+            },
+            'contact-bank': {
+                message: "I'll help you prepare the information needed to contact Commerzbank about the increased decline rates. This includes your transaction patterns and decline analysis.",
+                pills: [
+                    { text: "Prepare report", icon: "file-text", type: "primary", action: "prepare-report" },
+                    { text: "Schedule call", icon: "phone", type: "secondary", action: "schedule-call" },
+                    { text: "View contact info", icon: "info", type: "secondary", action: "view-contact" }
+                ]
+            },
+            'view-performance': {
+                message: "Here's your current performance dashboard showing the impact of Adaptive Acceptance. You should see improvements in your German market authorization rates within the next 24-48 hours.",
+                pills: [
+                    { text: "View metrics", icon: "bar-chart-2", type: "primary", action: "view-metrics" },
+                    { text: "Set up alerts", icon: "bell", type: "secondary", action: "setup-alerts" },
+                    { text: "Export report", icon: "download", type: "secondary", action: "export-report" }
+                ]
+            },
+            'configure-settings': {
+                message: "Let's configure your Adaptive Acceptance settings to optimize for your specific decline patterns. I'll help you set the right thresholds and routing rules.",
+                pills: [
+                    { text: "Configure rules", icon: "settings", type: "primary", action: "configure-rules" },
+                    { text: "Test settings", icon: "test-tube", type: "secondary", action: "test-settings" },
+                    { text: "View defaults", icon: "info", type: "secondary", action: "view-defaults" }
+                ]
+            },
+            'monitor-results': {
+                message: "I'll help you set up monitoring for your Adaptive Acceptance implementation. This will track performance improvements and alert you to any issues.",
+                pills: [
+                    { text: "Set up monitoring", icon: "activity", type: "primary", action: "setup-monitoring" },
+                    { text: "View alerts", icon: "bell", type: "secondary", action: "view-alerts" },
+                    { text: "Schedule review", icon: "calendar", type: "secondary", action: "schedule-review" }
+                ]
+            },
+            'export-report': {
+                message: "I'll generate a comprehensive report of your decline patterns and the impact of Adaptive Acceptance. This will include transaction data, decline analysis, and optimization recommendations.",
+                pills: [
+                    { text: "Download PDF", icon: "download", type: "primary", action: "download-pdf" },
+                    { text: "Schedule delivery", icon: "calendar", type: "secondary", action: "schedule-delivery" },
+                    { text: "Customize report", icon: "settings", type: "secondary", action: "customize-report" }
+                ]
+            },
+            'setup-alerts': {
+                message: "Let's configure alerts for your payment performance metrics. I'll help you set up notifications for significant changes in authorization rates, decline patterns, and revenue impact.",
+                pills: [
+                    { text: "Configure alerts", icon: "bell", type: "primary", action: "configure-alerts" },
+                    { text: "Test notifications", icon: "test-tube", type: "secondary", action: "test-notifications" },
+                    { text: "View alert history", icon: "clock", type: "secondary", action: "view-alert-history" }
+                ]
+            },
+            'prepare-report': {
+                message: "I'll help you prepare a comprehensive report for Commerzbank including your transaction patterns, decline analysis, and the impact on your business. This will help facilitate productive discussions.",
+                pills: [
+                    { text: "Generate report", icon: "file-text", type: "primary", action: "generate-report" },
+                    { text: "Review data", icon: "bar-chart-2", type: "secondary", action: "review-data" },
+                    { text: "Export findings", icon: "download", type: "secondary", action: "export-findings" }
                 ]
             }
         };
@@ -17735,8 +17825,8 @@
                                     </div>
                                 </div>
                                 <div class="suggested-prompts">
-                                    <button class="prompt-btn" id="prompt-1" onclick="openAIPanel('Why has my auth rate dropped in Germany in the last 2 weeks', '${currentBusinessType}', 'germany-auth-drop', ${successRate}, '${dateRange}', ${allData.metrics.payments})">
-                                        Why has my auth rate dropped in Germany in the last 2 weeks
+                                    <button class="prompt-btn" id="prompt-1" onclick="openAIPanel('How can I improve my ${successRate}% authorization rate for the ${dateRange.toLowerCase()}?', '${currentBusinessType}', 'success-rate', ${successRate}, '${dateRange}', ${allData.metrics.payments})">
+                                        How can I improve my ${successRate}% authorization rate for the ${dateRange.toLowerCase()}?
                                     </button>
                                 </div>
                             </div>
@@ -18196,13 +18286,13 @@
     function askAIAboutAcceptanceDrop() {
         const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
         const dateRange = document.getElementById('dateRangeDropdown')?.textContent.trim() || 'Last 90 days';
-        const question = "I noticed a drop in my payment success rate on July 22nd. How can I enable Smart Retries to recover declined payments and improve my authorization rate?";
+        const question = "I noticed a significant change in my accepted volume on this date. What insights can you provide about this trend and how can I optimize my payment processing to maintain consistent volume growth?";
         
         try {
-            openAIPanel(question, currentBusinessType, "smart-retries", 85.2, dateRange, 94);
+            openAIPanel(question, currentBusinessType, "german-card-diagnosis", 85.2, dateRange, 94);
             toggleNotificationPanel();
         } catch (error) {
-            console.error('Error calling openAIPanel:', error);
+            console.error('Error calling openAIAboutAcceptanceDrop:', error);
         }
     }
     
@@ -19767,7 +19857,7 @@
                     <span class="notification-timestamp">Jul 17</span>
                 </div>
                 <div class="notification-message">
-                    Acceptance rate dropped significantly in Germany on July 17th. This represents a potential revenue loss of $1,200.
+                    Acceptance rate dropped significantly in your primary market on July 17th. This represents a potential revenue loss of $1,200.
                 </div>
                 <div class="notification-actions">
                     <button class="notification-btn" onclick="testAskAssistant()">Ask Assistant</button>
