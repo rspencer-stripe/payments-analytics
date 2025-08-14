@@ -14180,8 +14180,7 @@
             responseMessage = `**AI Insight Analysis:** Based on your ${businessType} business profile and ${dateRange.toLowerCase()} data, I can help optimize your payment performance.\n\n**Current Metrics:**\n• Authorization rate: ${metric.toFixed(1)}%\n• Failed payment volume: $${metric.toFixed(0)}\n• Transaction count: ${payments ? payments.toLocaleString() : 'N/A'}\n\n**How I Can Help:**\n• Analyze decline patterns and identify optimization opportunities\n• Recommend fraud prevention strategies tailored to your business\n• Suggest payment method improvements for better conversion\n• Provide actionable insights for immediate implementation`;
             responsePills = [
                 { text: "Analyze performance", icon: "bar-chart-2", type: "primary", action: "analyze-performance" },
-                { text: "View recommendations", icon: "lightbulb", type: "secondary", action: "view-recommendations" },
-                { text: "Schedule consultation", icon: "calendar", type: "secondary", action: "schedule-consultation" }
+                { text: "Recommendations", icon: "lightbulb", type: "secondary", action: "view-recommendations" }
             ];
         }
         
