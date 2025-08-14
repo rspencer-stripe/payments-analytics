@@ -9157,7 +9157,7 @@
             const question = 'I noticed a significant change in my accepted volume on this date. What insights can you provide about this trend and how can I optimize my payment processing to maintain consistent volume growth?';
             
             // Open AI panel immediately with minimal processing
-            openAIPanel(question, businessType, 'volume-optimization', 85.2, dateRange, 0);
+            openAIPanel(question, businessType, 'german-card-diagnosis', 85.2, dateRange, 0);
         });
         
         svg.appendChild(group);
@@ -9289,7 +9289,7 @@
             const question = 'I noticed a significant change in my accepted volume on July 17th. What insights can you provide about this trend and how can I optimize my payment processing to maintain consistent volume growth?';
             
             // Open AI panel immediately with minimal processing
-            openAIPanel(question, businessType, 'volume-optimization', 85.2, dateRange, 0);
+            openAIPanel(question, businessType, 'german-card-diagnosis', 85.2, dateRange, 0);
         });
         
         svg.appendChild(group);
@@ -14139,6 +14139,8 @@
         let responseMessage = '';
         let responsePills = [];
         
+        console.log('openAIPanel called with topic:', topic, 'businessType:', businessType, 'metric:', metric);
+        
         if (topic === 'success-rate') {
             // Response for authorization rate improvement questions
             responseMessage = `**AI Insight Analysis:** Your ${metric.toFixed(1)}% authorization rate shows ${metric < 85 ? 'room for improvement' : 'strong performance'} for the ${dateRange.toLowerCase()}.\n\n**Key Findings:**\n• Industry benchmark for your business type: ${businessType === 'startup' ? '82-88%' : businessType === 'growth' ? '85-92%' : '88-95%'}\n• Current performance: ${metric.toFixed(1)}%\n• Gap to benchmark: ${Math.max(0, (businessType === 'startup' ? 85 : businessType === 'growth' ? 88 : 90) - metric).toFixed(1)}%\n\n**Optimization Opportunities:**\n• **Smart Retries** could improve rates by **1.5-2.5%**\n• **3D Secure optimization** could add another **0.8-1.2%**\n• **Payment method diversification** could contribute **1.0-1.8%**\n\n**Immediate Actions:**\n• Review decline code patterns for the ${dateRange.toLowerCase()}\n• Enable automatic retry logic for failed payments\n• Implement basic address verification\n• Add multiple payment method options`;
@@ -14157,6 +14159,7 @@
             ];
         } else if (topic === 'german-card-diagnosis') {
             // Response for German card auth rate drop diagnosis
+            console.log('German card diagnosis case triggered');
             responseMessage = `**AI Insight Analysis:** Your auth rate for German cards dropped 3.8% in the last 24 hours. This appears to be due to a specific issuing bank (Commerzbank) declining transactions with error code 'insufficient_funds' at 2.5x normal rate.\n\n**Root Cause Analysis:**\n• **Bank-specific issue:** Commerzbank is declining 15.2% of transactions vs. 6.1% normally\n• **Error pattern:** 78% of declines show 'insufficient_funds' error code\n• **Geographic scope:** Affects 23% of your German transaction volume\n• **Revenue impact:** Estimated $2,400 in declined transactions\n\n**Recommended Solution:**\nImplementing **Adaptive Acceptance** would likely improve auth rates by **1.2%** by dynamically routing these transactions through alternate networks.\n\n**Expected Outcome:**\n• Recover $1,680 of declined transactions\n• Improve overall German market auth rate to 89.1%\n• Reduce dependency on single bank network`;
             responsePills = [
                 { text: "Turn on Adaptive Acceptance", icon: "settings", type: "primary", action: "enable-adaptive-acceptance" },
