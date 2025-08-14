@@ -11819,10 +11819,30 @@
         
         // Use DataGenerator for consistent data across all pages
         console.log('Using DataGenerator for consistent data');
-        generator = new RealisticDataGenerator(businessType, dateRange);
-        businessMetrics = generator.getBusinessMetrics();
-        allData = generator.generateAllData();
-        optimizationData = generator.generateOptimizationData();
+        console.log('Business type being passed to DataGenerator:', businessType);
+        console.log('Date range being passed to DataGenerator:', dateRange);
+        
+        try {
+            generator = new RealisticDataGenerator(businessType, dateRange);
+            console.log('DataGenerator created successfully:', generator);
+            
+            businessMetrics = generator.getBusinessMetrics();
+            console.log('Business metrics retrieved:', businessMetrics);
+            
+            allData = generator.generateAllData();
+            console.log('All data generated:', allData);
+            
+            optimizationData = generator.generateOptimizationData();
+            console.log('Optimization data generated:', optimizationData);
+        } catch (error) {
+            console.error('Error creating DataGenerator or generating data:', error);
+            // Fallback to default data
+            businessType = 'growth'; // Ensure we have a valid business type
+            generator = new RealisticDataGenerator(businessType, dateRange);
+            businessMetrics = generator.getBusinessMetrics();
+            allData = generator.generateAllData();
+            optimizationData = generator.generateOptimizationData();
+        }
         
         // Data is now generated consistently from DataGenerator
         // businessMetrics, allData, and optimizationData are already set above
@@ -11831,6 +11851,18 @@
         console.log('Business metrics for', businessType, ':', businessMetrics);
         console.log('All data volume for', businessType, ':', allData.metrics.volume);
         console.log('Generated optimization data in updateOverviewPage:', optimizationData);
+        
+        // Validate business metrics before using them
+        if (!businessMetrics || !businessMetrics.successRate) {
+            console.error('Invalid business metrics:', businessMetrics);
+            console.error('Business type was:', businessType);
+            // Force fallback to growth business type
+            businessType = 'growth';
+            generator = new RealisticDataGenerator(businessType, dateRange);
+            businessMetrics = generator.getBusinessMetrics();
+            allData = generator.generateAllData();
+            optimizationData = generator.generateOptimizationData();
+        }
         
         // Calculate key metrics
         const totalRevenue = allData.metrics.volume;
@@ -12484,7 +12516,7 @@
 
     // Function to toggle optimization on/off
     function toggleOptimization(optimizationId, enabled) {
-        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'growth';
         const currentDateRange = document.getElementById('overviewDateRangeDropdown')?.textContent.trim() || 'Last 90 days';
         
         const generator = new RealisticDataGenerator(currentBusinessType, currentDateRange);
@@ -13230,7 +13262,7 @@
 
     // Function to enable optimization from insight card
     function enableOptimizationFromInsight(optimizationId) {
-        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'growth';
         const currentDateRange = document.getElementById('overviewDateRangeDropdown')?.textContent.trim() || 'Last 90 days';
         
         const generator = new RealisticDataGenerator(currentBusinessType, currentDateRange);

@@ -3,13 +3,31 @@ console.log('Loading RealisticDataGenerator class...');
 class RealisticDataGenerator {
         constructor(businessType, dateRange) {
             console.log('Creating RealisticDataGenerator instance with:', businessType, dateRange);
+            console.log('Business type type:', typeof businessType);
+            console.log('Date range type:', typeof dateRange);
+            
+            // Validate business type
+            if (!businessType || typeof businessType !== 'string') {
+                console.warn('Invalid business type provided:', businessType, 'defaulting to growth');
+                businessType = 'growth';
+            }
+            
+            // Validate date range
+            if (!dateRange || typeof dateRange !== 'string') {
+                console.warn('Invalid date range provided:', dateRange, 'defaulting to Last 90 days');
+                dateRange = 'Last 90 days';
+            }
+            
             this.businessType = businessType;
             this.dateRange = dateRange;
             this.dataPoints = this.getDataPointsForRange(dateRange);
             this.seed = this.getSeed(businessType, dateRange);
             this.rng = this.seededRandom(this.seed);
             this.optimizationState = this.getOptimizationState();
+            
             console.log('RealisticDataGenerator instance created successfully');
+            console.log('Final business type:', this.businessType);
+            console.log('Final date range:', this.dateRange);
         }
 
         // Get consistent seed for reproducible data
@@ -216,6 +234,8 @@ class RealisticDataGenerator {
 
         // Generate business-specific base metrics - Updated for realistic Stripe customer profiles
         getBusinessMetrics() {
+            console.log('getBusinessMetrics called with business type:', this.businessType);
+            
             const metrics = {
                 'startup': {
                     // Startup: New SaaS, e-commerce, or marketplace (0-2 years)
@@ -262,7 +282,12 @@ class RealisticDataGenerator {
                     authorizationRate: 96.5
                 }
             };
-            return metrics[this.businessType] || metrics['growth']; // Default to growth if invalid type
+            
+            const result = metrics[this.businessType] || metrics['growth']; // Default to growth if invalid type
+            console.log('getBusinessMetrics returning:', result);
+            console.log('Selected business type was:', this.businessType);
+            
+            return result;
         }
 
         // Generate timeframe multipliers
