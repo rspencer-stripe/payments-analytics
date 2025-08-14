@@ -344,6 +344,13 @@ class RealisticDataGenerator {
                 0.1
             );
             
+            // Generate industry benchmark (higher than current performance to justify AI insights)
+            const industryBenchmark = this.generateTimeSeriesData(
+                businessMetrics.successRate + 5, // Industry benchmark is 5% higher than current
+                0.05, // Lower volatility for industry benchmark
+                0.1 // Slight upward trend
+            );
+            
             // Generate optimized data (higher performance)
             const optimizedSuccessRate = this.generateTimeSeriesData(
                 businessMetrics.successRate + 8, 
@@ -354,6 +361,7 @@ class RealisticDataGenerator {
             return {
                 current: currentSuccessRate,
                 baseline: baselineSuccessRate,
+                industryBenchmark: industryBenchmark,
                 optimized: optimizedSuccessRate
             };
         }

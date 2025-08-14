@@ -1145,6 +1145,10 @@
             background: #22C55E;
         }
 
+        .legend-color.industry-benchmark {
+            background: #10B981;
+        }
+
         .chart-content {
             position: relative;
             height: 300px;
@@ -6508,8 +6512,13 @@
                                     <span id="legend-baseline-value" style="font-weight:600;margin-left:6px;"></span>
                                 </div>
                                 <div class="legend-item">
-                                    <div class="legend-color optimized"></div>
+                                    <div class="legend-color industry-benchmark"></div>
                                     <span>Industry benchmark</span>
+                                    <span id="legend-industry-benchmark-value" style="font-weight:600;margin-left:6px;"></span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color optimized"></div>
+                                    <span>Optimized performance</span>
                                     <span id="legend-optimized-value" style="font-weight:600;margin-left:6px;"></span>
                                 </div>
                             </div>
@@ -8317,8 +8326,8 @@
         console.log('Raw main chart data:', mainChartData);
         
         // Ensure we have exactly 7 data points to match the x-coordinates
-        if (!mainChartData || !mainChartData.current || !mainChartData.baseline || !mainChartData.optimized ||
-            mainChartData.current.length !== 7 || mainChartData.baseline.length !== 7 || mainChartData.optimized.length !== 7) {
+        if (!mainChartData || !mainChartData.current || !mainChartData.baseline || !mainChartData.industryBenchmark || !mainChartData.optimized ||
+            mainChartData.current.length !== 7 || mainChartData.baseline.length !== 7 || mainChartData.industryBenchmark.length !== 7 || mainChartData.optimized.length !== 7) {
             console.error('Data length mismatch. Expected 7, got:', mainChartData);
             return;
         }
@@ -8337,9 +8346,10 @@
         
         const validatedCurrent = validateData(mainChartData.current);
         const validatedBaseline = validateData(mainChartData.baseline);
+        const validatedIndustryBenchmark = validateData(mainChartData.industryBenchmark);
         const validatedOptimized = validateData(mainChartData.optimized);
         
-        console.log('Validated chart data:', { validatedCurrent, validatedBaseline, validatedOptimized });
+        console.log('Validated chart data:', { validatedCurrent, validatedBaseline, validatedIndustryBenchmark, validatedOptimized });
 
         // PERFECT ALIGNMENT: Use exact x-coordinates that match the x-axis label positions
         // These coordinates correspond to the visual positions of the x-axis labels
@@ -8351,15 +8361,18 @@
         // Build SVG paths with perfect alignment using validated data
         let currentLine = '';
         let baselineLine = '';
+        let industryBenchmarkLine = '';
         let optimizedLine = '';
         for (let i = 0; i < xPoints.length; i++) {
             if (i === 0) {
                 currentLine = `M${xPoints[i]},${validatedCurrent[i]}`;
                 baselineLine = `M${xPoints[i]},${validatedBaseline[i]}`;
+                industryBenchmarkLine = `M${xPoints[i]},${validatedIndustryBenchmark[i]}`;
                 optimizedLine = `M${xPoints[i]},${validatedOptimized[i]}`;
             } else {
                 currentLine += ` L${xPoints[i]},${validatedCurrent[i]}`;
                 baselineLine += ` L${xPoints[i]},${validatedBaseline[i]}`;
+                industryBenchmarkLine += ` L${xPoints[i]},${validatedIndustryBenchmark[i]}`;
                 optimizedLine += ` L${xPoints[i]},${validatedOptimized[i]}`;
             }
         }
@@ -8369,14 +8382,17 @@
         if (svg) {
             svg.setAttribute('viewBox', '0 0 800 200');
             const paths = svg.querySelectorAll('path');
-            if (paths.length >= 3) {
+            if (paths.length >= 4) {
                 paths[0].setAttribute('d', baselineLine);
                 paths[0].setAttribute('stroke-width', '2');
                 paths[1].setAttribute('d', currentLine);
                 paths[1].setAttribute('stroke-width', '3');
-                paths[2].setAttribute('d', optimizedLine);
-                paths[2].setAttribute('stroke-width', '3');
-                paths[2].setAttribute('stroke-dasharray', '5,5');
+                paths[2].setAttribute('d', industryBenchmarkLine);
+                paths[2].setAttribute('stroke-width', '2');
+                paths[2].setAttribute('stroke-dasharray', '3,3');
+                paths[3].setAttribute('d', optimizedLine);
+                paths[3].setAttribute('stroke-width', '3');
+                paths[3].setAttribute('stroke-dasharray', '5,5');
             }
         }
         
@@ -8393,20 +8409,23 @@
         // Update legend values
         const legendCurrent = document.getElementById('legend-current-value');
         const legendBaseline = document.getElementById('legend-baseline-value');
+        const legendIndustryBenchmark = document.getElementById('legend-industry-benchmark-value');
         const legendOptimized = document.getElementById('legend-optimized-value');
-        if (legendCurrent && legendBaseline && legendOptimized) {
+        if (legendCurrent && legendBaseline && legendIndustryBenchmark && legendOptimized) {
             // Convert Y back to percent for display
             const yToPercent = y => ((200-y)/2).toFixed(1) + '%';
             
             const lastIndex = validatedCurrent.length - 1;
             const currentValue = yToPercent(validatedCurrent[lastIndex]);
             const baselineValue = yToPercent(validatedBaseline[lastIndex]);
+            const industryBenchmarkValue = yToPercent(validatedIndustryBenchmark[lastIndex]);
             const optimizedValue = yToPercent(validatedOptimized[lastIndex]);
             
 
             
             legendCurrent.textContent = currentValue;
             legendBaseline.textContent = baselineValue;
+            legendIndustryBenchmark.textContent = industryBenchmarkValue;
             legendOptimized.textContent = optimizedValue;
         }
         
