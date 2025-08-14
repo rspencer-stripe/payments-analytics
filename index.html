@@ -15051,6 +15051,10 @@
                         setTimeout(() => {
                             openExperimentDrawer(experimentData);
                         }, 100);
+                    } else if (pill.action === 'enable-adaptive-acceptance') {
+                        // Handle Adaptive Acceptance action
+                        console.log('Adaptive Acceptance clicked, enabling feature...');
+                        handleAIAction(pill.action);
                     } else if (pill.action === 'ask-follow-up') {
                         addAIMessage('user', pill.text);
                         sendAIMessage(pill.text);
@@ -15084,6 +15088,76 @@
         
         // Reinitialize lucide icons
         lucide.createIcons();
+    }
+
+    // Function to handle AI action responses
+    function handleAIAction(action) {
+        console.log('handleAIAction called with action:', action);
+        
+        // Generate contextual response based on action
+        const actionResponses = {
+            'enable-adaptive-acceptance': {
+                message: "Adaptive Acceptance was successfully enabled! This feature will now dynamically route transactions through alternate networks when primary networks decline them, helping to improve your authorization rates.",
+                pills: [
+                    { text: "View performance", icon: "bar-chart-2", type: "primary", action: "view-performance" },
+                    { text: "Configure settings", icon: "settings", type: "secondary", action: "configure-settings" },
+                    { text: "Monitor results", icon: "activity", type: "secondary", action: "monitor-results" }
+                ]
+            },
+            'view-decline-details': {
+                message: "Here's a detailed breakdown of your recent decline patterns. The data shows that Commerzbank declines are concentrated in the €50-200 range with 'insufficient_funds' errors.",
+                pills: [
+                    { text: "Export report", icon: "download", type: "primary", action: "export-report" },
+                    { text: "Set up alerts", icon: "bell", type: "secondary", action: "setup-alerts" },
+                    { text: "Contact bank", icon: "message-circle", type: "secondary", action: "contact-bank" }
+                ]
+            },
+            'contact-bank': {
+                message: "I'll help you prepare the information needed to contact Commerzbank about the increased decline rates. This includes your transaction patterns and decline analysis.",
+                pills: [
+                    { text: "Prepare report", icon: "file-text", type: "primary", action: "prepare-report" },
+                    { text: "Schedule call", icon: "phone", type: "secondary", action: "schedule-call" },
+                    { text: "View contact info", icon: "info", type: "secondary", action: "view-contact" }
+                ]
+            },
+            'view-performance': {
+                message: "Here's your current performance dashboard showing the impact of Adaptive Acceptance. You should see improvements in your German market authorization rates within the next 24-48 hours.",
+                pills: [
+                    { text: "View metrics", icon: "bar-chart-2", type: "primary", action: "view-metrics" },
+                    { text: "Set up alerts", icon: "bell", type: "secondary", action: "setup-alerts" },
+                    { text: "Export report", icon: "download", type: "secondary", action: "export-report" }
+                ]
+            },
+            'configure-settings': {
+                message: "Let's configure your Adaptive Acceptance settings to optimize for your specific decline patterns. I'll help you set the right thresholds and routing rules.",
+                pills: [
+                    { text: "Configure rules", icon: "settings", type: "primary", action: "configure-rules" },
+                    { text: "Test settings", icon: "test-tube", type: "secondary", action: "test-settings" },
+                    { text: "View defaults", icon: "info", type: "secondary", action: "view-defaults" }
+                ]
+            },
+            'monitor-results': {
+                message: "I'll help you set up monitoring for your Adaptive Acceptance implementation. This will track performance improvements and alert you to any issues.",
+                pills: [
+                    { text: "Set up monitoring", icon: "activity", type: "primary", action: "setup-monitoring" },
+                    { text: "View alerts", icon: "bell", type: "secondary", action: "view-alerts" },
+                    { text: "Schedule review", icon: "calendar", type: "secondary", action: "schedule-review" }
+                ]
+            }
+        };
+        
+        const response = actionResponses[action] || {
+            message: "I understand you're interested in this feature. Let me provide you with the next steps to get started.",
+            pills: [
+                { text: "View documentation", icon: "file-text", type: "primary", action: "view-docs" },
+                { text: "Contact support", icon: "message-circle", type: "secondary", action: "contact-support" },
+                { text: "Schedule demo", icon: "calendar", type: "secondary", action: "schedule-demo" }
+            ]
+        };
+        
+        setTimeout(() => {
+            addAIMessage('assistant', response.message, response.pills);
+        }, 500);
     }
 
     function handlePillAction(action, pillText) {
