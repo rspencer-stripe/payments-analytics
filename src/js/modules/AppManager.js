@@ -10,6 +10,19 @@ class AppManager {
         this.isInitialized = false;
     }
 
+    // Utility function for formatting USD amounts
+    formatUSD(amount) {
+        if (typeof amount !== 'number' || isNaN(amount)) {
+            return '$0.00';
+        }
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(amount);
+    }
+
     // Initialize the application
     async init() {
         if (this.isInitialized) return;
