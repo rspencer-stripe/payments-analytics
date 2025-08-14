@@ -3897,6 +3897,47 @@
             cursor: pointer;
         }
 
+        /* Purple dot indicator styles for Network Token opportunities */
+        .purple-dot-indicator {
+            cursor: pointer;
+            transition: transform 0.15s ease-out, filter 0.15s ease-out;
+            z-index: 1000;
+            pointer-events: auto;
+            transform-origin: center;
+            will-change: transform, filter;
+            position: relative;
+        }
+        
+        /* Purple dot visual element */
+        .purple-dot-indicator .purple-dot {
+            transition: transform 0.15s ease-out, filter 0.15s ease-out;
+            animation: purpleDotPulse 3s ease-in-out infinite;
+        }
+
+        /* Hover state - subtle and stable */
+        .purple-dot-indicator:hover {
+            transform: scale(1.15);
+            filter: drop-shadow(0 3px 6px rgba(147, 51, 234, 0.4));
+        }
+
+        .purple-dot-indicator:hover .purple-dot {
+            animation: none;
+            transform: scale(1.1);
+            filter: drop-shadow(0 4px 8px rgba(147, 51, 234, 0.6));
+        }
+
+        /* Purple dot pulsing animation */
+        @keyframes purpleDotPulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 2px 4px rgba(147, 51, 234, 0.3));
+            }
+            50% {
+                transform: scale(1.08);
+                filter: drop-shadow(0 3px 5px rgba(147, 51, 234, 0.4));
+            }
+        }
+
         .blue-dot-indicator:hover .blue-dot {
             animation: none;
             filter: drop-shadow(0 4px 8px rgba(83, 58, 253, 0.6));
@@ -9189,6 +9230,115 @@
         }, 500);
     }
 
+    // Function to add purple dot indicators for Network Token opportunities
+    function addPurpleDotIndicator(svg, x, y, index, chartType = 'network-tokens') {
+        console.log('Creating purple dot indicator at coordinates:', x, y, 'for chart type:', chartType);
+        
+        // Remove any existing purple dot indicators to prevent duplicates
+        const existingIndicators = svg.querySelectorAll('.purple-dot-indicator');
+        if (existingIndicators.length > 0) {
+            console.log(`Removing ${existingIndicators.length} existing purple dot indicators`);
+            existingIndicators.forEach(indicator => indicator.remove());
+        }
+        
+        // Create a stable purple dot indicator with best practices
+        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        group.classList.add('purple-dot-indicator');
+        group.dataset.index = index;
+        group.dataset.chartType = chartType;
+        group.style.pointerEvents = 'all';
+        group.style.zIndex = '1000';
+        
+        // Create the purple circle indicator with proper class
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', '7.5');
+        circle.setAttribute('fill', '#9333EA');
+        circle.setAttribute('stroke', '#ffffff');
+        circle.setAttribute('stroke-width', '2');
+        circle.setAttribute('filter', 'drop-shadow(0 2px 4px rgba(147, 51, 234, 0.5))');
+        circle.classList.add('purple-dot');
+        
+        // Create a stable, invisible hover area
+        const hoverArea = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        hoverArea.setAttribute('cx', x);
+        hoverArea.setAttribute('cy', y);
+        hoverArea.setAttribute('r', '40'); // Larger hover area to prevent interference
+        hoverArea.setAttribute('fill', 'transparent');
+        hoverArea.setAttribute('stroke', 'transparent');
+        hoverArea.classList.add('hover-area');
+        
+        // Add elements to group in proper order (hover area first for better interaction)
+        group.appendChild(hoverArea);
+        group.appendChild(circle);
+        
+        // Implement robust hover state management
+        let isHovered = false;
+        let tooltipVisible = false;
+        let hideTimeout;
+        
+        // Mouse enter handler
+        const handleMouseEnter = function(e) {
+            e.stopPropagation();
+            console.log('Purple dot mouse enter - showing network token opportunity tooltip');
+            isHovered = true;
+            
+            // Clear any pending hide timeout
+            if (hideTimeout) {
+                clearTimeout(hideTimeout);
+                hideTimeout = null;
+            }
+            
+            // Show tooltip immediately
+            if (!tooltipVisible) {
+                const rect = this.getBoundingClientRect();
+                showPurpleDotTooltip(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                tooltipVisible = true;
+            }
+        };
+        
+        // Mouse leave handler
+        const handleMouseLeave = function(e) {
+            e.stopPropagation();
+            isHovered = false;
+            
+            // Set a delay before hiding to allow moving to tooltip
+            hideTimeout = setTimeout(() => {
+                if (!isHovered) {
+                    hideSimpleTooltip();
+                    tooltipVisible = false;
+                }
+            }, 150);
+        };
+        
+        // Add event listeners
+        group.addEventListener('mouseenter', handleMouseEnter);
+        group.addEventListener('mouseleave', handleMouseLeave);
+        
+        // Add click handler for network token opportunity
+        group.addEventListener('click', function(e) {
+            e.stopPropagation();
+            console.log('Purple dot clicked - opening network token opportunity');
+            
+            // Use cached selectors for better performance
+            const businessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+            const dateRange = document.getElementById('dateRangeDropdown')?.textContent?.trim() || 'Last 90 days';
+            
+            // Question for network token opportunity
+            const question = 'I see there\'s an opportunity to improve my payment performance. What can you tell me about this and how can I start testing it?';
+            
+            // Open AI panel immediately with minimal processing
+            openAIPanel(question, businessType, 'network-token-opportunity', 87.5, dateRange, 0);
+        });
+        
+        svg.appendChild(group);
+        console.log('Purple dot indicator added successfully at fixed position:', x, y);
+        console.log('Purple dot class:', group.classList.toString());
+        console.log('Purple dot chart type:', chartType);
+        console.log('Purple dot index:', index);
+    }
+
     // Function to add acceptance alert indicator for July 17th (legacy function - keeping for compatibility)
     function addAcceptanceAlertIndicator(svg, x, y, index) {
         console.log('Creating acceptance alert indicator at coordinates:', x, y);
@@ -9764,6 +9914,54 @@
         });
     }
 
+    // Function to show purple dot tooltip for Network Token opportunities
+    function showPurpleDotTooltip(x, y) {
+        console.log('showPurpleDotTooltip called with:', x, y);
+        // Hide any existing tooltips to prevent conflicts
+        hideAllTooltips();
+        
+        const tooltip = document.getElementById('acceptanceAlertTooltip');
+        const tooltipHeader = document.getElementById('acceptanceTooltipHeader');
+        const tooltipData = document.getElementById('acceptanceTooltipData');
+        
+        if (tooltip && tooltipHeader && tooltipData) {
+            // Update tooltip content to show "Network Token Opportunity"
+            tooltipHeader.textContent = 'Network Token Opportunity';
+            
+            const tooltipHTML = `
+                <div class="tooltip-data-section" style="margin-bottom: 12px;">
+                    <div style="font-size: 13px; color: #1A1F2E; line-height: 1.4; margin-bottom: 8px;">
+                        <i data-lucide="zap" style="width: 14px; height: 14px; display: inline-block; margin-right: 6px; color: #9333EA;"></i>
+                        <strong>Start A/B test</strong> for Network Tokens
+                    </div>
+                    <div style="font-size: 12px; color: #6C7689; font-style: italic;">
+                        Click to learn about this optimization opportunity
+                    </div>
+                </div>
+            `;
+            
+            tooltipData.innerHTML = tooltipHTML;
+            
+            // Position tooltip using best practices - simple and reliable
+            tooltip.style.position = 'fixed';
+            tooltip.style.display = 'block';
+            tooltip.style.left = (x + 40) + 'px';
+            tooltip.style.top = (y - 140) + 'px';
+            tooltip.style.zIndex = '10000';
+            
+            // Add a subtle animation
+            tooltip.style.animation = 'tooltipPulse 0.3s ease-out';
+            
+            // Reinitialize lucide icons for the tooltip
+            lucide.createIcons();
+            
+            // Add simple hover events to the tooltip
+            initializeSimpleTooltipHover(tooltip);
+        } else {
+            console.error('Acceptance alert tooltip elements not found');
+        }
+    }
+
     // Function to hide acceptance alert tooltip
     function hideAcceptanceAlertTooltip() {
         const tooltip = document.getElementById('acceptanceAlertTooltip');
@@ -10009,6 +10207,12 @@
                             const june15X = xPoints[june15Index];
                             const june15Y = currentY[june15Index];
                             addRedDotIndicator(svg, june15X, june15Y, june15Index, 'accepted-volume');
+                            
+                            // Add purple dot for Network Token opportunity (index 2 - around June 1st)
+                            const networkTokenIndex = 2;
+                            const networkTokenX = xPoints[networkTokenIndex];
+                            const networkTokenY = currentY[networkTokenIndex];
+                            addPurpleDotIndicator(svg, networkTokenX, networkTokenY, networkTokenIndex, 'network-tokens');
                             
                             // Verify the red dots were added after hover areas
                             setTimeout(() => {
@@ -14167,6 +14371,15 @@
                 { text: "View decline details", icon: "bar-chart-2", type: "secondary", action: "view-decline-details" },
                 { text: "Contact Commerzbank", icon: "message-circle", type: "secondary", action: "contact-bank" }
             ];
+        } else if (topic === 'network-token-opportunity') {
+            // Response for Network Token opportunity
+            console.log('Network token opportunity case triggered');
+            responseMessage = `**AI Insight Analysis:** I've identified a significant optimization opportunity for your payment processing! Your current authorization rate of ${metric.toFixed(1)}% could be improved by implementing **Network Tokens**.\n\n**Opportunity Analysis:**\n• **Current performance:** ${metric.toFixed(1)}% authorization rate\n• **Potential improvement:** +2.8% authorization rate increase\n• **Revenue impact:** Estimated +$3,200/month in additional successful transactions\n• **Implementation effort:** Low (automated setup)\n• **Risk level:** Minimal (A/B test approach)\n\n**What Network Tokens Do:**\nNetwork tokens replace sensitive card data with secure tokens, reducing fraud risk and improving authorization rates by maintaining consistent card data across transactions.\n\n**Recommended Action:**\nStart an A/B test to measure the real impact on your specific transaction volume and customer base.`;
+            responsePills = [
+                { text: "Enable network tokens", icon: "zap", type: "primary", action: "enable-network-tokens" },
+                { text: "Learn more", icon: "info", type: "secondary", action: "learn-network-tokens" },
+                { text: "View case studies", icon: "file-text", type: "secondary", action: "view-case-studies" }
+            ];
         } else if (topic === 'optimization') {
             // Response for fraud prevention and optimization questions
             responseMessage = `**AI Insight Analysis:** For ${payments.toLocaleString()} transactions in the ${dateRange.toLowerCase()}, implementing fraud prevention measures can significantly improve your bottom line.\n\n**Current Risk Assessment:**\n• Transaction volume: ${payments.toLocaleString()} payments\n• Recommended fraud prevention level: ${businessType === 'startup' ? 'Basic' : businessType === 'growth' ? 'Enhanced' : 'Advanced'}\n• Expected fraud rate reduction: **40-60%**\n\n**Recommended Measures:**\n• **3D Secure 2.0** for transactions over $${businessType === 'startup' ? '50' : businessType === 'growth' ? '100' : '75'}\n• **Address verification** for all transactions\n• **IP geolocation** for high-risk regions\n• **Device fingerprinting** for suspicious patterns\n\n**Implementation Priority:**\n• Phase 1: Basic fraud rules and 3D Secure\n• Phase 2: Advanced analytics and machine learning\n• Phase 3: Regional payment methods and compliance`;
@@ -14179,7 +14392,7 @@
             // Fallback response for other topics
             responseMessage = `**AI Insight Analysis:** Based on your ${businessType} business profile and ${dateRange.toLowerCase()} data, I can help optimize your payment performance.\n\n**Current Metrics:**\n• Authorization rate: ${metric.toFixed(1)}%\n• Failed payment volume: $${metric.toFixed(0)}\n• Transaction count: ${payments ? payments.toLocaleString() : 'N/A'}\n\n**How I Can Help:**\n• Analyze decline patterns and identify optimization opportunities\n• Recommend fraud prevention strategies tailored to your business\n• Suggest payment method improvements for better conversion\n• Provide actionable insights for immediate implementation`;
             responsePills = [
-                { text: "Analyze performance", icon: "bar-chart-2", type: "primary", action: "analyze-performance" },
+                { text: "Enable network tokens", icon: "zap", type: "primary", action: "enable-network-tokens" },
                 { text: "Recommendations", icon: "lightbulb", type: "secondary", action: "view-recommendations" }
             ];
         }
@@ -15054,6 +15267,10 @@
                         // Handle Adaptive Acceptance action
                         console.log('Adaptive Acceptance clicked, enabling feature...');
                         handleAIAction(pill.action);
+                    } else if (pill.action === 'enable-network-tokens') {
+                        // Handle Network Tokens action
+                        console.log('Network Tokens clicked, starting A/B test...');
+                        handleAIAction(pill.action);
                     } else if (pill.action === 'ask-follow-up') {
                         addAIMessage('user', pill.text);
                         sendAIMessage(pill.text);
@@ -15101,6 +15318,14 @@
                     { text: "View performance", icon: "bar-chart-2", type: "primary", action: "view-performance" },
                     { text: "Configure settings", icon: "settings", type: "secondary", action: "configure-settings" },
                     { text: "Monitor results", icon: "activity", type: "secondary", action: "monitor-results" }
+                ]
+            },
+            'enable-network-tokens': {
+                message: "Network Tokens A/B test has been started! This optimization will test the impact of using network tokens on your authorization rates and transaction success. The test will run for 14 days with 50% of your traffic.",
+                pills: [
+                    { text: "View test results", icon: "bar-chart-2", type: "primary", action: "view-test-results" },
+                    { text: "Configure test settings", icon: "settings", type: "secondary", action: "configure-test" },
+                    { text: "Monitor performance", icon: "activity", type: "secondary", action: "monitor-test" }
                 ]
             },
             'view-decline-details': {
