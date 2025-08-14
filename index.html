@@ -10208,12 +10208,6 @@
                             const june15Y = currentY[june15Index];
                             addRedDotIndicator(svg, june15X, june15Y, june15Index, 'accepted-volume');
                             
-                            // Add purple dot for Network Token opportunity (index 2 - around June 1st)
-                            const networkTokenIndex = 2;
-                            const networkTokenX = xPoints[networkTokenIndex];
-                            const networkTokenY = currentY[networkTokenIndex];
-                            addPurpleDotIndicator(svg, networkTokenX, networkTokenY, networkTokenIndex, 'network-tokens');
-                            
                             // Verify the red dots were added after hover areas
                             setTimeout(() => {
                                 const redDots = svg.querySelectorAll('.red-dot-indicator');
