@@ -171,9 +171,20 @@ class ModernChartHoverSystem {
         // Convert Y coordinates to percentages
         const yToPercent = y => ((200 - y) / 2).toFixed(1) + '%';
         
-        const currentValue = yToPercent(this.chartData.current[index]);
-        const baselineValue = yToPercent(this.chartData.baseline[index]);
-        const optimizedValue = yToPercent(this.chartData.optimized[index]);
+        // Use hardcoded coordinates that match the SVG path exactly
+        const exactCurrentY = [120, 100, 110, 90, 100, 80, 90];
+        const exactBaselineY = [150, 130, 140, 120, 130, 110, 120];
+        const exactIndustryBenchmarkY = [95, 80, 90, 70, 85, 65, 75];
+        
+        // Safety check for index bounds
+        if (index < 0 || index >= exactCurrentY.length) {
+            console.error('Invalid index for tooltip:', index);
+            return;
+        }
+        
+        const currentValue = yToPercent(exactCurrentY[index]);
+        const baselineValue = yToPercent(exactBaselineY[index]);
+        const optimizedValue = yToPercent(exactIndustryBenchmarkY[index]);
         const date = this.dateLabels[index];
 
         // Create tooltip content

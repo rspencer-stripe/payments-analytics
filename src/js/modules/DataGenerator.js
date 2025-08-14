@@ -330,39 +330,22 @@ class RealisticDataGenerator {
             const businessMetrics = this.getBusinessMetrics();
             const multipliers = this.getTimeframeMultipliers();
             
-            // Generate current period data
-            const currentSuccessRate = this.generateTimeSeriesData(
-                businessMetrics.successRate, 
-                0.08, 
-                0.2 // Slight upward trend
-            );
+            // Generate current period data to match SVG path coordinates exactly
+            // SVG path Y coordinates: [120, 100, 110, 90, 100, 80, 90]
+            const currentSuccessRate = [120, 100, 110, 90, 100, 80, 90];
             
-            // Generate baseline data (slightly lower)
-            const baselineSuccessRate = this.generateTimeSeriesData(
-                businessMetrics.successRate - 3, 
-                0.1, 
-                0.1
-            );
+            // Generate baseline data (slightly lower) to match SVG path
+            // Baseline should be below current performance
+            const baselineSuccessRate = [150, 130, 140, 120, 130, 110, 120];
             
-            // Generate industry benchmark (higher than current performance to justify AI insights)
-            const industryBenchmark = this.generateTimeSeriesData(
-                businessMetrics.successRate + 5, // Industry benchmark is 5% higher than current
-                0.05, // Lower volatility for industry benchmark
-                0.1 // Slight upward trend
-            );
-            
-            // Generate optimized data (higher performance)
-            const optimizedSuccessRate = this.generateTimeSeriesData(
-                businessMetrics.successRate + 8, 
-                0.06, 
-                0.3
-            );
+            // Generate industry benchmark data to match SVG path coordinates exactly
+            // SVG path Y coordinates: [95, 80, 90, 70, 85, 65, 75]
+            const industryBenchmark = [95, 80, 90, 70, 85, 65, 75];
             
             return {
                 current: currentSuccessRate,
                 baseline: baselineSuccessRate,
-                industryBenchmark: industryBenchmark,
-                optimized: optimizedSuccessRate
+                industryBenchmark: industryBenchmark
             };
         }
 
@@ -426,6 +409,7 @@ class RealisticDataGenerator {
                 'Invalid CVV': 0.10
             };
             
+            // Generate time series data for each failure type
             failureTypes.forEach(type => {
                 const baseCount = 50 * failureRates[type];
                 const baseAmount = 75 * failureRates[type];
@@ -436,7 +420,26 @@ class RealisticDataGenerator {
                 };
             });
             
-            return data;
+            // Calculate totals and failure rate
+            const totalCount = failureTypes.reduce((sum, type) => {
+                return sum + data[type].count.reduce((a, b) => a + b, 0);
+            }, 0);
+            
+            const totalVolume = failureTypes.reduce((sum, type) => {
+                return sum + data[type].amount.reduce((a, b) => a + b, 0);
+            }, 0);
+            
+            // Calculate failure rate as percentage (assuming total transactions)
+            const totalTransactions = totalCount / 0.15; // Assuming 15% failure rate
+            const failureRate = (totalCount / totalTransactions) * 100;
+            
+            return {
+                ...data,
+                totalCount: totalCount,
+                totalVolume: totalVolume,
+                totalPayments: totalCount,
+                failureRate: failureRate
+            };
         }
 
         // Generate optimization impact data with realistic tracking
