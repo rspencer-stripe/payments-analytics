@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test AI Panel - German Card Diagnosis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        :root {
+            --color-purple-500: #533AFD;
+            --color-purple-600: #4A2FE8;
+            --color-gray-50: #F9FAFB;
+            --color-gray-100: #F3F4F6;
+            --color-gray-200: #E4E7EC;
+            --color-gray-300: #D2D6DC;
+            --color-gray-400: #9AA2B1;
+            --color-gray-500: #6C7689;
+            --color-gray-600: #4F566B;
+            --color-gray-700: #3D4456;
+            --color-gray-800: #2B3040;
+            --color-gray-900: #1A1F2E;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #ffffff;
+            color: var(--color-gray-900);
+        }
+        
+        .test-button {
+            padding: 12px 24px;
+            background: var(--color-purple-500);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        
+        .test-button:hover {
+            background: var(--color-purple-600);
+        }
+        
+        .ai-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 480px;
+            height: 100vh;
+            background: white;
+            border-left: 1px solid var(--color-gray-200);
+            box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+            z-index: 2000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .ai-panel.open {
+            transform: translateX(0);
+        }
+        
+        .ai-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--color-gray-150);
+            background: white;
+        }
+        
+        .ai-panel-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: linear-gradient(180deg, #fafbfc 0%, #ffffff 100%);
+        }
+        
+        .ai-chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 32px;
+            overflow-y: auto;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.02) 2px,
+                    rgba(0, 0, 0, 0.02) 4px
+                );
+        }
+        
+        .ai-message {
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: messageSlideIn 0.4s ease-out forwards;
+        }
+        
+        .ai-message.user {
+            flex-direction: row-reverse;
+        }
+        
+        @keyframes messageSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .ai-message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 16px;
+        }
+        
+        .ai-message-avatar.assistant {
+            background: var(--color-purple-500);
+            color: white;
+        }
+        
+        .ai-message-avatar.user {
+            background: var(--color-gray-100);
+            color: var(--color-gray-600);
+        }
+        
+        .ai-message-content {
+            flex: 1;
+            max-width: calc(100% - 52px);
+        }
+        
+        .ai-message-bubble {
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 13px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        
+        .ai-message-bubble.assistant {
+            background: white;
+            color: var(--color-gray-900);
+            border: 1px solid var(--color-gray-150);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ai-message-bubble.assistant p {
+            margin: 0 0 10px 0;
+            line-height: 1.5;
+            font-size: 13px;
+        }
+        
+        .ai-message-bubble.assistant strong {
+            color: var(--color-gray-900);
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .ai-message-bubble.assistant h4 {
+            margin: 12px 0 8px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-gray-900);
+            line-height: 1.4;
+        }
+        
+        .ai-message-bubble.assistant ul {
+            margin: 8px 0;
+            padding-left: 16px;
+            list-style-type: none;
+        }
+        
+        .ai-message-bubble.assistant li {
+            margin: 4px 0;
+            line-height: 1.4;
+            font-size: 13px;
+            position: relative;
+            padding-left: 8px;
+        }
+        
+        .ai-message-bubble.assistant li:before {
+            content: "•";
+            color: var(--color-purple-500);
+            font-weight: bold;
+            position: absolute;
+            left: -8px;
+        }
+        
+        .ai-message-bubble.user {
+            background: var(--color-purple-500);
+            color: white;
+            box-shadow: 0 2px 8px rgba(83, 58, 253, 0.2);
+        }
+        
+        .ai-prompt-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .ai-prompt-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid var(--color-gray-200);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-gray-700);
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            max-width: 200px;
+        }
+        
+        .ai-prompt-pill:hover {
+            background: var(--color-gray-100);
+            border-color: var(--color-gray-300);
+            color: var(--color-gray-900);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .ai-prompt-pill.primary {
+            background: var(--color-purple-500);
+            border-color: var(--color-purple-500);
+            color: white;
+        }
+        
+        .ai-prompt-pill.primary:hover {
+            background: var(--color-purple-600);
+            border-color: var(--color-purple-600);
+            color: white;
+        }
+        
+        .ai-prompt-pill.secondary {
+            background: var(--color-gray-100);
+            border-color: var(--color-gray-200);
+            color: var(--color-gray-700);
+        }
+        
+        .ai-prompt-pill.secondary:hover {
+            background: var(--color-gray-200);
+            border-color: var(--color-gray-300);
+            color: var(--color-gray-900);
+        }
+        
+        .ai-prompt-pill-icon {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+        
+        .ai-prompt-pill-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    <div class="p-8">
+        <h1 class="text-3xl font-bold mb-8">Test AI Panel - German Card Diagnosis</h1>
+        
+        <div class="space-y-4">
+            <button class="test-button" onclick="testGermanCardDiagnosis()">
+                Test German Card Diagnosis
+            </button>
+            
+            <button class="test-button" onclick="testAdaptiveAcceptance()">
+                Test Adaptive Acceptance Action
+            </button>
+        </div>
+        
+        <div class="mt-8 p-4 bg-gray-100 rounded-lg">
+            <h2 class="text-lg font-semibold mb-2">Test Instructions:</h2>
+            <ol class="list-decimal list-inside space-y-1 text-sm">
+                <li>Click "Test German Card Diagnosis" to open the AI panel with the German card diagnosis</li>
+                <li>Click "Turn on Adaptive Acceptance" to test the action response</li>
+                <li>Check the console for debugging information</li>
+            </ol>
+        </div>
+    </div>
+    
+    <!-- AI Assistant Panel -->
+    <div id="aiAssistantPanel" class="ai-panel">
+        <div class="ai-panel-header">
+            <div class="ai-panel-title">
+                <i data-lucide="sparkles" style="width: 18px; height: 18px; color: var(--color-purple-500);"></i>
+                <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--color-gray-900);">Assistant</h3>
+            </div>
+            <div class="ai-panel-controls">
+                <button onclick="closeAIPanel()" class="ai-panel-control-btn">
+                    <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="ai-panel-content">
+            <div id="aiChatContainer" class="ai-chat-container">
+                <!-- Chat messages will be added here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Test function for German card diagnosis
+        function testGermanCardDiagnosis() {
+            console.log('Testing German card diagnosis...');
+            const question = "I noticed a significant change in my accepted volume on this date. What insights can you provide about this trend and how can I optimize my payment processing to maintain consistent volume growth?";
+            openAIPanel(question, 'growth', 'german-card-diagnosis', 85.2, 'Last 30 days', 94);
+        }
+        
+        // Test function for Adaptive Acceptance action
+        function testAdaptiveAcceptance() {
+            console.log('Testing Adaptive Acceptance action...');
+            handleAIAction('enable-adaptive-acceptance');
+        }
+        
+        // Function to open AI panel (simplified version)
+        function openAIPanel(question, businessType, topic, metric, dateRange, payments) {
+            console.log('openAIPanel called with:', { question, businessType, topic, metric, dateRange, payments });
+            
+            const panel = document.getElementById('aiAssistantPanel');
+            const chatContainer = document.getElementById('aiChatContainer');
+            
+            if (chatContainer) {
+                chatContainer.innerHTML = '';
+            }
+            
+            // Add user's question immediately
+            addAIMessage('user', question);
+            
+            // Generate contextually appropriate responses based on the actual question and business type
+            let responseMessage = '';
+            let responsePills = [];
+            
+            console.log('openAIPanel called with topic:', topic, 'businessType:', businessType, 'metric:', metric);
+            
+            if (topic === 'german-card-diagnosis') {
+                // Response for German card auth rate drop diagnosis
+                console.log('German card diagnosis case triggered');
+                responseMessage = `**AI Insight Analysis:** Your auth rate for German cards dropped 3.8% in the last 24 hours. This appears to be due to a specific issuing bank (Commerzbank) declining transactions with error code 'insufficient_funds' at 2.5x normal rate.\n\n**Root Cause Analysis:**\n• **Bank-specific issue:** Commerzbank is declining 15.2% of transactions vs. 6.1% normally\n• **Error pattern:** 78% of declines show 'insufficient_funds' error code\n• **Geographic scope:** Affects 23% of your German transaction volume\n• **Revenue impact:** Estimated $2,400 in declined transactions\n\n**Recommended Solution:**\nImplementing **Adaptive Acceptance** would likely improve auth rates by **1.2%** by dynamically routing these transactions through alternate networks.\n\n**Expected Outcome:**\n• Recover $1,680 of declined transactions\n• Improve overall German market auth rate to 89.1%\n• Reduce dependency on single bank network`;
+                responsePills = [
+                    { text: "Turn on Adaptive Acceptance", icon: "settings", type: "primary", action: "enable-adaptive-acceptance" },
+                    { text: "View decline details", icon: "bar-chart-2", type: "secondary", action: "view-decline-details" },
+                    { text: "Contact Commerzbank", icon: "message-circle", type: "secondary", action: "contact-bank" }
+                ];
+            } else {
+                responseMessage = "I understand your question. Let me provide some insights based on your business context.";
+                responsePills = [
+                    { text: "View documentation", icon: "file-text", type: "primary", action: "view-docs" },
+                    { text: "Contact support", icon: "message-circle", type: "secondary", action: "contact-support" }
+                ];
+            }
+            
+            // Add AI response immediately
+            addAIMessage('assistant', responseMessage, responsePills);
+            
+            // Open panel immediately
+            panel.classList.add('open');
+        }
+        
+        // Function to add AI message
+        function addAIMessage(type, content, pills = []) {
+            const chatContainer = document.getElementById('aiChatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `ai-message ${type}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = `ai-message-avatar ${type}`;
+            avatar.innerHTML = type === 'user' ? '👤' : '🤖';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'ai-message-content';
+            
+            const bubble = document.createElement('div');
+            bubble.className = `ai-message-bubble ${type}`;
+            
+            if (type === 'assistant') {
+                // Parse markdown-like content
+                const formattedContent = content
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>')
+                    .replace(/•/g, '•');
+                bubble.innerHTML = formattedContent;
+                
+                // Add pills if provided
+                if (pills.length > 0) {
+                    const pillsContainer = document.createElement('div');
+                    pillsContainer.className = 'ai-prompt-pills';
+                    
+                    pills.forEach(pill => {
+                        const pillButton = document.createElement('button');
+                        pillButton.className = `ai-prompt-pill ${pill.type}`;
+                        pillButton.onclick = () => handleAIAction(pill.action);
+                        
+                        const icon = document.createElement('i');
+                        icon.setAttribute('data-lucide', pill.icon);
+                        icon.className = 'ai-prompt-pill-icon';
+                        
+                        const text = document.createElement('span');
+                        text.className = 'ai-prompt-pill-text';
+                        text.textContent = pill.text;
+                        
+                        pillButton.appendChild(icon);
+                        pillButton.appendChild(text);
+                        pillsContainer.appendChild(pillButton);
+                    });
+                    
+                    messageContent.appendChild(bubble);
+                    messageContent.appendChild(pillsContainer);
+                } else {
+                    messageContent.appendChild(bubble);
+                }
+            } else {
+                bubble.textContent = content;
+                messageContent.appendChild(bubble);
+            }
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            chatContainer.appendChild(messageDiv);
+            
+            // Re-initialize Lucide icons for new pills
+            if (pills.length > 0) {
+                setTimeout(() => lucide.createIcons(), 100);
+            }
+        }
+        
+        // Function to handle AI actions
+        function handleAIAction(action) {
+            console.log('AI action triggered:', action);
+            
+            const actionResponses = {
+                'enable-adaptive-acceptance': {
+                    message: "Adaptive Acceptance was successfully enabled! This feature will now dynamically route transactions through alternate networks when primary networks decline them, helping to improve your authorization rates.",
+                    pills: [
+                        { text: "View performance", icon: "bar-chart-2", type: "primary", action: "view-performance" },
+                        { text: "Configure settings", icon: "settings", type: "secondary", action: "configure-settings" },
+                        { text: "Monitor results", icon: "activity", type: "secondary", action: "monitor-results" }
+                    ]
+                },
+                'view-decline-details': {
+                    message: "Here's a detailed breakdown of your recent decline patterns. The data shows that Commerzbank declines are concentrated in the €50-200 range with 'insufficient_funds' errors.",
+                    pills: [
+                        { text: "Export report", icon: "download", type: "primary", action: "export-report" },
+                        { text: "Set up alerts", icon: "bell", type: "secondary", action: "setup-alerts" },
+                        { text: "Contact bank", icon: "message-circle", type: "secondary", action: "contact-bank" }
+                    ]
+                },
+                'contact-bank': {
+                    message: "I'll help you prepare the information needed to contact Commerzbank about the increased decline rates. This includes your transaction patterns and decline analysis.",
+                    pills: [
+                        { text: "Prepare report", icon: "file-text", type: "primary", action: "prepare-report" },
+                        { text: "Schedule call", icon: "phone", type: "secondary", action: "schedule-call" },
+                        { text: "View contact info", icon: "info", type: "secondary", action: "view-contact" }
+                    ]
+                }
+            };
+            
+            const response = actionResponses[action] || {
+                message: "I understand you're interested in this feature. Let me provide you with the next steps to get started.",
+                pills: [
+                    { text: "View documentation", icon: "file-text", type: "primary", action: "view-docs" },
+                    { text: "Contact support", icon: "message-circle", type: "secondary", action: "contact-support" }
+                ]
+            };
+            
+            setTimeout(() => {
+                addAIMessage('assistant', response.message, response.pills);
+            }, 500);
+        }
+        
+        // Function to close AI panel
+        function closeAIPanel() {
+            const panel = document.getElementById('aiAssistantPanel');
+            panel.classList.remove('open');
+        }
+    </script>
+</body>
+</html> 

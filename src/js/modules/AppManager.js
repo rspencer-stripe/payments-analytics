@@ -242,7 +242,21 @@ class AppManager {
     // Handle acceptance alert click
     handleAcceptanceAlertClick(indicator) {
         const index = indicator.dataset.index;
-        this.showAcceptanceAlertTooltip(indicator);
+        console.log('Acceptance alert indicator clicked, opening AI panel...');
+        
+        // Open AI panel with German card diagnosis instead of showing tooltip
+        const currentBusinessType = document.querySelector('.business-type-tab.active')?.dataset.type || 'medium';
+        const dateRange = document.getElementById('dateRangeDropdown')?.textContent?.trim() || 'Last 30 days';
+        const question = 'I noticed a significant change in my accepted volume on this date. What insights can you provide about this trend and how can I optimize my payment processing to maintain consistent volume growth?';
+        
+        // Call the global openAIPanel function
+        if (typeof window.openAIPanel === 'function') {
+            window.openAIPanel(question, currentBusinessType, 'german-card-diagnosis', 85.2, dateRange, 94);
+        } else {
+            console.error('openAIPanel function not found');
+            // Fallback to showing tooltip
+            this.showAcceptanceAlertTooltip(indicator);
+        }
     }
 
     // Reload data

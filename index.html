@@ -14112,7 +14112,8 @@
     }
 
     // AI Assistant Panel Functions - Optimized for Performance
-    function openAIPanel(question, businessType, topic, metric, dateRange, payments = null) {
+    // Make openAIPanel globally available
+    window.openAIPanel = function(question, businessType, topic, metric, dateRange, payments = null) {
         // Fast path - immediately show panel and add basic response
         const panel = document.getElementById('aiAssistantPanel');
         const mainContent = document.querySelector('.main-content');
@@ -14208,7 +14209,8 @@
         }, 100);
     }
 
-    function closeAIPanel() {
+    // Make closeAIPanel globally available
+    window.closeAIPanel = function() {
         const panel = document.getElementById('aiAssistantPanel');
         const mainContent = document.querySelector('.main-content');
         const topBar = document.querySelector('.top-bar');
