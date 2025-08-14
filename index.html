@@ -8314,11 +8314,32 @@
         const generator = new RealisticDataGenerator(businessType, dateRange);
         const mainChartData = generator.generateMainChartData();
         
+        console.log('Raw main chart data:', mainChartData);
+        
         // Ensure we have exactly 7 data points to match the x-coordinates
-        if (mainChartData.current.length !== 7 || mainChartData.baseline.length !== 7 || mainChartData.optimized.length !== 7) {
-            console.error('Data length mismatch. Expected 7, got:', mainChartData.current.length, mainChartData.baseline.length, mainChartData.optimized.length);
+        if (!mainChartData || !mainChartData.current || !mainChartData.baseline || !mainChartData.optimized ||
+            mainChartData.current.length !== 7 || mainChartData.baseline.length !== 7 || mainChartData.optimized.length !== 7) {
+            console.error('Data length mismatch. Expected 7, got:', mainChartData);
             return;
         }
+        
+        // Validate data and prevent NaN values
+        const validateData = (dataArray) => {
+            return dataArray.map(val => {
+                const num = parseFloat(val);
+                if (isNaN(num)) {
+                    console.warn('NaN value detected, replacing with 100:', val);
+                    return 100;
+                }
+                return Math.max(0, num);
+            });
+        };
+        
+        const validatedCurrent = validateData(mainChartData.current);
+        const validatedBaseline = validateData(mainChartData.baseline);
+        const validatedOptimized = validateData(mainChartData.optimized);
+        
+        console.log('Validated chart data:', { validatedCurrent, validatedBaseline, validatedOptimized });
 
         // PERFECT ALIGNMENT: Use exact x-coordinates that match the x-axis label positions
         // These coordinates correspond to the visual positions of the x-axis labels
@@ -8327,19 +8348,19 @@
 
 
 
-        // Build SVG paths with perfect alignment
+        // Build SVG paths with perfect alignment using validated data
         let currentLine = '';
         let baselineLine = '';
         let optimizedLine = '';
         for (let i = 0; i < xPoints.length; i++) {
             if (i === 0) {
-                currentLine = `M${xPoints[i]},${mainChartData.current[i]}`;
-                baselineLine = `M${xPoints[i]},${mainChartData.baseline[i]}`;
-                optimizedLine = `M${xPoints[i]},${mainChartData.optimized[i]}`;
+                currentLine = `M${xPoints[i]},${validatedCurrent[i]}`;
+                baselineLine = `M${xPoints[i]},${validatedBaseline[i]}`;
+                optimizedLine = `M${xPoints[i]},${validatedOptimized[i]}`;
             } else {
-                currentLine += ` L${xPoints[i]},${mainChartData.current[i]}`;
-                baselineLine += ` L${xPoints[i]},${mainChartData.baseline[i]}`;
-                optimizedLine += ` L${xPoints[i]},${mainChartData.optimized[i]}`;
+                currentLine += ` L${xPoints[i]},${validatedCurrent[i]}`;
+                baselineLine += ` L${xPoints[i]},${validatedBaseline[i]}`;
+                optimizedLine += ` L${xPoints[i]},${validatedOptimized[i]}`;
             }
         }
         
@@ -8377,10 +8398,10 @@
             // Convert Y back to percent for display
             const yToPercent = y => ((200-y)/2).toFixed(1) + '%';
             
-            const lastIndex = mainChartData.current.length - 1;
-            const currentValue = yToPercent(mainChartData.current[lastIndex]);
-            const baselineValue = yToPercent(mainChartData.baseline[lastIndex]);
-            const optimizedValue = yToPercent(mainChartData.optimized[lastIndex]);
+            const lastIndex = validatedCurrent.length - 1;
+            const currentValue = yToPercent(validatedCurrent[lastIndex]);
+            const baselineValue = yToPercent(validatedBaseline[lastIndex]);
+            const optimizedValue = yToPercent(validatedOptimized[lastIndex]);
             
 
             
@@ -10268,139 +10289,11 @@
         }, 100);
     }
 
-    // Realistic data generation system
-    class RealisticDataGenerator {
-        constructor(businessType, dateRange) {
-            this.businessType = businessType;
-            this.dateRange = dateRange;
-            this.dataPoints = this.getDataPointsForRange(dateRange);
-            this.seed = this.getSeed(businessType, dateRange);
-            this.rng = this.seededRandom(this.seed);
-        }
 
-        // Get consistent seed for reproducible data
-        getSeed(businessType, dateRange) {
-            const businessSeeds = { 'small': 1000, 'medium': 2000, 'large': 3000 };
-            const rangeSeeds = { 
-                'Last 7 days': 1, 'Last 30 days': 2, 'Last 60 days': 3, 
-                'Last 90 days': 4, 'Last 6 months': 5, 'Last 12 months': 6
-            };
-            return businessSeeds[businessType] + rangeSeeds[dateRange];
-        }
 
-        // Seeded random number generator for consistent data
-        seededRandom(seed) {
-            let state = seed;
-            return function() {
-                state = (state * 9301 + 49297) % 233280;
-                return state / 233280;
-            };
-        }
 
-        // Get number of data points for each timeframe
-        getDataPointsForRange(dateRange) {
-            const points = { 
-                'Last 7 days': 7, 'Last 30 days': 8, 'Last 60 days': 8, 
-                'Last 90 days': 7, 'Last 6 months': 8, 'Last 12 months': 12
-            };
-            return points[dateRange] || 7;
-        }
 
-        // Generate business-specific base metrics
-        getBusinessMetrics() {
-            const metrics = {
-                'startup': {
-                    successRate: 78.5,
-                    avgTransactionValue: 11.2, // Increased by 40% from 8.0
-                    dailyTransactions: 3.1, // Increased by 40% from 2.2
-                    failureRate: 21.5,
-                    disputeRate: 0.8
-                },
-                'growth': {
-                    successRate: 85.2,
-                    avgTransactionValue: 14.4, // Increased by 40% from 10.3
-                    dailyTransactions: 19.3, // Increased by 40% from 13.8
-                    failureRate: 14.8,
-                    disputeRate: 0.4
-                },
-                'scale': {
-                    successRate: 91.7,
-                    avgTransactionValue: 14.0, // Increased by 40% from 10.0
-                    dailyTransactions: 139.2, // Increased by 40% from 99.4
-                    failureRate: 8.3,
-                    disputeRate: 0.2
-                },
-                'enterprise': {
-                    successRate: 94.8,
-                    avgTransactionValue: 28.9, // Higher value for enterprise
-                    dailyTransactions: 1247.8, // Much higher volume for enterprise
-                    failureRate: 5.2,
-                    disputeRate: 0.1
-                }
-            };
-            return metrics[this.businessType];
-        }
 
-        // Generate timeframe multipliers - use "Last 90 days" as baseline (1.0)
-        getTimeframeMultipliers() {
-            const multipliers = {
-                'Last 7 days': { volume: 0.078, payments: 0.078, days: 7 }, // 7/90 ≈ 0.078
-                'Last 30 days': { volume: 0.333, payments: 0.333, days: 30 }, // 30/90 = 0.333
-                'Last 60 days': { volume: 0.667, payments: 0.667, days: 60 }, // 60/90 = 0.667
-                'Last 90 days': { volume: 1.0, payments: 1.0, days: 90 }, // Baseline
-                'Last 6 months': { volume: 2.0, payments: 2.0, days: 180 }, // 180/90 = 2.0
-                'Last 12 months': { volume: 4.0, payments: 4.0, days: 365 } // 365/90 ≈ 4.0
-            };
-            return multipliers[this.dateRange];
-        }
-
-        // Generate realistic time series data with trends and seasonality
-        generateTimeSeriesData(baseValue, volatility = 0.15, trend = 0) {
-            const data = [];
-            let currentValue = baseValue;
-            
-            for (let i = 0; i < this.dataPoints; i++) {
-                // Add trend
-                currentValue += trend;
-                
-                // Add weekly seasonality (weekend effect)
-                const dayOfWeek = (i % 7);
-                const weekendEffect = (dayOfWeek === 0 || dayOfWeek === 6) ? 0.8 : 1.0;
-                
-                // Add random variation
-                const randomFactor = 1 + (this.rng() - 0.5) * volatility * 2;
-                
-                const finalValue = Math.max(0, currentValue * weekendEffect * randomFactor);
-                data.push(Math.round(finalValue * 100) / 100);
-            }
-            
-            return data;
-        }
-
-        // Generate card type distribution
-        generateCardDistribution() {
-            const distributions = {
-                'startup': { credit: 0.65, debit: 0.30, prepaid: 0.05 },
-                'growth': { credit: 0.70, debit: 0.25, prepaid: 0.05 },
-                'scale': { credit: 0.75, debit: 0.20, prepaid: 0.05 },
-                'enterprise': { credit: 0.80, debit: 0.15, prepaid: 0.05 }
-            };
-            return distributions[this.businessType];
-        }
-
-        // Generate main chart data with three lines - scaled from "Last 90 days" baseline
-        generateMainChartData() {
-            const businessMetrics = this.getBusinessMetrics();
-            const timeframeMultipliers = this.getTimeframeMultipliers();
-            
-            // Use "Last 90 days" as the baseline for consistent scaling
-            const baselineDateRange = 'Last 90 days';
-            const baselineGenerator = new RealisticDataGenerator(this.businessType, baselineDateRange);
-            const baselineBusinessMetrics = baselineGenerator.getBusinessMetrics();
-            
-            // IMPORTANT: Force exactly 7 data points for main chart to match x-coordinates
-            const originalDataPoints = this.dataPoints;
-            this.dataPoints = 7;
             
             // Generate current success rate data with realistic fluctuations
             // Scale from 90-day baseline but maintain percentage data type
