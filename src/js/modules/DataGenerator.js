@@ -453,7 +453,7 @@ class RealisticDataGenerator {
                 'enterprise': { volume: 5.2, payments: 3.8, successRate: 1.0 }
             };
             
-            const scaling = businessScaling[this.businessType] || businessScaling.medium;
+            const scaling = businessScaling[this.businessType] || businessScaling.growth;
             
             // Process ALL optimizations (both active and inactive) for table display
             allOptimizations.forEach(opt => {

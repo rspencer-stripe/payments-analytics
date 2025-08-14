@@ -11864,10 +11864,18 @@
             optimizationData = generator.generateOptimizationData();
         }
         
-        // Calculate key metrics
-        const totalRevenue = allData.metrics.volume;
-        const totalPayments = allData.metrics.payments;
-        const successRate = businessMetrics.successRate;
+        // Calculate key metrics with safety checks
+        const totalRevenue = allData?.metrics?.volume || 0;
+        const totalPayments = allData?.metrics?.payments || 0;
+        const successRate = businessMetrics?.successRate || 85.0;
+        
+        console.log('Calculated metrics:', {
+            totalRevenue,
+            totalPayments,
+            successRate,
+            businessMetrics: businessMetrics,
+            allData: allData
+        });
         
         // Update performance stats with realistic data
         const performanceSparklines = overviewView.querySelectorAll('.sparkline-charts-container .sparkline-row .sparkline-card');
@@ -11881,7 +11889,11 @@
             performanceSparklines[0].querySelector('.sparkline-rate').textContent = `Benchmark: $${(totalVolume * 1.2).toFixed(1)}K`;
             
             // Net revenue (after processing costs and fraud)
-            const netRevenue = totalRevenue * (1 - businessMetrics.processingCost/100 - businessMetrics.fraudRate/100);
+            const processingCost = businessMetrics?.processingCost || 2.8;
+            const fraudRate = businessMetrics?.fraudRate || 0.7;
+            const disputeRate = businessMetrics?.disputeRate || 0.9;
+            
+            const netRevenue = totalRevenue * (1 - processingCost/100 - fraudRate/100);
             const netRevenueK = netRevenue / 1000;
             const netTrend = ((generator ? generator.rng() : Math.random()) - 0.5) * 12; // ±6K variation
             performanceSparklines[1].querySelector('.sparkline-value').textContent = `$${netRevenueK.toFixed(1)}K`;
@@ -11890,7 +11902,7 @@
             performanceSparklines[1].querySelector('.sparkline-rate').textContent = `Benchmark: $${(netRevenueK * 1.15).toFixed(1)}K`;
             
             // Lost revenue (processing costs + fraud + disputes)
-            const lostRevenue = totalRevenue * (businessMetrics.processingCost/100 + businessMetrics.fraudRate/100 + businessMetrics.disputeRate/100);
+            const lostRevenue = totalRevenue * (processingCost/100 + fraudRate/100 + disputeRate/100);
             const lostRevenueK = lostRevenue / 1000;
             const lostTrend = ((generator ? generator.rng() : Math.random()) - 0.5) * 8; // ±4K variation
             performanceSparklines[2].querySelector('.sparkline-value').textContent = `$${lostRevenueK.toFixed(1)}K`;
@@ -11904,29 +11916,35 @@
         const sparklineTrends = overviewView.querySelectorAll('.sparkline-trend');
         
         if (sparklineValues.length >= 6) {
+            // Get safe values with defaults
+            const safeSuccessRate = businessMetrics?.successRate || 85.0;
+            const safeAuthRate = businessMetrics?.authorizationRate || 91.0;
+            const safeDisputeRate = businessMetrics?.disputeRate || 0.9;
+            const safeProcessingCost = businessMetrics?.processingCost || 2.8;
+            
             // Acceptance rate
-            const acceptanceRate = businessMetrics.successRate + ((generator ? generator.rng() : Math.random()) - 0.5) * 3;
+            const acceptanceRate = safeSuccessRate + ((generator ? generator.rng() : Math.random()) - 0.5) * 3;
             sparklineValues[0].textContent = `${Math.min(100, Math.max(0, acceptanceRate)).toFixed(1)}%`;
             const acceptanceTrend = ((generator ? generator.rng() : Math.random()) - 0.5) * 4;
             sparklineTrends[0].textContent = `${acceptanceTrend > 0 ? '+' : ''}${acceptanceTrend.toFixed(1)}%`;
             sparklineTrends[0].className = `sparkline-trend ${acceptanceTrend > 0 ? 'positive' : 'negative'}`;
             
             // Auth success
-            const authSuccess = businessMetrics.authorizationRate + ((generator ? generator.rng() : Math.random()) - 0.5) * 2;
+            const authSuccess = safeAuthRate + ((generator ? generator.rng() : Math.random()) - 0.5) * 2;
             sparklineValues[1].textContent = `${Math.min(100, Math.max(0, authSuccess)).toFixed(1)}%`;
             const authTrend = ((generator ? generator.rng() : Math.random()) - 0.5) * 3;
             sparklineTrends[1].textContent = `${authTrend > 0 ? '+' : ''}${authTrend.toFixed(1)}%`;
             sparklineTrends[1].className = `sparkline-trend ${authTrend > 0 ? 'positive' : 'negative'}`;
             
             // Dispute rate
-            const disputeRate = businessMetrics.disputeRate + ((generator ? generator.rng() : Math.random()) - 0.5) * 0.3;
+            const disputeRate = safeDisputeRate + ((generator ? generator.rng() : Math.random()) - 0.5) * 0.3;
             sparklineValues[2].textContent = `${Math.max(0, disputeRate).toFixed(1)}%`;
             const disputeTrend = ((generator ? generator.rng() : Math.random()) - 0.5) * 0.4;
             sparklineTrends[2].textContent = `${disputeTrend > 0 ? '+' : ''}${disputeTrend.toFixed(1)}%`;
             sparklineTrends[2].className = `sparkline-trend ${disputeTrend < 0 ? 'positive' : 'negative'}`;
             
             // Processing cost
-            const processingCost = businessMetrics.processingCost + ((generator ? generator.rng() : Math.random()) - 0.5) * 0.4;
+            const processingCost = safeProcessingCost + ((generator ? generator.rng() : Math.random()) - 0.5) * 0.4;
             sparklineValues[3].textContent = `${Math.max(0, processingCost).toFixed(1)}%`;
             const costTrend = ((generator ? generator.rng() : Math.random()) - 0.5) * 0.5;
             sparklineTrends[3].textContent = `${costTrend > 0 ? '+' : ''}${costTrend.toFixed(1)}%`;
@@ -11982,18 +12000,20 @@
         console.log('=== OPTIMIZATION METRIC UPDATE ===');
         console.log('Optimization metric value element found:', !!optimizationMetricValue);
         console.log('Optimization chart bars found:', optimizationChartBars.length);
-        console.log('Optimization data volume:', optimizationData.volume);
+        console.log('Optimization data:', optimizationData);
+        console.log('Optimization data volume:', optimizationData?.volume);
         
-        if (optimizationMetricValue) {
+        if (optimizationMetricValue && optimizationData?.volume) {
             const newValue = `$${optimizationData.volume.toFixed(2)}`;
             optimizationMetricValue.textContent = newValue;
             console.log('Updated optimization metric value to:', newValue);
             console.log('Element text content after update:', optimizationMetricValue.textContent);
         } else {
-            console.error('Optimization metric value element not found!');
+            console.error('Optimization metric value element not found or optimization data invalid!');
+            console.error('Optimization data:', optimizationData);
         }
         
-                 if (optimizationChartBars.length >= 7) {
+                 if (optimizationChartBars.length >= 7 && optimizationData?.volume) {
              // Update bar heights based on optimization data
              const maxHeight = 160;
              console.log('Chart bars - optimizationData.volume:', optimizationData.volume);
