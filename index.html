@@ -15269,8 +15269,28 @@
                         handleAIAction(pill.action);
                     } else if (pill.action === 'enable-network-tokens') {
                         // Handle Network Tokens action
-                        console.log('Network Tokens clicked, starting A/B test...');
-                        handleAIAction(pill.action);
+                        console.log('Network Tokens clicked, opening experiment drawer...');
+                        
+                        // Close AI panel first to avoid conflicts
+                        closeAIPanel();
+                        
+                        const experimentData = {
+                            id: 'enable-network-tokens',
+                            title: 'Network Tokens',
+                            description: 'Enable network tokens to improve authorization rates and reduce fraud risk by replacing sensitive card data with secure tokens.',
+                            uplift: 8,
+                            revenue: '+$3,200/month',
+                            effort: 'Low (automated setup)'
+                        };
+                        
+                        console.log('Network Tokens experiment data:', experimentData);
+                        
+                        // Add a small delay to ensure AI panel is closed
+                        setTimeout(() => {
+                            openExperimentDrawer(experimentData);
+                        }, 100);
+                        
+                        return;
                     } else if (pill.action === 'ask-follow-up') {
                         addAIMessage('user', pill.text);
                         sendAIMessage(pill.text);
@@ -15321,7 +15341,7 @@
                 ]
             },
             'enable-network-tokens': {
-                message: "Network Tokens A/B test has been started! This optimization will test the impact of using network tokens on your authorization rates and transaction success. The test will run for 14 days with 50% of your traffic.",
+                message: "Opening Network Tokens experiment setup...",
                 pills: [
                     { text: "View test results", icon: "bar-chart-2", type: "primary", action: "view-test-results" },
                     { text: "Configure test settings", icon: "settings", type: "secondary", action: "configure-test" },
@@ -19315,7 +19335,8 @@
         }
     }
     
-    function openExperimentDrawer(recommendation) {
+    // Make openExperimentDrawer globally available
+    window.openExperimentDrawer = function(recommendation) {
         console.log('openExperimentDrawer called with:', recommendation);
         console.log('Type of recommendation:', typeof recommendation);
         console.log('Recommendation stringified:', JSON.stringify(recommendation));
